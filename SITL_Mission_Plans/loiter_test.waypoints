@@ -1,0 +1,39 @@
+QGC WPL 110
+0	1	0	16	0.00	0.00	0.00	0.00	-35.36326400	149.16523900	584.090000	1
+1	0	3	22	15.00	0.00	0.00	0.00	-35.36326400	149.16523900	100.000000	1
+2	0	3	16	0.00	0.00	0.00	0.00	-35.37000000	149.17000000	100.000000	1
+3	0	3	17	3.00	50.00	0.00	1.00	-35.37000000	149.17000000	100.000000	1
+4	0	3	16	0.00	0.00	0.00	0.00	-35.36500000	149.16500000	120.000000	1
+5	0	3	19	30.00	0.00	0.00	0.00	-35.36500000	149.16500000	120.000000	1
+6	0	3	21	0.00	0.00	0.00	0.00	-35.36326400	149.16523900	0.000000	1
+
+# Loiter Test Mission
+# Description: Tests different loiter modes and behaviors
+#
+# Mission Profile:
+# - Takeoff to 100m
+# - Navigate to first waypoint
+# - Loiter 3 turns at 50m radius (NAV_LOITER_TURNS)
+# - Navigate to second waypoint at 120m
+# - Loiter for 30 seconds (NAV_LOITER_TIME)
+# - Return and land
+#
+# Expected Duration: ~8 minutes
+#
+# Usage:
+#   wp load loiter_test.waypoints
+#   mode AUTO
+#
+# Good for:
+# - Testing loiter radius accuracy
+# - Bank angle limits
+# - Wind compensation in circles
+# - Timing accuracy
+#
+# Watch parameters:
+# - WP_LOITER_RAD (loiter radius)
+# - LIM_ROLL_CD (max roll angle)
+# - NAVL1_PERIOD (L1 controller responsiveness)
+#
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0

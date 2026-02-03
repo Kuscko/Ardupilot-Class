@@ -11,7 +11,6 @@ Example:
     python3 mavlink_monitor.py /dev/ttyUSB0:57600
 
 Author: Patrick Kelly (@Kuscko)
-FOR: AEVEX Onboarding
 Version: 1.0
 """
 

@@ -5,7 +5,6 @@
 --   param set SCR_USER1 120  (warn above 120 meters)
 --
 -- Author: Patrick Kelly (@Kuscko)
--- FOR: AEVEX Onboarding
 -- Version: 1.0
 
 function update()

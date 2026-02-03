@@ -5,7 +5,6 @@
 -- WARNING: Ensure servo 9 is not assigned to critical flight controls!
 --
 -- Author: Patrick Kelly (@Kuscko)
--- FOR: AEVEX Onboarding
 -- Version: 1.0
 
 -- Configuration

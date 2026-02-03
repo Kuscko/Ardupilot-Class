@@ -1,0 +1,49 @@
+# TECS Tuning Parameter Set
+# Use for: Testing TECS parameter effects
+#
+# Load this, then modify one parameter at a time to observe effects
+#
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+
+# TECS - Baseline for tuning
+TECS_CLMB_MAX,5.0
+TECS_SINK_MAX,5.0
+TECS_TIME_CONST,5.0
+TECS_SPDWEIGHT,1.0
+TECS_PTCH_DAMP,0.0
+TECS_SINK_MIN,2.0
+TECS_THR_DAMP,0.5
+TECS_INTEG_GAIN,0.1
+TECS_VERT_ACC,7.0
+
+# Airspeed - Fixed for consistent testing
+ARSPD_FBW_MIN,12.0
+ARSPD_FBW_MAX,22.0
+TRIM_ARSPD_CM,1500
+
+# Logging - Enable for analysis
+LOG_DISARMED,0
+LOG_REPLAY,0
+
+# Use altitude_test.waypoints mission for testing
+
+# Tuning Guidelines:
+#
+# TECS_TIME_CONST (3-10):
+#   Lower = faster response, more aggressive
+#   Higher = slower response, more stable
+#   Test: Observe altitude/speed tracking
+#
+# TECS_CLMB_MAX / TECS_SINK_MAX (2-10 m/s):
+#   Limits climb/descent rates
+#   Test: Watch max climb/sink in altitude_test mission
+#
+# TECS_SPDWEIGHT (0.5-2.0):
+#   <1.0 = prioritize altitude over speed
+#   >1.0 = prioritize speed over altitude
+#   Test: Observe speed variations during climbs
+#
+# TECS_SINK_MIN (0-5 m/s):
+#   Minimum sink rate (glide slope)
+#   Test: Watch descent behavior

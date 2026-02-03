@@ -1,0 +1,37 @@
+# Conservative Parameter Set
+# Use for: Initial flights, testing, cautious operation
+#
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+
+# TECS - Conservative climb/descent
+TECS_CLMB_MAX,3.0
+TECS_SINK_MAX,2.0
+TECS_TIME_CONST,6.0
+TECS_SPDWEIGHT,1.0
+
+# Airspeed - Safe range
+ARSPD_FBW_MIN,12.0
+ARSPD_FBW_MAX,20.0
+TRIM_ARSPD_CM,1500
+
+# Throttle - Limited
+THR_MIN,0
+THR_MAX,70
+TRIM_THROTTLE,45
+
+# Navigation - Gentle turns
+LIM_ROLL_CD,3000
+NAVL1_PERIOD,18
+WP_LOITER_RAD,80
+
+# Failsafes - Enabled
+FS_SHORT_ACTN,1
+FS_LONG_ACTN,2
+BATT_LOW_VOLT,10.5
+BATT_CRT_VOLT,10.0
+
+# Fence - Enabled
+FENCE_ENABLE,1
+FENCE_RADIUS,500
+FENCE_ALT_MAX,200

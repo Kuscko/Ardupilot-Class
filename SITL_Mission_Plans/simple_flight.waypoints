@@ -1,0 +1,24 @@
+QGC WPL 110
+0	1	0	16	0.00	0.00	0.00	0.00	-35.36326400	149.16523900	584.090000	1
+1	0	3	22	15.00	0.00	0.00	0.00	-35.36326400	149.16523900	100.000000	1
+2	0	3	16	0.00	0.00	0.00	0.00	-35.37000000	149.17000000	100.000000	1
+3	0	3	16	0.00	0.00	0.00	0.00	-35.36500000	149.17500000	100.000000	1
+4	0	3	21	0.00	0.00	0.00	0.00	-35.36326400	149.16523900	0.000000	1
+
+# Simple Flight Mission
+# Description: Basic takeoff, two waypoints, and land mission
+#
+# Mission Profile:
+# - Takeoff to 100m AGL
+# - Fly to two waypoints
+# - Return to home and land
+#
+# Expected Duration: ~5 minutes
+# Distance: ~2 km
+#
+# Usage:
+#   wp load simple_flight.waypoints
+#   mode AUTO
+#
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0

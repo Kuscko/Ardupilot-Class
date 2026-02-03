@@ -1,0 +1,52 @@
+# EKF3 GPS-Denied Parameters
+# Use for: Testing without GPS, indoor flight, GPS jamming scenarios
+#
+# Relies on: Barometer for altitude, Optical flow for position (if available)
+#
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+
+# Enable EKF3
+EK3_ENABLE,1
+AHRS_EKF_TYPE,3
+
+# Source Selection - No GPS
+EK3_SRC1_POSXY,0
+EK3_SRC1_VELXY,0
+EK3_SRC1_POSZ,1
+EK3_SRC1_VELZ,0
+EK3_SRC1_YAW,1
+
+# Disable GPS checks
+EK3_GPS_CHECK,0
+GPS_TYPE,0
+
+# Altitude Source - Barometer only
+EK3_ALT_SOURCE,0
+EK3_ALT_M_NSE,2.0
+
+# Increase process noise (less sensor data)
+EK3_ACC_P_NSE,0.5
+EK3_GYRO_P_NSE,0.02
+EK3_WIND_P_NSE,0.2
+
+# Increase position/velocity noise
+EK3_POSNE_M_NSE,2.0
+EK3_VELD_M_NSE,1.5
+EK3_VELNE_M_NSE,2.0
+
+# Magnetometer becomes more important
+EK3_MAG_CAL,3
+EK3_MAG_M_NSE,0.03
+
+# More lenient innovation gates
+EK3_POSNE_I_GATE,1000
+EK3_VEL_I_GATE,1000
+EK3_HGT_I_GATE,1000
+
+# WARNING: Position estimate will drift without GPS!
+# Use only for:
+# - Short duration flights
+# - Testing GPS failover
+# - Indoor/confined areas with optical flow
+# - Understanding EKF sensor fusion

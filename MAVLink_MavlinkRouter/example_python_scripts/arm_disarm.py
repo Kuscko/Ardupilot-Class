@@ -9,7 +9,6 @@ Usage:
     python3 arm_disarm.py [connection_string]
 
 Author: Patrick Kelly (@Kuscko)
-FOR: AEVEX Onboarding
 Version: 1.0
 """
 

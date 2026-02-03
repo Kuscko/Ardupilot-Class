@@ -7,7 +7,6 @@
 -- WARNING: Test thoroughly in SITL before using on real aircraft
 --
 -- Author: Patrick Kelly (@Kuscko)
--- FOR: AEVEX Onboarding
 -- Version: 1.0
 
 -- Configuration

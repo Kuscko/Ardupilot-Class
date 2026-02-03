@@ -3,7 +3,6 @@
 -- Displays waypoint number and coordinates
 --
 -- Author: Patrick Kelly (@Kuscko)
--- FOR: AEVEX Onboarding
 -- Version: 1.0
 
 local last_waypoint = -1

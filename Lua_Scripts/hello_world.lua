@@ -3,7 +3,6 @@
 -- This is the simplest possible Lua script for ArduPilot
 --
 -- Author: Patrick Kelly (@Kuscko)
--- FOR: AEVEX Onboarding
 -- Version: 1.0
 
 function update()

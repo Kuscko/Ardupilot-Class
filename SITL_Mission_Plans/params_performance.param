@@ -1,0 +1,39 @@
+# Performance Parameter Set
+# Use for: Advanced testing, aggressive maneuvers, racing
+#
+# WARNING: Only use after testing with conservative parameters
+#
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+
+# TECS - Aggressive climb/descent
+TECS_CLMB_MAX,8.0
+TECS_SINK_MAX,6.0
+TECS_TIME_CONST,3.0
+TECS_SPDWEIGHT,2.0
+
+# Airspeed - Wide range
+ARSPD_FBW_MIN,10.0
+ARSPD_FBW_MAX,28.0
+TRIM_ARSPD_CM,2000
+
+# Throttle - Full range
+THR_MIN,0
+THR_MAX,100
+TRIM_THROTTLE,60
+
+# Navigation - Aggressive turns
+LIM_ROLL_CD,6000
+NAVL1_PERIOD,12
+WP_LOITER_RAD,50
+
+# Failsafes - Enabled (always!)
+FS_SHORT_ACTN,1
+FS_LONG_ACTN,2
+BATT_LOW_VOLT,10.5
+BATT_CRT_VOLT,10.0
+
+# Fence - Larger area
+FENCE_ENABLE,1
+FENCE_RADIUS,1000
+FENCE_ALT_MAX,400

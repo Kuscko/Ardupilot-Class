@@ -1,0 +1,158 @@
+# Sensor Configuration Example
+# Shows common sensor parameters and their usage
+#
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+
+# ============================================================================
+# GPS PARAMETERS (AP_GPS)
+# ============================================================================
+
+# GPS Type (0=None, 1=Auto, 2=uBlox, etc.)
+GPS_TYPE,1
+
+# Auto-configure GPS
+GPS_AUTO_CONFIG,1
+
+# GNSS Mode (0=GPS only, 1=GPS+SBAS, 3=GPS+GLONASS+Galileo)
+GPS_GNSS_MODE,3
+
+# Minimum satellites before accepting fix
+GPS_MIN_DGPS,4
+
+# Save configuration to GPS
+GPS_SAVE_CFG,1
+
+# ============================================================================
+# IMU PARAMETERS (AP_InertialSensor)
+# ============================================================================
+
+# Gyro low-pass filter (Hz)
+INS_GYRO_FILTER,20
+
+# Accelerometer low-pass filter (Hz)
+INS_ACCEL_FILTER,20
+
+# Which IMUs to use (bitmask: 1=first, 2=second, 3=both)
+INS_USE,3
+
+# Enable fast sampling
+INS_FAST_SAMPLE,1
+
+# Notch filter center frequency (for motor noise)
+INS_HNTCH_ENABLE,0
+INS_HNTCH_FREQ,80
+INS_HNTCH_BW,40
+
+# ============================================================================
+# BAROMETER PARAMETERS (AP_Baro)
+# ============================================================================
+
+# Probe for external barometers
+BARO_PROBE_EXT,0
+
+# Altitude offset (meters)
+BARO_ALT_OFFSET,0
+
+# Ground temperature (Celsius)
+BARO_GND_TEMP,25
+
+# ============================================================================
+# COMPASS PARAMETERS (AP_Compass)
+# ============================================================================
+
+# Enable compass
+COMPASS_ENABLE,1
+
+# Auto-declination
+COMPASS_AUTODEC,1
+
+# Use compass for yaw
+COMPASS_USE,1
+
+# Compass offsets (set by calibration)
+COMPASS_OFS_X,0
+COMPASS_OFS_Y,0
+COMPASS_OFS_Z,0
+
+# Compass scale factors
+COMPASS_DIA_X,1.0
+COMPASS_DIA_Y,1.0
+COMPASS_DIA_Z,1.0
+
+# Motor compensation
+COMPASS_MOT_X,0
+COMPASS_MOT_Y,0
+COMPASS_MOT_Z,0
+
+# ============================================================================
+# AIRSPEED PARAMETERS (AP_Airspeed)
+# ============================================================================
+
+# Airspeed sensor type (0=None, 1=I2C-MS4525, 2=Analog, etc.)
+ARSPD_TYPE,1
+
+# Enable airspeed sensor
+ARSPD_USE,1
+
+# Airspeed ratio (calibration)
+ARSPD_RATIO,2.0
+
+# Airspeed offset
+ARSPD_OFFSET,0
+
+# Auto-calibrate on ground
+ARSPD_AUTOCAL,1
+
+# Skip calibration (if already calibrated)
+ARSPD_SKIP_CAL,0
+
+# Tube order (1=normal, 0=reversed)
+ARSPD_TUBE_ORDER,1
+
+# ============================================================================
+# BATTERY MONITOR PARAMETERS (AP_BattMonitor)
+# ============================================================================
+
+# Battery monitor type (3=Analog voltage only, 4=Analog voltage and current)
+BATT_MONITOR,4
+
+# Battery capacity (mAh)
+BATT_CAPACITY,5000
+
+# Voltage sensor pin
+BATT_VOLT_PIN,2
+
+# Current sensor pin
+BATT_CURR_PIN,3
+
+# Voltage multiplier
+BATT_VOLT_MULT,10.1
+
+# Amps per volt
+BATT_AMP_PERVLT,17.0
+
+# Low voltage threshold
+BATT_LOW_VOLT,10.5
+
+# Critical voltage threshold
+BATT_CRT_VOLT,10.0
+
+# ============================================================================
+# RANGEFINDER PARAMETERS (AP_RangeFinder)
+# ============================================================================
+
+# Rangefinder type (0=None, 1=Analog, 8=LightWareSerial, etc.)
+RNGFND1_TYPE,0
+
+# Minimum reliable distance (cm)
+RNGFND1_MIN_CM,20
+
+# Maximum distance (cm)
+RNGFND1_MAX_CM,2000
+
+# Orientation (25=down)
+RNGFND1_ORIENT,25
+
+# Scaling factor
+RNGFND1_SCALING,1.0

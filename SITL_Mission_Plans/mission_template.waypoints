@@ -1,0 +1,41 @@
+QGC WPL 110
+0	1	0	16	0.00	0.00	0.00	0.00	-35.36326400	149.16523900	584.090000	1
+1	0	3	22	15.00	0.00	0.00	0.00	-35.36326400	149.16523900	100.000000	1
+2	0	3	16	0.00	0.00	0.00	0.00	-35.37000000	149.17000000	100.000000	1
+3	0	3	16	0.00	0.00	0.00	0.00	-35.38000000	149.17000000	100.000000	1
+4	0	3	21	0.00	0.00	0.00	0.00	-35.36326400	149.16523900	0.000000	1
+
+# MISSION FILE TEMPLATE
+# Format: QGC WPL 110 (Ground Control Waypoint List version 110)
+#
+# Each line represents a waypoint with the following fields:
+# <index> <current> <coord_frame> <command> <param1> <param2> <param3> <param4> <lat> <lon> <alt> <autocontinue>
+#
+# Field Descriptions:
+# - index:        Waypoint number (0 = home, 1+ = mission waypoints)
+# - current:      1 if this is the current/home waypoint, 0 otherwise
+# - coord_frame:  0 = absolute (MSL), 3 = relative to home
+# - command:      MAVLink command ID (see below)
+# - param1-4:     Command-specific parameters
+# - lat:          Latitude in decimal degrees
+# - lon:          Longitude in decimal degrees
+# - alt:          Altitude in meters
+# - autocontinue: 1 = continue to next waypoint automatically
+#
+# Common Commands:
+# - 16 (NAV_WAYPOINT):     Navigate to waypoint
+# - 22 (NAV_TAKEOFF):      Takeoff (param1 = pitch angle)
+# - 21 (NAV_LAND):         Land at location
+# - 20 (NAV_RETURN_TO_LAUNCH): Return to home
+# - 17 (NAV_LOITER_TURNS): Loiter for N turns (param1 = turns)
+# - 19 (NAV_LOITER_TIME):  Loiter for N seconds (param1 = time)
+# - 178 (DO_CHANGE_SPEED): Change speed (param2 = speed m/s)
+#
+# Example Template Structure:
+# Waypoint 0: Home position (always required, current=1)
+# Waypoint 1: Takeoff to 100m
+# Waypoint 2-3: Navigate to mission points
+# Waypoint 4: Land
+#
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0

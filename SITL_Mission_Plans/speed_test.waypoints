@@ -1,0 +1,48 @@
+QGC WPL 110
+0	1	0	16	0.00	0.00	0.00	0.00	-35.36326400	149.16523900	584.090000	1
+1	0	3	22	15.00	0.00	0.00	0.00	-35.36326400	149.16523900	100.000000	1
+2	0	3	178	0.00	12.00	-1.00	0.00	0.00000000	0.00000000	0.000000	1
+3	0	3	16	0.00	0.00	0.00	0.00	-35.37000000	149.16523900	100.000000	1
+4	0	3	178	0.00	18.00	-1.00	0.00	0.00000000	0.00000000	0.000000	1
+5	0	3	16	0.00	0.00	0.00	0.00	-35.37000000	149.17523900	100.000000	1
+6	0	3	178	0.00	15.00	-1.00	0.00	0.00000000	0.00000000	0.000000	1
+7	0	3	16	0.00	0.00	0.00	0.00	-35.36326400	149.17523900	100.000000	1
+8	0	3	21	0.00	0.00	0.00	0.00	-35.36326400	149.16523900	0.000000	1
+
+# Speed Test Mission
+# Description: Tests airspeed changes during flight
+#
+# Mission Profile:
+# - Takeoff to 100m
+# - Set speed to 12 m/s (slow)
+# - Fly north
+# - Set speed to 18 m/s (fast)
+# - Fly east
+# - Set speed to 15 m/s (cruise)
+# - Return and land
+#
+# Expected Duration: ~7 minutes
+# Speed range: 12-18 m/s
+#
+# Usage:
+#   wp load speed_test.waypoints
+#   mode AUTO
+#
+# Good for:
+# - TECS speed/altitude coupling
+# - Throttle response
+# - Airspeed sensor validation
+#
+# Watch parameters:
+# - ARSPD_FBW_MIN (min airspeed)
+# - ARSPD_FBW_MAX (max airspeed)
+# - TRIM_ARSPD_CM (cruise airspeed)
+# - TECS_SPDWEIGHT (speed vs altitude priority)
+#
+# Command 178 (DO_CHANGE_SPEED):
+# - param1: 0 (airspeed type)
+# - param2: target speed (m/s)
+# - param3: throttle (-1 = no change)
+#
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0

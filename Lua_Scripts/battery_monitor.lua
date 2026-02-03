@@ -7,7 +7,6 @@
 --   Low: < 14.0V (3.5V per cell)
 --
 -- Author: Patrick Kelly (@Kuscko)
--- FOR: AEVEX Onboarding
 -- Version: 1.0
 
 local warned_low = false
