@@ -24,7 +24,7 @@ This document provides agent-style onboarding instructions for building the Ardu
 
 ### 4. References
 - [ArduPilot Build Instructions](https://ardupilot.org/dev/docs/building-setup-linux.html)
-- [Onboarding Guide: Environment Setup & Troubleshooting](../../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Onboarding Guide: Environment Setup & Troubleshooting](../../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 
 ---
 **Keep this README up to date as you work through the onboarding process.**

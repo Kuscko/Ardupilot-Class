@@ -15,7 +15,7 @@ Create and maintain digital slides and notes for onboarding presentations and kn
 - [ ] Update content as onboarding process evolves
 
 ### 3. References
-- [Onboarding Guide: Documentation & Sharing](../../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Onboarding Guide: Documentation & Sharing](../../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 
 ---
 **Keep this folder up to date for onboarding presentations and knowledge transfer.**

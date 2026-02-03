@@ -343,7 +343,7 @@ wsl --set-version Ubuntu-22.04 2
 
 - [Main Build Guide](../ArduPilot_Build_Instructions/BUILD_GUIDE.md)
 - [Troubleshooting Guide](../ArduPilot_Build_Instructions/TROUBLESHOOTING.md)
-- [ArduPilot Onboarding Guide](../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [ArduPilot Onboarding Guide](../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 - [ArduPilot Dev Docs](https://ardupilot.org/dev/)
 - [ArduPilot Forum](https://discuss.ardupilot.org/)
 

@@ -13,7 +13,7 @@ This repository contains a complete onboarding environment for new engineers lea
 ### For New Engineers
 
 1. **Read the main onboarding guide first:**
-   - [ArduPilot Onboarding Guide](../../Documents/ArduPilot_Onboarding_Guide.md)
+   - [ArduPilot Onboarding Guide](Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 
 2. **Follow the folder structure below in order:**
    - Start with [ArduPilot Build Instructions](#1-ardupilot-build-instructions)
@@ -34,11 +34,12 @@ This repository contains a complete onboarding environment for new engineers lea
 ## Repository Structure
 
 ```
-Development/Onboarding/
-├── ONBOARDING_MASTER_README.md          # This file
+AEVEX/
+├── README.md                             # This file
 │
 ├── Onboarding_Documentation/
-│   └── README.md                         # High-level onboarding overview
+│   ├── README.md                         # High-level onboarding overview
+│   └── ArduPilot_Onboarding_Guide.md    # Main onboarding guide
 │
 ├── ArduPilot_Build_Instructions/
 │   ├── README.md                         # Build instructions overview
@@ -282,7 +283,7 @@ Development/Onboarding/
 ### Week 1: Foundation
 
 **Day 1-2:**
-1. Read [ArduPilot Onboarding Guide](../../Documents/ArduPilot_Onboarding_Guide.md) (Week 1 sections)
+1. Read [ArduPilot Onboarding Guide](Onboarding_Documentation/ArduPilot_Onboarding_Guide.md) (Week 1 sections)
 2. Follow [BUILD_GUIDE.md](ArduPilot_Build_Instructions/BUILD_GUIDE.md)
 3. Run [install_ardupilot_plane_4.5.7.sh](Installation_Scripts/install_ardupilot_plane_4.5.7.sh)
 4. Start SITL and complete first flight
@@ -302,7 +303,7 @@ Development/Onboarding/
 ### Week 2: Advanced Topics
 
 **Day 6-7:**
-1. Read [ArduPilot Onboarding Guide](../../Documents/ArduPilot_Onboarding_Guide.md) (Week 2 sections)
+1. Read [ArduPilot Onboarding Guide](Onboarding_Documentation/ArduPilot_Onboarding_Guide.md) (Week 2 sections)
 2. Build ArduPilot from source
 3. Explore codebase structure
 4. Review sensor driver code
@@ -331,7 +332,7 @@ Development/Onboarding/
 ## Quick Links
 
 ### Essential Documentation
-- [Main Onboarding Guide](../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Main Onboarding Guide](Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 - [Quick Reference Card](Slides_Notes/QUICK_REFERENCE_CARD.md)
 - [Onboarding Checklist](Slides_Notes/ONBOARDING_CHECKLIST.md)
 
@@ -449,4 +450,4 @@ ArduPilot is open-source software released under GPLv3: https://www.gnu.org/lice
 
 ---
 
-**Ready to start? Begin with [ArduPilot Onboarding Guide](../../Documents/ArduPilot_Onboarding_Guide.md)!**
+**Ready to start? Begin with [ArduPilot Onboarding Guide](Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)!**

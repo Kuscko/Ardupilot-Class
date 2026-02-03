@@ -20,7 +20,7 @@ Learn, create, and document Lua scripts for ArduPilot (Plane 4.5.7). Capture all
 - [ ] Add solutions for common Lua scripting problems
 
 ### 4. References
-- [Onboarding Guide: Lua Scripting](../../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Onboarding Guide: Lua Scripting](../../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 - [ArduPilot Lua Scripting Docs](https://ardupilot.org/plane/docs/common-lua-scripts.html)
 
 ---

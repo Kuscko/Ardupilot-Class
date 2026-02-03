@@ -19,7 +19,7 @@ Create, run, and document mission plans in SITL (Software-In-The-Loop) for ArduP
 - [ ] Add solutions for common SITL problems (see onboarding guide Appendix B)
 
 ### 4. References
-- [Onboarding Guide: SITL & Mission Planning](../../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Onboarding Guide: SITL & Mission Planning](../../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 - [SITL Docs](https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html)
 
 ---

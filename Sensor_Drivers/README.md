@@ -18,7 +18,7 @@ Document where sensor drivers live in the ArduPilot codebase (Plane 4.5.7) and s
 - [ ] Note any sensor driver issues encountered and solutions
 
 ### 4. References
-- [Onboarding Guide: Sensor Drivers](../../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Onboarding Guide: Sensor Drivers](../../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 - [ArduPilot Codebase](https://github.com/ArduPilot/ardupilot)
 
 ---

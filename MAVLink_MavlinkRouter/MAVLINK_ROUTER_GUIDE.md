@@ -587,7 +587,7 @@ Calculate bandwidth for planning:
 - [mavlink-router GitHub](https://github.com/mavlink-router/mavlink-router)
 - [MAVLink Protocol](https://mavlink.io/en/)
 - [ArduPilot MAVLink](https://ardupilot.org/dev/docs/mavlink-basics.html)
-- [Main Onboarding Guide](../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Main Onboarding Guide](../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 
 ---
 

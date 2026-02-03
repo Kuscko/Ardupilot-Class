@@ -20,7 +20,7 @@ Learn and document the MAVLink protocol and mavlink-router usage for ArduPilot (
 - [ ] Add solutions for common communication problems
 
 ### 4. References
-- [Onboarding Guide: MAVLink & Communication](../../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Onboarding Guide: MAVLink & Communication](../../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 - [MAVLink Common Messages](https://mavlink.io/en/messages/common.html)
 - [mavlink-router](https://github.com/mavlink-router/mavlink-router)
 

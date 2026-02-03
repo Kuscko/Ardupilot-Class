@@ -1,1 +1,68 @@
-/Onboarding TODO.txt
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env
+.venv
+venv/
+ENV/
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Visual Studio Code
+.vscode/
+.history/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# Logs
+logs/
+*.log
+
+# Azure Cosmos DB Emulator
+CosmosDB.Emulator.*
+*.mdf
+*.ldf
+
+# Build output
+dist/
+build/
+out/
+coverage/
+*.tgz
+
+# Test output
+test-results/
+coverage/
+
+# Misc
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Local environment files
+*.local
+*.env.*
+.envrc
+
+# Ignore secrets
+secrets.*
+
+# Ignore AI generated files
+.claude

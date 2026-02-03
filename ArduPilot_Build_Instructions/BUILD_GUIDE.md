@@ -306,7 +306,7 @@ After successful build:
 
 - [ArduPilot Dev Docs: Building the Code](https://ardupilot.org/dev/docs/building-the-code.html)
 - [ArduPilot Dev Docs: SITL](https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html)
-- [Main Onboarding Guide](../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Main Onboarding Guide](../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 - [ArduPilot GitHub](https://github.com/ArduPilot/ardupilot)
 - [ArduPilot Discourse Forum](https://discuss.ardupilot.org/)
 

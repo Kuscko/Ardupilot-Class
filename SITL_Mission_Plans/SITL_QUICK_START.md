@@ -365,7 +365,7 @@ wp load ~/my_mission.txt
 - [ArduPilot SITL Docs](https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html)
 - [MAVProxy Documentation](https://ardupilot.org/mavproxy/)
 - [Flight Modes](https://ardupilot.org/plane/docs/flight-modes.html)
-- [Main Onboarding Guide](../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Main Onboarding Guide](../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 
 ---
 

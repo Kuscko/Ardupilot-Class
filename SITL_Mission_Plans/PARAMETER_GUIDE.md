@@ -504,7 +504,7 @@ param set SCR_ENABLE 1
 - [ArduPilot Parameter Docs](https://ardupilot.org/plane/docs/parameters.html)
 - [TECS Tuning Guide](https://ardupilot.org/plane/docs/tecs-total-energy-control-system-for-speed-height-tuning-guide.html)
 - [Failsafe Documentation](https://ardupilot.org/plane/docs/apms-failsafe-function.html)
-- [Main Onboarding Guide](../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Main Onboarding Guide](../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 
 ---
 

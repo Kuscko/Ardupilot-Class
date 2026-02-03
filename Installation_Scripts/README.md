@@ -20,7 +20,7 @@ Maintain and update scripts for installing ArduPilot (Plane 4.5.7). Document all
 - [ ] Add solutions for common issues (see onboarding guide Appendix B)
 
 ### 4. References
-- [Onboarding Guide: Installation & Troubleshooting](../../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Onboarding Guide: Installation & Troubleshooting](../../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 - [ArduPilot Install Docs](https://ardupilot.org/dev/docs/building-setup-linux.html)
 
 ---

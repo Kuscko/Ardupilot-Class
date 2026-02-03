@@ -19,7 +19,7 @@ Document key concepts, findings, and troubleshooting related to ArduPilot's Exte
 - [ ] Add solutions or references for resolving EKF issues
 
 ### 4. References
-- [EKF Overview in Onboarding Guide](../../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [EKF Overview in Onboarding Guide](../../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 - [ArduPilot EKF3 Documentation](https://ardupilot.org/plane/docs/ekf3.html)
 
 ---

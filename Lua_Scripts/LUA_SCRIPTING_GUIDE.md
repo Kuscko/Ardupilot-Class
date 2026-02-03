@@ -702,7 +702,7 @@ Place these example scripts in your scripts directory for reference:
 - [ArduPilot Lua Scripting Docs](https://ardupilot.org/plane/docs/common-lua-scripts.html)
 - [Lua Scripting Applets](https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_Scripting/applets)
 - [Lua Bindings Reference](https://github.com/ArduPilot/ardupilot/blob/master/libraries/AP_Scripting/docs/docs.lua)
-- [Main Onboarding Guide](../../../Documents/ArduPilot_Onboarding_Guide.md)
+- [Main Onboarding Guide](../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)
 
 ---
 
