@@ -329,6 +329,90 @@ AEVEX/
 
 ---
 
+## Advanced Topics Learning Path
+
+After completing the core onboarding (Weeks 1-3), explore these advanced topics to deepen your ArduPilot expertise. We recommend following this progression to build a strong foundational understanding.
+
+### Phase 1: Development Fundamentals (Weeks 3-4)
+
+Start with understanding the development workflow and codebase:
+
+1. **[Code Contribution Workflow](Advanced_Topics/Code_Contribution_Workflow/)** - Learn Git workflows, code style, and PR process [1]
+2. **[Custom Build Configurations](Advanced_Topics/Custom_Build_Configurations/)** - Build for specific hardware and customize features [2]
+3. **[Debugging Tools](Advanced_Topics/Debugging_Tools/)** - Master GDB and debugging techniques [3]
+
+**Why this order:** Understanding how to contribute and debug prepares you for deeper technical work.
+
+### Phase 2: Vehicle Behavior & Tuning (Weeks 4-5)
+
+Learn to optimize vehicle performance:
+
+1. **[PID Tuning](Advanced_Topics/PID_Tuning/)** - Tune flight controllers for stable flight [4]
+2. **[Navigation Deep Dive](Advanced_Topics/Navigation_Deep_Dive/)** - Master waypoint navigation and path planning [5]
+3. **[Performance Optimization](Advanced_Topics/Performance_Optimization/)** - Optimize code and reduce latency [6]
+
+**Why this order:** Start with flight characteristics, then dive into navigation, then optimize performance.
+
+### Phase 3: Safety & Testing (Week 5-6)
+
+Ensure safe and reliable operation:
+
+1. **[Safety & Geofencing](Advanced_Topics/Safety_Geofencing/)** - Implement safety features and geofences [7]
+2. **[Testing & CI/CD](Advanced_Topics/Testing_CI_CD/)** - Write tests and automate validation [8]
+3. **[HITL Testing](Advanced_Topics/HITL_Testing/)** - Test with real hardware in the loop [9]
+
+**Why this order:** Build safety systems first, then validate with comprehensive testing.
+
+### Phase 4: Integration & Customization (Week 6-7)
+
+Extend ArduPilot capabilities:
+
+1. **[Companion Computer](Advanced_Topics/Companion_Computer/)** - Integrate companion computers (Raspberry Pi, Jetson) [10]
+2. **[Custom MAVLink Messages](Advanced_Topics/Custom_MAVLink_Messages/)** - Create custom telemetry messages [11]
+3. **[Payload Integration](Advanced_Topics/Payload_Integration/)** - Control cameras, gimbals, and custom payloads [12]
+
+**Why this order:** Start with basic integration, then add custom communications, then integrate hardware payloads.
+
+### Phase 5: Advanced Features (Week 7-8)
+
+Master specialized capabilities:
+
+1. **[OSD Configuration](Advanced_Topics/OSD_Configuration/)** - Configure on-screen displays [13]
+2. **[Telemetry Radio Setup](Advanced_Topics/Telemetry_Radio_Setup/)** - Optimize radio links and range [14]
+3. **[RC Calibration](Advanced_Topics/RC_Calibration/)** - Advanced RC setup and mixing [15]
+4. **[Flight Log Analysis](Advanced_Topics/Flight_Log_Analysis/)** - Analyze logs to diagnose issues [16]
+
+**Why this order:** These topics build on previous knowledge and are often needed for specific use cases.
+
+### Phase 6: SITL Advanced Features (Week 8+)
+
+Leverage simulation for development:
+
+1. **[SITL Advanced Features](Advanced_Topics/SITL_Advanced_Features/)** - Multi-vehicle simulation, sensor simulation, custom scenarios [17]
+
+**Why last:** Advanced SITL features are most useful after understanding the system deeply.
+
+### Learning Tips
+
+- **Don't rush** - Each topic takes 2-4 hours minimum to understand properly
+- **Complete hands-on exercises** - Practical experience solidifies theoretical knowledge
+- **Test in SITL first** - Always validate concepts in simulation before hardware
+- **Review official documentation** - Cross-reference with ArduPilot docs for deeper understanding
+- **Join the community** - Get help on [ArduPilot Discord](https://ardupilot.org/discord) and [Discourse forums](https://discuss.ardupilot.org/)
+- **Document your learning** - Keep notes of issues encountered and solutions found
+- **Build progressively** - Each phase builds on previous knowledge
+
+### Advanced Topics Resources
+
+- [ArduPilot Developer Documentation](https://ardupilot.org/dev/) [18]
+- [Contributing Guide](https://ardupilot.org/dev/docs/contributing.html) [19]
+- [Code Overview](https://ardupilot.org/dev/docs/code-overview.html) [20]
+
+**Sources:**
+[1-20] Official ArduPilot Documentation: https://ardupilot.org/
+
+---
+
 ## Quick Links
 
 ### Essential Documentation
