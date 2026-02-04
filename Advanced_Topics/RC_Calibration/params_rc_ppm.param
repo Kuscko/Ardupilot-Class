@@ -1,0 +1,147 @@
+# RC Calibration - PPM Receiver Configuration
+# Example parameter file for PPM receiver setup (traditional receiver)
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+
+# ============================================
+# PPM RECEIVER CONFIGURATION
+# ============================================
+
+# RC Protocol - PPM
+RC_PROTOCOLS,1
+
+# ============================================
+# RC CHANNEL CALIBRATION
+# ============================================
+# Note: These are example values for standard PPM receiver
+# Run RC calibration in Mission Planner to get actual values
+
+# Channel 1 - Roll (Aileron)
+RC1_MIN,988
+RC1_MAX,2012
+RC1_TRIM,1500
+RC1_DZ,30
+RC1_REVERSED,0
+
+# Channel 2 - Pitch (Elevator)
+RC2_MIN,988
+RC2_MAX,2012
+RC2_TRIM,1500
+RC2_DZ,30
+RC2_REVERSED,0
+
+# Channel 3 - Throttle
+RC3_MIN,988
+RC3_MAX,2012
+RC3_TRIM,988
+RC3_DZ,30
+RC3_REVERSED,0
+
+# Channel 4 - Yaw (Rudder)
+RC4_MIN,988
+RC4_MAX,2012
+RC4_TRIM,1500
+RC4_DZ,30
+RC4_REVERSED,0
+
+# Channel 5 - Flight Mode (3-position switch)
+RC5_MIN,988
+RC5_MAX,2012
+RC5_TRIM,1500
+RC5_DZ,10
+RC5_OPTION,0
+
+# Channel 6 - Auto-tune
+RC6_MIN,988
+RC6_MAX,2012
+RC6_TRIM,988
+RC6_DZ,10
+RC6_OPTION,107
+
+# Channel 7 - Arm/Disarm
+RC7_MIN,988
+RC7_MAX,2012
+RC7_TRIM,988
+RC7_DZ,10
+RC7_OPTION,153
+
+# Channel 8 - Camera Trigger
+RC8_MIN,988
+RC8_MAX,2012
+RC8_TRIM,988
+RC8_DZ,10
+RC8_OPTION,9
+
+# ============================================
+# FLIGHT MODE CONFIGURATION (3-position)
+# ============================================
+
+# Mode switch on Channel 5
+FLTMODE_CH,5
+
+# Flight modes for 3-position switch
+FLTMODE1,0     # MANUAL (low position)
+FLTMODE2,5     # FBWA (middle position)
+FLTMODE3,10    # AUTO (high position)
+FLTMODE4,10    # AUTO (not used)
+FLTMODE5,11    # RTL (not used)
+FLTMODE6,11    # RTL (not used)
+
+# ============================================
+# RC OPTIONS
+# ============================================
+
+# RC6 - Auto-tune (option 107)
+# Flip switch high to enable auto-tune mode
+
+# RC7 - Arm/Disarm (option 153)
+# Low = Disarm, High = Arm
+
+# RC8 - Camera Trigger (option 9)
+# Flip switch to trigger camera
+
+# ============================================
+# RC FAILSAFE
+# ============================================
+
+# Throttle failsafe value
+THR_FS_VALUE,975
+
+# Short failsafe action (0=continue, 1=RTL, 2=land, 3=terminate)
+FS_SHORT_ACTN,0
+
+# Long failsafe action
+FS_LONG_ACTN,1
+
+# GCS failsafe
+FS_GCS_ENABLE,1
+
+# ============================================
+# ARMING CONFIGURATION
+# ============================================
+
+# Arming checks
+ARMING_CHECK,1
+
+# Rudder arming (0=disabled, 1=armonly, 2=armdisarm)
+ARMING_RUDDER,2
+
+# ============================================
+# NOTES
+# ============================================
+# 1. Connect PPM receiver to RC input port
+# 2. Load these parameters: param load params_rc_ppm.param
+# 3. Run RC calibration in Mission Planner (SETUP → Mandatory Hardware → Radio Calibration)
+# 4. Move all sticks and switches through full range during calibration
+# 5. Update min/max/trim values with calibrated results
+# 6. Test all switches and modes before flight
+# 7. Verify failsafe triggers correctly (turn off transmitter)
+#
+# Common RC Options:
+#   9   = Camera Trigger
+#   28  = Relay 1 On/Off
+#   41  = Arm/Emergency Motor Stop
+#   55  = Motor Interlock Enable
+#   107 = Auto Tune Enable
+#   153 = ARM/DISARM (4.1+)

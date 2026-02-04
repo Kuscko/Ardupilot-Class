@@ -1,0 +1,40 @@
+# Rectangular Geofence Example
+# Simple rectangular boundary fence for testing area
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+#
+# Format: lat lon
+# First point should be repeated as last point to close polygon
+#
+# This example creates a rectangular fence around CMAC field
+# (Canberra Model Aircraft Club)
+
+-35.362938 149.164917
+-35.362938 149.165800
+-35.363550 149.165800
+-35.363550 149.164917
+-35.362938 149.164917
+
+# To load this fence:
+# 1. In Mission Planner: SETUP → GeoFence → Load from File
+# 2. Select this .txt file
+# 3. Enable fence: param set FENCE_ENABLE 1
+# 4. Set action on breach: param set FENCE_ACTION 1 (RTL)
+# 5. Save parameters and reboot
+#
+# Fence parameters to configure:
+# FENCE_ENABLE   - 0=disabled, 1=enabled
+# FENCE_ACTION   - 0=report only, 1=RTL, 2=Land, 3=SmartRTL, 4=Brake, 5=SmartRTL or Land
+# FENCE_ALT_MAX  - Maximum altitude (meters)
+# FENCE_ALT_MIN  - Minimum altitude (meters, 0=disabled)
+# FENCE_MARGIN   - Distance from fence to trigger (meters)
+# FENCE_TYPE     - 0=none, 1=alt only, 2=circle, 3=alt+circle, 4=polygon, 7=all enabled
+#
+# Recommended parameters for this fence:
+# param set FENCE_ENABLE 1
+# param set FENCE_ACTION 1
+# param set FENCE_ALT_MAX 120
+# param set FENCE_ALT_MIN 10
+# param set FENCE_MARGIN 5
+# param set FENCE_TYPE 7

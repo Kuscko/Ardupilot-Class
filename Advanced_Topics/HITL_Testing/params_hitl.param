@@ -1,0 +1,108 @@
+# HITL Testing Parameter Configuration
+# Configure flight controller for Hardware-in-the-Loop testing
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+
+# ============================================
+# CORE HITL PARAMETERS
+# ============================================
+
+# Enable HITL simulation mode
+SIM_ENABLED,1
+
+# GPS Configuration for HITL
+GPS_TYPE,100
+GPS_TYPE2,0
+
+# Airspeed sensor HITL
+ARSPD_TYPE,100
+ARSPD_AUTOCAL,1
+
+# ============================================
+# SAFETY PARAMETERS
+# ============================================
+
+# Disable safety switch for testing
+BRD_SAFETY_DEFLT,0
+
+# Arming checks (can disable some for testing)
+ARMING_CHECK,1
+# Set to 0 to disable all arming checks (use cautiously)
+
+# ============================================
+# LOGGING CONFIGURATION
+# ============================================
+
+# Enable comprehensive logging for HITL validation
+LOG_BACKEND_TYPE,1
+LOG_FILE_DSRMROT,1
+LOG_DISARMED,1
+LOG_BITMASK,1048575
+SCHED_DEBUG,4
+
+# ============================================
+# HITL-SPECIFIC TUNING
+# ============================================
+
+# Simulated sensors may have different characteristics
+# Adjust if needed based on simulator
+
+# EKF Configuration
+EK3_ENABLE,1
+EK3_GPS_TYPE,0
+EK3_VELNE_M_NSE,0.5
+EK3_VELD_M_NSE,0.7
+
+# RC Input (depends on simulator setup)
+# Configure based on your X-Plane/RealFlight setup
+RC1_MIN,1000
+RC1_MAX,2000
+RC1_TRIM,1500
+RC2_MIN,1000
+RC2_MAX,2000
+RC2_TRIM,1500
+RC3_MIN,1000
+RC3_MAX,2000
+RC3_TRIM,1000
+RC4_MIN,1000
+RC4_MAX,2000
+RC4_TRIM,1500
+
+# ============================================
+# PERFORMANCE MONITORING
+# ============================================
+
+# Monitor HITL performance
+PM_ENABLED,1
+
+# ============================================
+# TESTING MODES
+# ============================================
+
+# Enable modes for testing
+FLTMODE1,0    # MANUAL
+FLTMODE2,1    # CIRCLE
+FLTMODE3,2    # STABILIZE
+FLTMODE4,5    # FBWA
+FLTMODE5,6    # FBWB
+FLTMODE6,10   # AUTO
+
+# ============================================
+# NOTES
+# ============================================
+# 1. Load these parameters after flashing firmware
+# 2. Reboot after loading parameters
+# 3. Verify SIM_ENABLED = 1 and GPS_TYPE = 100
+# 4. Connect to X-Plane or other simulator
+# 5. Verify GPS fix and sensor data before arming
+#
+# To load:
+#   param load params_hitl.param
+#   param save
+#   reboot
+#
+# To verify HITL mode:
+#   param show SIM_ENABLED
+#   param show GPS_TYPE
+#   param show ARSPD_TYPE

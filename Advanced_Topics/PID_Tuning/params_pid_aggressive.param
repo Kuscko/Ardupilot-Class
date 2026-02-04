@@ -1,0 +1,171 @@
+# PID Tuning - Aggressive Configuration
+# High-performance PID values for sport flying and fast response
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+# WARNING: Use only on well-tuned, tested aircraft
+
+# ============================================
+# ROLL RATE CONTROLLER
+# ============================================
+
+# Roll rate PID (aggressive - fast response)
+RLL_RATE_P,0.18
+RLL_RATE_I,0.18
+RLL_RATE_D,0.008
+RLL_RATE_FF,0.0
+RLL_RATE_IMAX,0.75
+RLL_RATE_FLTD,20.0
+RLL_RATE_FLTT,20.0
+
+# ============================================
+# PITCH RATE CONTROLLER
+# ============================================
+
+# Pitch rate PID (aggressive - fast response)
+PTCH_RATE_P,0.18
+PTCH_RATE_I,0.18
+PTCH_RATE_D,0.008
+PTCH_RATE_FF,0.0
+PTCH_RATE_IMAX,0.75
+PTCH_RATE_FLTD,20.0
+PTCH_RATE_FLTT,20.0
+
+# ============================================
+# YAW RATE CONTROLLER
+# ============================================
+
+# Yaw rate PID (aggressive)
+YAW_RATE_P,0.25
+YAW_RATE_I,0.025
+YAW_RATE_D,0.0
+YAW_RATE_FF,0.0
+YAW_RATE_IMAX,0.75
+YAW_RATE_FLTD,0.0
+YAW_RATE_FLTT,0.0
+
+# ============================================
+# ROLL CONTROLLER
+# ============================================
+
+# Roll stabilization (aggressive)
+ROLL_P,1.8
+ROLL_IMAX,3.0
+
+# ============================================
+# PITCH CONTROLLER
+# ============================================
+
+# Pitch stabilization (aggressive)
+PITCH_P,1.8
+PITCH_IMAX,3.0
+
+# ============================================
+# SERVO LIMITS (Aggressive)
+# ============================================
+
+# Roll limits (degrees) - wider range
+RLL_LIM_MAX,60
+
+# Pitch limits (degrees) - wider range
+PTCH_LIM_MAX_DN,-35
+PTCH_LIM_MAX_UP,35
+
+# Servo slew rate (deg/sec) - faster for quick response
+SERVO_RATE,100
+
+# ============================================
+# TECS PARAMETERS (Aggressive)
+# ============================================
+
+# TECS altitude/airspeed controller (responsive)
+TECS_TIME_CONST,4.0
+TECS_PTCH_DAMP,0.3
+TECS_SINK_MAX,5.0
+TECS_SINK_MIN,4.0
+TECS_CLMB_MAX,5.0
+TECS_THR_DAMP,0.3
+TECS_INTEG_GAIN,0.3
+TECS_VERT_ACC,8.0
+TECS_SPDWEIGHT,2.0
+
+# ============================================
+# L1 CONTROLLER (Aggressive)
+# ============================================
+
+# L1 navigation controller (tight turns)
+NAVL1_PERIOD,15
+NAVL1_DAMPING,0.75
+NAVL1_XTRACK_I,0.02
+
+# ============================================
+# THROTTLE SETTINGS
+# ============================================
+
+# Throttle limits (full range)
+THR_MIN,0
+THR_MAX,100
+THR_CRUISE,60
+THR_PASS_STAB,0
+
+# Throttle slew rate (percent/sec) - fast changes
+THR_SLEWRATE,100
+
+# ============================================
+# AIRSPEED SETTINGS
+# ============================================
+
+# Airspeed limits (m/s) - higher speeds
+ARSPD_FBW_MIN,15
+ARSPD_FBW_MAX,25
+TRIM_ARSPD_CM,2000
+
+# ============================================
+# FILTER SETTINGS
+# ============================================
+
+# Gyro filtering (higher cutoff for faster response)
+INS_GYRO_FILTER,80
+
+# Accelerometer filtering
+INS_ACCEL_FILTER,20
+
+# ============================================
+# NOTES
+# ============================================
+# Aggressive tuning is suitable for:
+# - Sport and aerobatic flying
+# - Racing applications
+# - Fast, responsive aircraft
+# - Experienced pilots
+# - Calm weather conditions
+# - Well-balanced, low-vibration aircraft
+#
+# Characteristics:
+# - Very responsive controls
+# - Aggressive corrections
+# - Tight turns and maneuvers
+# - Fast mode transitions
+# - Can be twitchy in turbulence
+# - Higher risk of oscillation if not properly tuned
+#
+# WARNINGS:
+# - Test incrementally - don't apply all at once
+# - Requires excellent aircraft balance
+# - May oscillate if vibration is present
+# - Use only after conservative tune is stable
+# - Monitor logs for oscillations
+# - Reduce gains if any oscillation detected
+#
+# To load:
+#   param load params_pid_aggressive.param
+#   param save
+#   reboot
+#
+# Testing procedure:
+# 1. Start with conservative tune
+# 2. Apply aggressive tune
+# 3. Test in FBWA mode first
+# 4. Gradually test higher speeds
+# 5. Check logs for oscillation (ATT.Roll vs ATT.DesRoll)
+# 6. Reduce P gains by 20% if oscillation occurs

@@ -1,0 +1,115 @@
+# RC Calibration - SBUS Receiver Configuration
+# Example parameter file for SBUS receiver setup
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+
+# ============================================
+# SBUS RECEIVER CONFIGURATION
+# ============================================
+
+# RC Protocol - SBUS
+SERIAL1_PROTOCOL,23
+SERIAL1_BAUD,100
+
+# RC Input Configuration
+RC_PROTOCOLS,2048
+
+# ============================================
+# RC CHANNEL CALIBRATION
+# ============================================
+# Note: These are example values
+# Run RC calibration in Mission Planner to get actual values
+
+# Channel 1 - Roll (Aileron)
+RC1_MIN,1000
+RC1_MAX,2000
+RC1_TRIM,1500
+RC1_DZ,30
+RC1_REVERSED,0
+
+# Channel 2 - Pitch (Elevator)
+RC2_MIN,1000
+RC2_MAX,2000
+RC2_TRIM,1500
+RC2_DZ,30
+RC2_REVERSED,0
+
+# Channel 3 - Throttle
+RC3_MIN,1000
+RC3_MAX,2000
+RC3_TRIM,1000
+RC3_DZ,30
+RC3_REVERSED,0
+
+# Channel 4 - Yaw (Rudder)
+RC4_MIN,1000
+RC4_MAX,2000
+RC4_TRIM,1500
+RC4_DZ,30
+RC4_REVERSED,0
+
+# Channel 5 - Flight Mode
+RC5_MIN,1000
+RC5_MAX,2000
+RC5_TRIM,1500
+RC5_DZ,0
+RC5_OPTION,0
+
+# Channel 6 - Tuning/Aux
+RC6_MIN,1000
+RC6_MAX,2000
+RC6_TRIM,1500
+RC6_DZ,0
+RC6_OPTION,0
+
+# Channel 7 - Camera Trigger
+RC7_MIN,1000
+RC7_MAX,2000
+RC7_TRIM,1500
+RC7_DZ,0
+RC7_OPTION,9
+
+# Channel 8 - Aux
+RC8_MIN,1000
+RC8_MAX,2000
+RC8_TRIM,1500
+RC8_DZ,0
+RC8_OPTION,0
+
+# ============================================
+# FLIGHT MODE CONFIGURATION
+# ============================================
+
+# Mode switch on Channel 5
+FLTMODE_CH,5
+
+# Flight modes (6-position switch example)
+FLTMODE1,0     # MANUAL
+FLTMODE2,5     # FBWA
+FLTMODE3,6     # FBWB
+FLTMODE4,10    # AUTO
+FLTMODE5,11    # RTL
+FLTMODE6,15    # GUIDED
+
+# PWM thresholds for mode switching
+FLTMODE_GCSBLOCK,0
+
+# ============================================
+# RC FAILSAFE
+# ============================================
+
+# Throttle failsafe
+THR_FS_VALUE,975
+FS_SHORT_ACTN,0
+FS_LONG_ACTN,1
+
+# ============================================
+# NOTES
+# ============================================
+# 1. Connect SBUS receiver to SERIAL1 (usually TELEM1)
+# 2. Load these parameters: param load params_rc_sbus.param
+# 3. Run RC calibration in Mission Planner
+# 4. Update min/max/trim values from calibration
+# 5. Test mode switching before flight
+# 6. Configure RC_OPTIONS based on auxiliary switches

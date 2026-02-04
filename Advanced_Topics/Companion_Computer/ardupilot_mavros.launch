@@ -1,0 +1,188 @@
+<!-- ArduPilot MAVROS Launch File -->
+<!-- ROS launch file for connecting MAVROS to ArduPilot flight controller -->
+<!-- Author: Patrick Kelly (@Kuscko) -->
+<!-- Version: 1.0 -->
+<!-- Last Updated: 2026-02-03 -->
+
+<launch>
+    <!-- ============================================ -->
+    <!-- ARGUMENTS -->
+    <!-- ============================================ -->
+
+    <!-- Flight controller connection -->
+    <arg name="fcu_url" default="/dev/ttyACM0:115200" />
+    <arg name="gcs_url" default="" />
+    <arg name="tgt_system" default="1" />
+    <arg name="tgt_component" default="1" />
+
+    <!-- Frame and namespace -->
+    <arg name="fcu_protocol" default="v2.0" />
+    <arg name="respawn_mavros" default="false" />
+    <arg name="namespace" default="mavros" />
+
+    <!-- ============================================ -->
+    <!-- MAVROS NODE -->
+    <!-- ============================================ -->
+
+    <node pkg="mavros" type="mavros_node" name="mavros" required="$(eval not respawn_mavros)" clear_params="true" output="screen" respawn="$(arg respawn_mavros)" ns="$(arg namespace)">
+
+        <!-- Connection URLs -->
+        <param name="fcu_url" value="$(arg fcu_url)" />
+        <param name="gcs_url" value="$(arg gcs_url)" />
+        <param name="target_system_id" value="$(arg tgt_system)" />
+        <param name="target_component_id" value="$(arg tgt_component)" />
+        <param name="fcu_protocol" value="$(arg fcu_protocol)" />
+
+        <!-- ============================================ -->
+        <!-- ARDUPILOT SPECIFIC SETTINGS -->
+        <!-- ============================================ -->
+
+        <!-- Use ArduPilot mode mappings -->
+        <rosparam command="load" file="$(find mavros)/launch/apm_config.yaml" />
+
+        <!-- Plugin blacklist (disable unused plugins for performance) -->
+        <rosparam param="plugin_blacklist">
+            - safety_area
+            - 3dr_radio
+            - vision_speed_estimate
+            - adsb
+            - obstacle_distance
+            - vibration
+        </rosparam>
+
+        <!-- Plugin whitelist (enable only needed plugins) -->
+        <!-- Uncomment to use whitelist instead of blacklist -->
+        <!--
+        <rosparam param="plugin_whitelist">
+            - sys_status
+            - sys_time
+            - imu
+            - gps
+            - global_position
+            - local_position
+            - setpoint_position
+            - setpoint_velocity
+            - setpoint_attitude
+            - command
+            - rc_io
+            - param
+            - mission
+            - geofence
+        </rosparam>
+        -->
+
+        <!-- ============================================ -->
+        <!-- CONNECTION SETTINGS -->
+        <!-- ============================================ -->
+
+        <!-- System status publishing rate (Hz) -->
+        <param name="system_status/rate" value="1.0" />
+
+        <!-- Heartbeat publishing rate (Hz) -->
+        <param name="conn/heartbeat_rate" value="1.0" />
+
+        <!-- Timeout for connection (seconds) -->
+        <param name="conn/timeout" value="10.0" />
+
+        <!-- ============================================ -->
+        <!-- IMU SETTINGS -->
+        <!-- ============================================ -->
+
+        <!-- IMU frame ID -->
+        <param name="imu/frame_id" value="base_link" />
+
+        <!-- IMU data rate (Hz) - should match SCHED_LOOP_RATE -->
+        <param name="imu/rate" value="50.0" />
+
+        <!-- ============================================ -->
+        <!-- GPS SETTINGS -->
+        <!-- ============================================ -->
+
+        <!-- GPS frame ID -->
+        <param name="global_position/frame_id" value="map" />
+        <param name="global_position/child_frame_id" value="base_link" />
+
+        <!-- GPS data rate (Hz) -->
+        <param name="global_position/rate" value="10.0" />
+
+        <!-- Use GPS for global position -->
+        <param name="global_position/use_relative_alt" value="true" />
+
+        <!-- ============================================ -->
+        <!-- LOCAL POSITION SETTINGS -->
+        <!-- ============================================ -->
+
+        <!-- Local position frame IDs -->
+        <param name="local_position/frame_id" value="map" />
+        <param name="local_position/child_frame_id" value="base_link" />
+
+        <!-- Position source (0=GPS, 1=Vision, 2=Mocap) -->
+        <param name="local_position/tf/send" value="false" />
+
+        <!-- ============================================ -->
+        <!-- SETPOINT SETTINGS -->
+        <!-- ============================================ -->
+
+        <!-- Setpoint rate (Hz) -->
+        <param name="setpoint_raw/rate" value="50.0" />
+
+        <!-- Use quaternion for attitude control -->
+        <param name="setpoint_attitude/use_quaternion" value="true" />
+
+    </node>
+
+    <!-- ============================================ -->
+    <!-- STATIC TRANSFORM (Optional) -->
+    <!-- ============================================ -->
+
+    <!-- Transform from base_link to camera (example) -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_camera"
+          args="0.1 0 -0.05 0 0 0 base_link camera_link" />
+
+</launch>
+
+<!-- ============================================ -->
+<!-- USAGE INSTRUCTIONS -->
+<!-- ============================================ -->
+
+<!--
+To use this launch file:
+
+1. Install MAVROS:
+   sudo apt-get install ros-noetic-mavros ros-noetic-mavros-extras
+   wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh
+   sudo bash ./install_geographiclib_datasets.sh
+
+2. Connect flight controller via USB or serial
+
+3. Launch with default settings (USB connection):
+   roslaunch ardupilot_mavros.launch
+
+4. Launch with custom serial port:
+   roslaunch ardupilot_mavros.launch fcu_url:=/dev/ttyUSB0:921600
+
+5. Launch with network connection (e.g., companion computer):
+   roslaunch ardupilot_mavros.launch fcu_url:=udp://:14550@
+
+6. Launch with GCS forwarding:
+   roslaunch ardupilot_mavros.launch fcu_url:=/dev/ttyACM0:115200 gcs_url:=udp://@192.168.1.100:14550
+
+Common connection strings:
+- Serial:     /dev/ttyACM0:115200
+- USB:        /dev/ttyACM0:115200
+- UDP:        udp://:14550@
+- TCP client: tcp://192.168.1.100:5760
+- TCP server: tcp-l://:5760
+
+Verify connection:
+   rostopic echo /mavros/state
+   rostopic echo /mavros/imu/data
+   rostopic echo /mavros/global_position/global
+
+Example subscriber node:
+   rostopic echo /mavros/global_position/global
+
+Example publisher (set mode to GUIDED):
+   rosservice call /mavros/set_mode "custom_mode: 'GUIDED'"
+
+-->

@@ -1,0 +1,53 @@
+# Rally Points Example
+# Safe landing locations for RTL (Return to Launch) failsafe
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+#
+# Rally points provide alternative landing locations if home is not safe
+# Aircraft will choose nearest rally point on RTL
+#
+# Format: QGroundControl WPL 110
+# <index> <current> <coord frame> <command> <p1> <p2> <p3> <p4> <lat> <lon> <alt> <autocontinue>
+
+QGC WPL 110
+0	0	0	5001	0	0	0	0	-35.363264	149.165237	50	1
+1	0	0	5001	0	0	0	0	-35.363100	149.164500	50	1
+2	0	0	5001	0	0	0	0	-35.362700	149.165500	50	1
+
+# Rally Point Descriptions:
+# Point 0: North end of field (primary)
+# Point 1: South end of field (backup)
+# Point 2: West side clear area (emergency)
+#
+# All rally points set to 50m altitude AGL for safe approach
+#
+# To load rally points:
+# 1. In Mission Planner: SETUP → Rally Points
+# 2. Click "Load Rally Points"
+# 3. Select this .txt file
+# 4. Verify points on map
+# 5. Enable rally points: param set RALLY_TOTAL 3
+#
+# Rally point parameters:
+# RALLY_TOTAL       - Total number of rally points
+# RALLY_LIMIT_KM    - Max distance to rally point (km, 0=no limit)
+# RALLY_INCL_HOME   - Include home in rally point set (0=no, 1=yes)
+#
+# Recommended parameters:
+# param set RALLY_TOTAL 3
+# param set RALLY_LIMIT_KM 2
+# param set RALLY_INCL_HOME 1
+#
+# How rally points work:
+# 1. On RTL, aircraft selects nearest rally point (or home if RALLY_INCL_HOME=1)
+# 2. Aircraft flies to rally point at RALLY_ALT altitude
+# 3. Aircraft circles at rally point
+# 4. Land can be triggered manually or via LAND mode
+#
+# Best practices:
+# - Place rally points in open areas clear of obstacles
+# - Set altitude high enough to clear all obstacles
+# - Distribute rally points around flight area
+# - Verify clear approach paths to each rally point
+# - Test RTL to each rally point before operational flights

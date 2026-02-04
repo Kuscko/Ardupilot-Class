@@ -1,0 +1,66 @@
+# Mapping/Survey Build Configuration Example
+# Example hwdef.dat optimized for aerial mapping missions
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+
+# Start from base board configuration
+include ../MatekH743/hwdef.dat
+
+# Change board ID (must be unique!)
+APJ_BOARD_ID 991
+
+# ============================================
+# ENABLE MAPPING FEATURES
+# ============================================
+
+# Camera Control
+define AP_CAMERA_ENABLED 1
+define AP_CAMERA_BACKEND_DEFAULT_ENABLED 1
+
+# Precision Navigation
+define HAL_RALLY_ENABLED 1          # Rally points for safe return
+define MODE_AUTO_ENABLED 1          # AUTO mode for missions
+define MODE_LOITER_ENABLED 1        # Precise loiter
+define MODE_GUIDED_ENABLED 1        # GCS control
+
+# Terrain Following
+define AP_TERRAIN_AVAILABLE 1
+
+# Full Logging
+define HAL_LOGGING_ENABLED 1
+define HAL_LOGGING_DATAFLASH_ENABLED 1
+
+# ============================================
+# DISABLE UNUSED FEATURES
+# ============================================
+
+# Quadplane (not needed for mapping)
+define MODE_QSTABILIZE_ENABLED 0
+define MODE_QHOVER_ENABLED 0
+define MODE_QLOITER_ENABLED 0
+define MODE_QLAND_ENABLED 0
+define MODE_QRTL_ENABLED 0
+
+# Agricultural Features
+define HAL_SPRAYER_ENABLED 0
+define HAL_PARACHUTE_ENABLED 0
+define HAL_GRIPPER_ENABLED 0
+
+# Other
+define HAL_ADSB_ENABLED 0
+define HAL_PROXIMITY_ENABLED 0
+define AP_SCRIPTING_ENABLED 0       # Can enable if needed for custom logic
+
+# Performance Optimization
+env OPTIMIZE -O2
+
+# Default Parameters for Mapping
+# (Add to defaults.parm file in same directory)
+# CAM_TRIGG_TYPE,1          # Camera trigger enabled
+# CAM_DURATION,10           # 10ms trigger pulse
+# CAM_SERVO_ON,1900         # Servo PWM to trigger
+# CAM_SERVO_OFF,1100        # Servo PWM off
+# RELAY_PIN,54              # Use relay pin for trigger
+# LOG_BITMASK,1048575       # Comprehensive logging
+
+# Use for: Aerial photography, mapping, and survey missions

@@ -1,0 +1,51 @@
+# Minimal Build Configuration Example
+# Example hwdef.dat for creating smallest possible ArduPlane build
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+
+# Start from base board configuration
+include ../CubeOrange/hwdef.dat
+
+# Change board ID (must be unique!)
+APJ_BOARD_ID 990
+
+# ============================================
+# DISABLE NON-ESSENTIAL FEATURES
+# ============================================
+
+# Peripheral Features
+define HAL_PARACHUTE_ENABLED 0
+define HAL_SPRAYER_ENABLED 0
+define HAL_GRIPPER_ENABLED 0
+define HAL_MOUNT_ENABLED 0
+define HAL_RALLY_ENABLED 0
+define HAL_BEACON_ENABLED 0
+define HAL_ADSB_ENABLED 0
+define HAL_PROXIMITY_ENABLED 0
+define HAL_RPM_ENABLED 0
+
+# Advanced Flight Modes
+define MODE_LOITER_ENABLED 0
+define MODE_CIRCLE_ENABLED 0
+define MODE_GUIDED_ENABLED 0
+define MODE_QSTABILIZE_ENABLED 0
+define MODE_QHOVER_ENABLED 0
+define MODE_QLOITER_ENABLED 0
+
+# Advanced Features
+define AP_SCRIPTING_ENABLED 0       # Disable Lua scripting
+define AP_TERRAIN_AVAILABLE 0       # Disable terrain following
+define HAL_LOGGING_ENABLED 1        # Keep basic logging
+define AP_CAMERA_ENABLED 0          # Disable camera triggering
+
+# Sensor Drivers (disable unused)
+define HAL_COMPASS_AK8963_ENABLED 0
+define HAL_COMPASS_HMC5843_ENABLED 0
+define HAL_BARO_BMP280_ENABLED 0
+define HAL_RANGEFINDER_ENABLED 0
+
+# Size Optimization
+env OPTIMIZE -Os
+
+# Result: Saves ~200-300KB of flash space
+# Use for: Basic MANUAL/FBWA/AUTO flight on limited flash hardware

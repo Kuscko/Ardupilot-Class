@@ -1,0 +1,144 @@
+# PID Tuning - Conservative Configuration
+# Safe, stable PID values for initial testing and training flights
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+
+# ============================================
+# ROLL RATE CONTROLLER
+# ============================================
+
+# Roll rate PID (conservative - smooth response)
+RLL_RATE_P,0.08
+RLL_RATE_I,0.08
+RLL_RATE_D,0.003
+RLL_RATE_FF,0.0
+RLL_RATE_IMAX,0.5
+RLL_RATE_FLTD,10.0
+RLL_RATE_FLTT,10.0
+
+# ============================================
+# PITCH RATE CONTROLLER
+# ============================================
+
+# Pitch rate PID (conservative - smooth response)
+PTCH_RATE_P,0.08
+PTCH_RATE_I,0.08
+PTCH_RATE_D,0.003
+PTCH_RATE_FF,0.0
+PTCH_RATE_IMAX,0.5
+PTCH_RATE_FLTD,10.0
+PTCH_RATE_FLTT,10.0
+
+# ============================================
+# YAW RATE CONTROLLER
+# ============================================
+
+# Yaw rate PID (conservative)
+YAW_RATE_P,0.15
+YAW_RATE_I,0.015
+YAW_RATE_D,0.0
+YAW_RATE_FF,0.0
+YAW_RATE_IMAX,0.5
+YAW_RATE_FLTD,0.0
+YAW_RATE_FLTT,0.0
+
+# ============================================
+# ROLL CONTROLLER
+# ============================================
+
+# Roll stabilization
+ROLL_P,1.0
+ROLL_IMAX,0.666
+
+# ============================================
+# PITCH CONTROLLER
+# ============================================
+
+# Pitch stabilization
+PITCH_P,1.0
+PITCH_IMAX,0.666
+
+# ============================================
+# SERVO LIMITS (Conservative)
+# ============================================
+
+# Roll limits (degrees)
+RLL_LIM_MAX,45
+
+# Pitch limits (degrees)
+PTCH_LIM_MAX_DN,-25
+PTCH_LIM_MAX_UP,25
+
+# Servo slew rate (deg/sec) - slower for smooth response
+SERVO_RATE,50
+
+# ============================================
+# TECS PARAMETERS (Conservative)
+# ============================================
+
+# TECS altitude/airspeed controller
+TECS_TIME_CONST,5.0
+TECS_PTCH_DAMP,0.5
+TECS_SINK_MAX,3.0
+TECS_SINK_MIN,2.0
+TECS_CLMB_MAX,3.0
+TECS_THR_DAMP,0.5
+TECS_INTEG_GAIN,0.1
+TECS_VERT_ACC,5.0
+TECS_SPDWEIGHT,1.0
+
+# ============================================
+# L1 CONTROLLER (Conservative)
+# ============================================
+
+# L1 navigation controller
+NAVL1_PERIOD,20
+NAVL1_DAMPING,0.75
+NAVL1_XTRACK_I,0.01
+
+# ============================================
+# THROTTLE SETTINGS
+# ============================================
+
+# Throttle limits (conservative range)
+THR_MIN,0
+THR_MAX,75
+THR_CRUISE,50
+THR_PASS_STAB,0
+
+# Throttle slew rate (percent/sec) - gradual changes
+THR_SLEWRATE,50
+
+# ============================================
+# AIRSPEED SETTINGS
+# ============================================
+
+# Airspeed limits (m/s) - conservative speeds
+ARSPD_FBW_MIN,12
+ARSPD_FBW_MAX,18
+TRIM_ARSPD_CM,1500
+
+# ============================================
+# NOTES
+# ============================================
+# Conservative tuning is recommended for:
+# - Initial test flights after building aircraft
+# - Training and learning flights
+# - Windy conditions (more stability needed)
+# - Heavy or unbalanced aircraft
+# - When safety is priority over performance
+#
+# Characteristics:
+# - Smooth, gentle responses
+# - Less aggressive corrections
+# - More stable in turbulence
+# - Slower mode transitions
+# - Reduced risk of oscillation
+#
+# To load:
+#   param load params_pid_conservative.param
+#   param save
+#   reboot
+#
+# After testing, can gradually increase P gains by 10-20% if needed
