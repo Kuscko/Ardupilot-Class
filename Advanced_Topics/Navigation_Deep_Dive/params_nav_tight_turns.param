@@ -1,0 +1,70 @@
+# Navigation Tuning - Tight Turns Configuration
+# L1 controller parameters optimized for tight turns and precise waypoint tracking
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+
+# ============================================
+# L1 CONTROLLER (Tight Turns)
+# ============================================
+
+# L1 period - smaller value = tighter turns
+NAVL1_PERIOD,15
+
+# Damping ratio - standard value for stability
+NAVL1_DAMPING,0.75
+
+# Cross-track integrator gain - helps correct drift
+NAVL1_XTRACK_I,0.02
+
+# ============================================
+# WAYPOINT PARAMETERS
+# ============================================
+
+# Waypoint radius - how close to get to waypoint before considering it reached
+WP_RADIUS,30
+
+# Loiter radius - circle radius for loiter points
+WP_LOITER_RAD,50
+
+# ============================================
+# AIRSPEED SETTINGS
+# ============================================
+
+# Airspeed limits (m/s)
+ARSPD_FBW_MIN,13
+ARSPD_FBW_MAX,20
+TRIM_ARSPD_CM,1600
+
+# ============================================
+# ROLL LIMITS FOR TURNS
+# ============================================
+
+# Maximum roll angle (degrees) - higher allows tighter turns
+RLL_LIM_MAX,50
+
+# ============================================
+# NOTES
+# ============================================
+# Tight turns configuration is suitable for:
+# - Survey missions requiring precise coverage
+# - Waypoint racing
+# - Obstacle-rich environments
+# - Confined airspace operations
+#
+# Characteristics:
+# - Smaller turn radius
+# - More aggressive waypoint approach
+# - Higher precision tracking
+# - May overshoot in high wind
+#
+# To load:
+#   param load params_nav_tight_turns.param
+#   param save
+#   reboot
+#
+# Test procedure:
+# 1. Fly square pattern mission
+# 2. Check corner rounding in logs
+# 3. Verify waypoint approach distance
+# 4. Adjust NAVL1_PERIOD if needed (+/- 2)

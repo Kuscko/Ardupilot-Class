@@ -1,0 +1,85 @@
+# Navigation Tuning - Smooth/Wide Turns Configuration
+# L1 controller parameters optimized for gentle turns and passenger comfort
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+
+# ============================================
+# L1 CONTROLLER (Smooth Turns)
+# ============================================
+
+# L1 period - larger value = wider, smoother turns
+NAVL1_PERIOD,25
+
+# Damping ratio - standard value for stability
+NAVL1_DAMPING,0.75
+
+# Cross-track integrator gain - moderate correction
+NAVL1_XTRACK_I,0.01
+
+# ============================================
+# WAYPOINT PARAMETERS
+# ============================================
+
+# Waypoint radius - larger radius for smoother approach
+WP_RADIUS,50
+
+# Loiter radius - larger circle for gentle loiter
+WP_LOITER_RAD,100
+
+# ============================================
+# AIRSPEED SETTINGS
+# ============================================
+
+# Airspeed limits (m/s) - moderate speeds
+ARSPD_FBW_MIN,15
+ARSPD_FBW_MAX,22
+TRIM_ARSPD_CM,1800
+
+# ============================================
+# ROLL LIMITS FOR TURNS
+# ============================================
+
+# Maximum roll angle (degrees) - lower for gentle turns
+RLL_LIM_MAX,35
+
+# ============================================
+# THROTTLE LIMITS
+# ============================================
+
+# Throttle slew rate - gradual throttle changes
+THR_SLEWRATE,50
+
+# ============================================
+# NOTES
+# ============================================
+# Smooth turns configuration is suitable for:
+# - Passenger flights or cargo transport
+# - Photogrammetry missions (camera stability)
+# - Long-distance cruising
+# - Low-stress on airframe
+# - Turbulent conditions (wider turns more stable)
+#
+# Characteristics:
+# - Wider turn radius
+# - Gentler waypoint approach
+# - Lower G-forces
+# - More comfortable flight
+# - Less precise waypoint tracking
+#
+# To load:
+#   param load params_nav_smooth_turns.param
+#   param save
+#   reboot
+#
+# Test procedure:
+# 1. Fly circuit mission
+# 2. Observe turn smoothness
+# 3. Check passenger/camera comfort
+# 4. Verify no overshoots
+# 5. Adjust NAVL1_PERIOD if needed (+/- 3)
+#
+# Trade-offs:
+# - Wider turns = larger airspace required
+# - Less precise = may need larger waypoint radius
+# - Slower response to wind = more drift

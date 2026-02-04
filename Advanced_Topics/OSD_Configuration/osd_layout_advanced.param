@@ -1,0 +1,231 @@
+# OSD Screen Layout - Advanced Configuration
+# Comprehensive OSD display with maximum flight information for experienced pilots
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+
+# ============================================
+# OSD ENABLE
+# ============================================
+
+# Enable OSD
+OSD_TYPE,1
+
+# Video format
+OSD_FORMAT,0
+
+# Units (0=Metric, 1=Imperial, 2=SI, 3=Aviation)
+OSD_UNITS,3
+
+# ============================================
+# SCREEN 1 - ADVANCED LAYOUT
+# ============================================
+
+# Top Row - Critical Flight Data
+OSD1_BAT_VOLT_EN,1
+OSD1_BAT_VOLT_X,1
+OSD1_BAT_VOLT_Y,1
+
+OSD1_CURRENT_EN,1
+OSD1_CURRENT_X,6
+OSD1_CURRENT_Y,1
+
+OSD1_BATTBAR_EN,1
+OSD1_BATTBAR_X,1
+OSD1_BATTBAR_Y,2
+
+OSD1_ALTITUDE_EN,1
+OSD1_ALTITUDE_X,12
+OSD1_ALTITUDE_Y,1
+
+OSD1_CLIMBEFF_EN,1
+OSD1_CLIMBEFF_X,18
+OSD1_CLIMBEFF_Y,1
+
+OSD1_GSPEED_EN,1
+OSD1_GSPEED_X,24
+OSD1_GSPEED_Y,1
+
+# Second Row - Navigation
+OSD1_FLTMODE_EN,1
+OSD1_FLTMODE_X,11
+OSD1_FLTMODE_Y,2
+
+OSD1_AIRSPEED_EN,1
+OSD1_AIRSPEED_X,24
+OSD1_AIRSPEED_Y,2
+
+# Center - Attitude Reference
+OSD1_HORIZON_EN,1
+OSD1_HORIZON_X,14
+OSD1_HORIZON_Y,8
+
+OSD1_SIDEBARS_EN,1
+OSD1_SIDEBARS_X,14
+OSD1_SIDEBARS_Y,8
+
+OSD1_CROSSHAIR_EN,1
+OSD1_CROSSHAIR_X,14
+OSD1_CROSSHAIR_Y,8
+
+# Left Side - Navigation Data
+OSD1_HEADING_EN,1
+OSD1_HEADING_X,1
+OSD1_HEADING_Y,5
+
+OSD1_COMPASS_EN,1
+OSD1_COMPASS_X,1
+OSD1_COMPASS_Y,6
+
+OSD1_HOMEDIST_EN,1
+OSD1_HOMEDIST_X,1
+OSD1_HOMEDIST_Y,9
+
+OSD1_HOMEDIR_EN,1
+OSD1_HOMEDIR_X,1
+OSD1_HOMEDIR_Y,10
+
+# Right Side - System Status
+OSD1_RSSI_EN,1
+OSD1_RSSI_X,24
+OSD1_RSSI_Y,5
+
+OSD1_GPSSAT_EN,1
+OSD1_GPSSAT_X,24
+OSD1_GPSSAT_Y,6
+
+OSD1_GPSLAT_EN,1
+OSD1_GPSLAT_X,20
+OSD1_GPSLAT_Y,9
+
+OSD1_GPSLONG_EN,1
+OSD1_GPSLONG_X,20
+OSD1_GPSLONG_Y,10
+
+# Bottom Row - Flight Stats
+OSD1_FLTIME_EN,1
+OSD1_FLTIME_X,1
+OSD1_FLTIME_Y,13
+
+OSD1_WAYPOINT_EN,1
+OSD1_WAYPOINT_X,10
+OSD1_WAYPOINT_Y,13
+
+OSD1_ARMING_EN,1
+OSD1_ARMING_X,16
+OSD1_ARMING_Y,13
+
+OSD1_THROTTLE_EN,1
+OSD1_THROTTLE_X,22
+OSD1_THROTTLE_Y,13
+
+# Warnings Row
+OSD1_MESSAGE_EN,1
+OSD1_MESSAGE_X,1
+OSD1_MESSAGE_Y,14
+
+# Wind Data
+OSD1_WIND_EN,1
+OSD1_WIND_X,1
+OSD1_WIND_Y,12
+
+# EKF Variance
+OSD1_VSPEED_EN,1
+OSD1_VSPEED_X,24
+OSD1_VSPEED_Y,11
+
+# ============================================
+# SCREEN 2 - FPV RACING LAYOUT (Optional)
+# ============================================
+
+# Minimal layout for FPV racing - only essentials
+OSD2_BAT_VOLT_EN,1
+OSD2_BAT_VOLT_X,1
+OSD2_BAT_VOLT_Y,1
+
+OSD2_GSPEED_EN,1
+OSD2_GSPEED_X,24
+OSD2_GSPEED_Y,1
+
+OSD2_HORIZON_EN,1
+OSD2_HORIZON_X,14
+OSD2_HORIZON_Y,8
+
+OSD2_RSSI_EN,1
+OSD2_RSSI_X,24
+OSD2_RSSI_Y,14
+
+# Disable everything else on screen 2
+OSD2_ALTITUDE_EN,0
+OSD2_CURRENT_EN,0
+OSD2_BATTBAR_EN,0
+
+# ============================================
+# OSD OPTIONS
+# ============================================
+
+# Warning levels
+OSD_W_BATVOLT,10.5
+OSD_W_RSSI,50
+OSD_W_NSAT,6
+
+# Text scale (0=small, 1=medium, 2=large)
+OSD_TXT_RES,0
+
+# Font (0=default, 1=bold, 2=large)
+OSD_FONT,0
+
+# ============================================
+# NOTES
+# ============================================
+# Advanced OSD layout provides:
+# - Maximum flight information
+# - Professional racing/FPV layout
+# - Dual screen support (switch with RC)
+# - Comprehensive telemetry
+# - Warning indicators
+#
+# Screen switching:
+# - Set RC channel option to OSD screen select
+# - RC7_OPTION,83 (OSD screen switch)
+#
+# Display elements included:
+# Primary flight:
+# - Battery voltage, current, bar graph
+# - Altitude (MSL and AGL)
+# - Groundspeed and airspeed
+# - Climb/sink efficiency
+#
+# Navigation:
+# - Flight mode
+# - Heading and compass
+# - Home distance and direction
+# - Current waypoint
+# - GPS coordinates
+#
+# System status:
+# - RSSI (signal strength)
+# - GPS satellite count
+# - Armed status
+# - Flight time
+# - Messages/warnings
+#
+# Attitude:
+# - Artificial horizon
+# - Sidebars (bank angle)
+# - Crosshair
+#
+# Advanced data:
+# - Wind speed/direction
+# - Vertical speed
+# - Throttle percentage
+#
+# To load:
+#   param load osd_layout_advanced.param
+#   param save
+#   reboot
+#
+# Customization:
+# - Adjust X,Y coordinates to move elements
+# - Set _EN to 0 to disable unwanted elements
+# - Use OSD font tool to customize fonts

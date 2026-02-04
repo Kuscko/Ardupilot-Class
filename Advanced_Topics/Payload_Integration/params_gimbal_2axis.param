@@ -1,0 +1,105 @@
+# 2-Axis Gimbal Configuration
+# Parameter set for 2-axis (pitch/roll) servo gimbal
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+
+# ============================================
+# MOUNT TYPE AND CONFIGURATION
+# ============================================
+
+# Mount type (1=Servo)
+MNT1_TYPE,1
+
+# Stabilization mode (2=mount stabilizes)
+MNT1_DEFLT_MODE,2
+
+# ============================================
+# SERVO ASSIGNMENT
+# ============================================
+
+# Pitch servo (tilt)
+SERVO10_FUNCTION,6
+SERVO10_MIN,1100
+SERVO10_MAX,1900
+SERVO10_TRIM,1500
+SERVO10_REVERSED,0
+
+# Roll servo
+SERVO11_FUNCTION,7
+SERVO11_MIN,1100
+SERVO11_MAX,1900
+SERVO11_TRIM,1500
+SERVO11_REVERSED,0
+
+# ============================================
+# GIMBAL ANGLES
+# ============================================
+
+# Pitch (tilt) limits
+MNT1_PITCH_MIN,-90
+MNT1_PITCH_MAX,30
+
+# Roll limits
+MNT1_ROLL_MIN,-45
+MNT1_ROLL_MAX,45
+
+# Yaw (not used for 2-axis)
+MNT1_YAW_MIN,0
+MNT1_YAW_MAX,0
+
+# ============================================
+# STABILIZATION GAINS
+# ============================================
+
+# Lead filter (0.0-0.2, smaller = smoother)
+MNT1_LEAD_RLL,0.0
+MNT1_LEAD_PTCH,0.0
+
+# ============================================
+# RC CONTROL
+# ============================================
+
+# RC channel for pitch control
+MNT1_RC_RATE_PITCH,10
+
+# RC channel for roll control (if manual control desired)
+MNT1_RC_RATE_ROLL,0
+
+# ============================================
+# RETRACT SETTINGS
+# ============================================
+
+# Retract on boot
+MNT1_RETRACT_X,0
+MNT1_RETRACT_Y,-90
+MNT1_RETRACT_Z,0
+
+# ============================================
+# NOTES
+# ============================================
+# 2-Axis gimbal stabilizes camera in pitch and roll
+#
+# Servo functions:
+# - SERVO10 (Function 6): Mount pitch
+# - SERVO11 (Function 7): Mount roll
+#
+# Stabilization:
+# - MNT1_DEFLT_MODE=2: Camera stabilizes to level horizon
+# - Aircraft attitude compensated automatically
+#
+# RC Control:
+# - MNT1_RC_RATE_PITCH: RC channel for manual tilt
+# - Set to 0 to disable manual control
+#
+# Calibration:
+# 1. Set servo to mid position (1500)
+# 2. Mount camera level
+# 3. Adjust SERVO_TRIM if needed
+# 4. Test full range of motion
+# 5. Verify stabilization in FBWA mode
+#
+# To load:
+#   param load params_gimbal_2axis.param
+#   param save
+#   reboot

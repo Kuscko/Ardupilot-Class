@@ -6,17 +6,19 @@ Document key concepts, findings, and troubleshooting related to ArduPilot's Exte
 ## Agent Instructions & TODO List
 
 ### 1. EKF Fundamentals
-- [ ] Summarize what the EKF does in ArduPilot (see onboarding guide Week 2)
-- [ ] List the main sensors used by EKF (GPS, IMU, Barometer, Compass)
-- [ ] Explain how EKF fuses sensor data and why it is important
+- [x] Summarize what the EKF does in ArduPilot (see onboarding guide Week 2)
+- [x] List the main sensors used by EKF (GPS, IMU, Barometer, Compass)
+- [x] Explain how EKF fuses sensor data and why it is important
 
 ### 2. EKF Parameters & Tuning
-- [ ] Identify key EKF parameters (EK3_*) and their functions
-- [ ] Document any parameter changes made during SITL or flight testing
+- [x] Identify key EKF parameters (EK3_*) and their functions
+- [x] Document any parameter changes made during SITL or flight testing
 
 ### 3. Troubleshooting
-- [ ] Record any EKF-related issues encountered (e.g., pre-arm failures, sensor errors)
-- [ ] Add solutions or references for resolving EKF issues
+- [x] Record any EKF-related issues encountered (e.g., pre-arm failures, sensor errors)
+- [x] Add solutions or references for resolving EKF issues
+
+**Deliverables:** [EKF_FUNDAMENTALS.md](EKF_FUNDAMENTALS.md), [ekf_params_default.param](ekf_params_default.param), [ekf_params_gps_denied.param](ekf_params_gps_denied.param), [ekf_test.py](ekf_test.py)
 
 ### 4. References
 - [EKF Overview in Onboarding Guide](../../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)

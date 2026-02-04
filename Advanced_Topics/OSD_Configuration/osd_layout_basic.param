@@ -1,0 +1,95 @@
+# OSD Screen Layout - Basic Configuration
+# Minimal OSD display for beginners with essential flight information
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+
+# ============================================
+# OSD ENABLE
+# ============================================
+
+# Enable OSD
+OSD_TYPE,1
+
+# Video format (0=Auto, 1=NTSC, 2=PAL)
+OSD_FORMAT,0
+
+# ============================================
+# SCREEN 1 - BASIC LAYOUT
+# ============================================
+
+# Altitude (Top center)
+OSD1_ALTITUDE_EN,1
+OSD1_ALTITUDE_X,12
+OSD1_ALTITUDE_Y,1
+
+# Groundspeed (Top right)
+OSD1_GSPEED_EN,1
+OSD1_GSPEED_X,20
+OSD1_GSPEED_Y,1
+
+# Battery Voltage (Top left)
+OSD1_BAT_VOLT_EN,1
+OSD1_BAT_VOLT_X,1
+OSD1_BAT_VOLT_Y,1
+
+# Flight Mode (Center top)
+OSD1_FLTMODE_EN,1
+OSD1_FLTMODE_X,10
+OSD1_FLTMODE_Y,2
+
+# Artificial Horizon (Center)
+OSD1_HORIZON_EN,1
+OSD1_HORIZON_X,14
+OSD1_HORIZON_Y,8
+
+# Home Direction Arrow (Bottom center)
+OSD1_HOMEDIST_EN,1
+OSD1_HOMEDIST_X,12
+OSD1_HOMEDIST_Y,12
+
+# GPS Satellite Count (Bottom left)
+OSD1_GPSSAT_EN,1
+OSD1_GPSSAT_X,1
+OSD1_GPSSAT_Y,13
+
+# Armed Status (Bottom right)
+OSD1_ARMING_EN,1
+OSD1_ARMING_X,20
+OSD1_ARMING_Y,13
+
+# Disable everything else to keep it clean
+OSD1_AIRSPEED_EN,0
+OSD1_CURRENT_EN,0
+OSD1_BATTBAR_EN,0
+OSD1_COMPASS_EN,0
+OSD1_RSSI_EN,0
+
+# ============================================
+# NOTES
+# ============================================
+# Basic OSD layout provides:
+# - Essential flight data only
+# - Clean, uncluttered view
+# - Easy to read for beginners
+# - Minimal distraction
+#
+# Display elements:
+# - Battery voltage (critical safety)
+# - Altitude (situational awareness)
+# - Speed (flight monitoring)
+# - Flight mode (know current state)
+# - Artificial horizon (attitude reference)
+# - Home direction (navigation)
+# - GPS status (link quality)
+# - Armed state (safety)
+#
+# Screen coordinates:
+# - X: 0-29 (30 columns)
+# - Y: 0-15 (16 rows)
+# - Origin: Top-left (0,0)
+#
+# To load:
+#   param load osd_layout_basic.param
+#   param save
+#   reboot

@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!-- Custom MAVLink Message Definitions
+     Example custom messages for ArduPilot telemetry
+     Author: Patrick Kelly (@Kuscko)
+     Version: 1.0
+     Last Updated: 2026-02-03
+-->
+<mavlink>
+    <include>common.xml</include>
+
+    <messages>
+        <!-- Custom Sensor Data Message
+             ID: 12000 (use unique ID not conflicting with standard messages)
+             Sends custom sensor readings from aircraft
+        -->
+        <message id="12000" name="CUSTOM_SENSOR_DATA">
+            <description>Custom sensor telemetry data</description>
+            <field type="uint32_t" name="timestamp_ms">Timestamp in milliseconds since boot</field>
+            <field type="float" name="sensor1_value">First sensor reading (units depend on sensor)</field>
+            <field type="float" name="sensor2_value">Second sensor reading</field>
+            <field type="float" name="sensor3_value">Third sensor reading</field>
+            <field type="uint8_t" name="sensor_status">Sensor status bitmask (0=OK, 1=Error, 2=Warning)</field>
+        </message>
+
+        <!-- Custom Status Message
+             ID: 12001
+             Sends custom aircraft status information
+        -->
+        <message id="12001" name="CUSTOM_STATUS">
+            <description>Custom aircraft status</description>
+            <field type="uint32_t" name="timestamp_ms">Timestamp in milliseconds</field>
+            <field type="uint16_t" name="flight_mode">Custom flight mode identifier</field>
+            <field type="uint8_t" name="health_flags">Health status flags</field>
+            <field type="float" name="battery_remaining_pct">Battery percentage remaining</field>
+            <field type="float" name="mission_progress_pct">Mission completion percentage</field>
+        </message>
+
+        <!-- Custom Command Message
+             ID: 12002
+             Receives commands from ground station
+        -->
+        <message id="12002" name="CUSTOM_COMMAND">
+            <description>Custom command from GCS to aircraft</description>
+            <field type="uint8_t" name="target_system">System ID</field>
+            <field type="uint8_t" name="target_component">Component ID</field>
+            <field type="uint16_t" name="command_id">Custom command identifier</field>
+            <field type="float" name="param1">Command parameter 1</field>
+            <field type="float" name="param2">Command parameter 2</field>
+            <field type="float" name="param3">Command parameter 3</field>
+        </message>
+
+        <!-- Custom Payload Data
+             ID: 12003
+             Sends payload-specific telemetry
+        -->
+        <message id="12003" name="CUSTOM_PAYLOAD_DATA">
+            <description>Custom payload telemetry</description>
+            <field type="uint32_t" name="timestamp_ms">Timestamp</field>
+            <field type="float" name="payload_temperature">Payload temperature (Celsius)</field>
+            <field type="float" name="payload_voltage">Payload voltage (Volts)</field>
+            <field type="uint16_t" name="payload_state">Payload state machine status</field>
+            <field type="uint8_t[8]" name="payload_data">Custom payload data array</field>
+        </message>
+    </messages>
+</mavlink>
+
+<!--
+USAGE INSTRUCTIONS:
+
+1. Save this file as custom_telemetry.xml
+
+2. Generate MAVLink headers:
+   # Clone MAVLink repo (if not already cloned)
+   git clone https://github.com/mavlink/mavlink.git
+   cd mavlink
+
+   # Generate C headers
+   python -m pymavlink.tools.mavgen --lang=C --wire-protocol=2.0 --output=generated/custom custom_telemetry.xml
+
+   # Generate Python headers
+   python -m pymavlink.tools.mavgen --lang=Python --wire-protocol=2.0 --output=generated/custom custom_telemetry.xml
+
+3. Copy generated headers to ArduPilot:
+   # For C (ArduPilot firmware)
+   cp generated/custom/*.h ~/ardupilot/libraries/GCS_MAVLink/include/mavlink/v2.0/custom/
+
+   # For Python (ground station scripts)
+   # Headers will be in generated/custom/
+
+4. Update ArduPilot to send custom messages:
+   - Edit libraries/GCS_MAVLink/GCS_Common.cpp
+   - Add send function for your custom message
+   - OR use Lua scripting (see lua_sender_example.lua)
+
+5. Receive in Python:
+   - See python_receiver_example.py
+
+MESSAGE ID ALLOCATION:
+- Standard MAVLink messages: 0-255
+- Common extensions: 256-511
+- User/experimental: 12000-12999 (use this range)
+- Avoid conflicts with existing message IDs
+
+FIELD TYPES:
+- uint8_t, uint16_t, uint32_t, uint64_t (unsigned integers)
+- int8_t, int16_t, int32_t, int64_t (signed integers)
+- float, double (floating point)
+- char[N] (string)
+- uint8_t[N] (byte array)
+
+BEST PRACTICES:
+- Always include timestamp field
+- Use descriptive field names
+- Document units in field description
+- Keep message size reasonable (< 255 bytes)
+- Use appropriate data types (don't use float for integers)
+- Include status/health fields for error detection
+
+TESTING:
+- Test message generation first
+- Verify message can be sent/received
+- Check byte packing/alignment
+- Test with different protocol versions (MAVLink 1 vs 2)
+- Validate on SITL before hardware
+-->

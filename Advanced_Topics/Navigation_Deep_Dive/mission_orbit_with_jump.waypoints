@@ -1,0 +1,73 @@
+# Advanced Mission - Orbit with DO_JUMP
+# Demonstrates DO_JUMP command for repeating orbit pattern
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+#
+# Pattern: Circular orbit repeated 3 times using DO_JUMP
+# Center: CMAC field
+# Radius: 100m
+# Altitude: 80m AGL
+# Orbits: 3 complete circles
+
+QGC WPL 110
+0	1	0	16	0.00	0.00	0.00	0.00	-35.363261	149.165237	584.000000	1
+1	0	3	22	0.00	0.00	0.00	0.00	0.00	0.00	80.00	1
+2	0	3	16	0.00	0.00	0.00	0.00	-35.363261	149.166237	80.00	1
+3	0	3	18	3.00	0.00	0.00	1.00	-35.363261	149.165237	80.00	1
+4	0	3	177	2	3	0.00	0.00	0.00	0.00	0.00	1
+5	0	3	16	0.00	0.00	0.00	0.00	-35.363261	149.165237	80.00	1
+6	0	3	20	0.00	0.00	0.00	0.00	0.00	0.00	0.00	1
+
+# Waypoint Descriptions:
+# 0: Home position (auto-set)
+# 1: CMD 22 - Takeoff to 80m AGL
+# 2: CMD 16 - Fly to orbit start point (100m east of center)
+# 3: CMD 18 - Loiter turns (3 complete circles, 100m radius, clockwise)
+# 4: CMD 177 - DO_JUMP: Jump to waypoint 3, repeat 2 times (total 3 orbits)
+# 5: CMD 16 - Return to center after orbits complete
+# 6: CMD 20 - RTL (Return to Launch)
+
+# Command Reference:
+# CMD 16 = WAYPOINT (navigate to position)
+# CMD 18 = LOITER_TURNS (circle N times at location)
+# CMD 20 = RETURN_TO_LAUNCH
+# CMD 22 = TAKEOFF
+# CMD 177 = DO_JUMP (jump to waypoint, repeat count)
+
+# DO_JUMP Parameters:
+# Param 1: Target waypoint number (3 in this case)
+# Param 2: Repeat count (2 = jump 2 times, total 3 executions)
+# Param 3-4: Reserved (0)
+
+# Total Mission Behavior:
+# 1. Takeoff to 80m
+# 2. Fly to orbit start
+# 3. Execute 3 loiter turns (first time)
+# 4. DO_JUMP back to waypoint 3 (2 more times)
+#    - Total: 3 * 3 = 9 complete circles
+# 5. Return to center
+# 6. RTL
+
+# Flight Time Estimate:
+# - Orbit circumference: 2 * π * 100m ≈ 628m
+# - Total distance: 9 orbits * 628m ≈ 5.6 km
+# - At 15 m/s: ~6-7 minutes
+
+# Use Cases:
+# - Aerial photography from multiple angles
+# - Surveillance of point of interest
+# - Thermal imaging survey
+# - Antenna pattern testing
+# - Training on orbit behavior
+
+# Loading instructions:
+# 1. Load in Mission Planner
+# 2. Verify LOITER_TURNS parameters (radius, direction)
+# 3. Check DO_JUMP target and count
+# 4. Write to vehicle
+# 5. Test in SITL first!
+
+# Parameters to set:
+# WP_LOITER_RAD,100   # 100m loiter radius
+# NAVL1_PERIOD,18     # Standard turning

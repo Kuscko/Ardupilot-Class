@@ -1,0 +1,63 @@
+# Camera Trigger Survey Mission
+# Automated aerial photography mission with distance-based camera triggering
+# Author: Patrick Kelly (@Kuscko)
+# Version: 1.0
+# Last Updated: 2026-02-03
+#
+# Mission: Grid survey with camera triggering every 50m
+# Area: 300m x 300m
+# Altitude: 100m AGL
+# Camera trigger: Distance-based (50m intervals)
+
+QGC WPL 110
+0	1	0	16	0.00	0.00	0.00	0.00	-35.363261	149.165237	584.000000	1
+1	0	3	22	0.00	0.00	0.00	0.00	0.00	0.00	100.00	1
+2	0	3	206	1.00	50.00	0.00	0.00	0.00	0.00	0.00	1
+3	0	3	16	0.00	0.00	0.00	0.00	-35.363261	149.165237	100.00	1
+4	0	3	16	0.00	0.00	0.00	0.00	-35.360261	149.165237	100.00	1
+5	0	3	16	0.00	0.00	0.00	0.00	-35.360261	149.166237	100.00	1
+6	0	3	16	0.00	0.00	0.00	0.00	-35.363261	149.166237	100.00	1
+7	0	3	206	0.00	0.00	0.00	0.00	0.00	0.00	0.00	1
+8	0	3	20	0.00	0.00	0.00	0.00	0.00	0.00	0.00	1
+
+# Command Reference:
+# CMD 16  = WAYPOINT
+# CMD 20  = RTL
+# CMD 22  = TAKEOFF
+# CMD 206 = DO_SET_CAM_TRIGG_DIST
+
+# Waypoint Descriptions:
+# 0: Home
+# 1: Takeoff to 100m
+# 2: Enable camera triggering (every 50m)
+# 3-6: Survey grid waypoints
+# 7: Disable camera triggering
+# 8: RTL
+
+# DO_SET_CAM_TRIGG_DIST Parameters:
+# Waypoint 2:
+#   Param1: 1.00 = Enable triggering
+#   Param2: 50.00 = Distance between shots (meters)
+#
+# Waypoint 7:
+#   Param1: 0.00 = Disable triggering
+
+# Camera Configuration Parameters:
+# CAM_TRIGG_TYPE,1        # Servo trigger
+# CAM_DURATION,10         # 10ms pulse
+# CAM_SERVO_ON,1900       # Servo PWM high
+# CAM_SERVO_OFF,1100      # Servo PWM low
+# CAM_TRIGG_DIST,50       # Distance trigger (meters)
+# SERVO9_FUNCTION,10      # Camera trigger on servo 9
+
+# Expected Photos:
+# Grid distance: ~1200m total
+# Trigger interval: 50m
+# Expected photos: ~24 images
+
+# Loading instructions:
+# 1. Configure camera parameters first
+# 2. Load mission in Mission Planner
+# 3. Verify camera trigger on servo output
+# 4. Test trigger with multimeter before flight
+# 5. Ensure SD card in camera with space
