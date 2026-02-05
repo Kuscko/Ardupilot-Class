@@ -170,12 +170,12 @@ print_status "Python packages installed"
 # Step 8: Build SITL
 echo ""
 echo "Step 8: Building ArduPlane for SITL..."
-cd "$INSTALL_DIR/ArduPlane"
+cd "$INSTALL_DIR"
 echo "Configuring build system..."
-../waf configure --board sitl
+./waf configure --board sitl
 
 echo "Building (this may take 5-15 minutes on first build)..."
-../waf plane
+./waf plane
 print_status "Build completed successfully"
 
 # Step 9: Verify installation
