@@ -216,9 +216,9 @@ The scripts handle several edge cases:
 
 **Symptom:** Installation script reports error about python-argparse
 
-**Cause:** Package deprecated in Ubuntu 24.04+ (included in Python 3 by default)
+**Cause:** The `argparse` module has been part of Python's standard library since Python 2.7 and Python 3.2. The separate `python-argparse` package is obsolete and unavailable in modern Python environments.
 
-**Solution:** Script automatically detects and skips this package on newer Ubuntu versions. No action required.
+**Solution:** Script automatically removes this deprecated package from the install list. No action required.
 
 ### Issue: X server windows don't appear (WSL2)
 

@@ -252,31 +252,31 @@ python3 -m pip install --user --upgrade matplotlib scipy opencv-python
 
 ## Known Issues and Solutions
 
-### python-argparse Error (Ubuntu 24.04+)
+### python-argparse Error
 
-**Issue:** On Ubuntu 24.04 (Noble) and newer, the ArduPilot install script fails with:
+**Issue:** The ArduPilot install script fails with:
 
 ```text
 Package 'python-argparse' has no installation candidate
 ```
 
-**Cause:** `python-argparse` has been part of Python's standard library since Python 2.7/3.2 and is no longer a separate package.
+**Cause:** The `argparse` module has been part of Python's standard library since Python 2.7 and Python 3.2. The separate `python-argparse` package is obsolete and no longer available in modern Python environments. This issue occurs regardless of Ubuntu version when using Python 3.4+.
 
-**Solution:** The `install_ardupilot_plane_4.5.7.sh` script automatically patches this issue. If you're installing manually:
+**Solution:** The `install_ardupilot_plane_4.5.7.sh` script automatically removes `python-argparse` from the package list. If you're installing manually:
 
 ```bash
 cd ~/ardupilot
 # Backup the original script
 cp Tools/environment_install/install-prereqs-ubuntu.sh Tools/environment_install/install-prereqs-ubuntu.sh.backup
 
-# Apply the fix (find line ~200-220)
-sed -i 's/if \[ $RELEASE_CODENAME != "mantic" \]; then/if [ $RELEASE_CODENAME != "mantic" ] \&\& [ $RELEASE_CODENAME != "noble" ] \&\& [ $RELEASE_CODENAME != "oracular" ]; then/g' Tools/environment_install/install-prereqs-ubuntu.sh
+# Remove python-argparse from the package list entirely
+sed -i 's/python-argparse//g' Tools/environment_install/install-prereqs-ubuntu.sh
 
 # Now run the install script
 ./Tools/environment_install/install-prereqs-ubuntu.sh -y
 ```
 
-**Note:** This fix is already included in the automated installation script.
+**Note:** This fix is automatically applied by the installation script regardless of your Ubuntu version, since the issue is related to Python version (3.4+), not the operating system.
 
 ### Deprecated Python Packages (2024-2025)
 

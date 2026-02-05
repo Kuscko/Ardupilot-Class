@@ -99,11 +99,11 @@ This script installs:
 - MAVProxy (ground control software)
 - Other build dependencies
 
-**Note for Ubuntu 24.04+ users:** If you encounter an error about `python-argparse` not being available, apply this fix before running the installer:
+**Note:** If you encounter an error about `python-argparse` not being available, this is because the `argparse` module has been part of Python's standard library since Python 2.7/3.2 and the separate package is obsolete. Apply this fix before running the installer:
 
 ```bash
 cd ~/ardupilot
-sed -i 's/if \[ $RELEASE_CODENAME != "mantic" \]; then/if [ $RELEASE_CODENAME != "mantic" ] \&\& [ $RELEASE_CODENAME != "noble" ] \&\& [ $RELEASE_CODENAME != "oracular" ]; then/g' Tools/environment_install/install-prereqs-ubuntu.sh
+sed -i 's/python-argparse//g' Tools/environment_install/install-prereqs-ubuntu.sh
 ```
 
 See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for details.

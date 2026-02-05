@@ -118,30 +118,30 @@ else
     exit 1
 fi
 
-# Step 5: Patch install-prereqs-ubuntu.sh for Ubuntu 24.04 compatibility
+# Step 5: Patch install-prereqs-ubuntu.sh for python-argparse compatibility
 echo ""
-echo "Step 5: Checking for Ubuntu 24.04 compatibility issues..."
+echo "Step 5: Patching install script for python-argparse compatibility..."
 INSTALL_SCRIPT="./Tools/environment_install/install-prereqs-ubuntu.sh"
 
-# Detect Ubuntu version
+# Detect Ubuntu version (for logging only)
 UBUNTU_CODENAME=$(lsb_release -sc 2>/dev/null || echo "unknown")
 print_status "Detected Ubuntu codename: $UBUNTU_CODENAME"
 
-# Check if python-argparse fix is needed (Ubuntu 24.04 "noble" or newer)
-if [ "$UBUNTU_CODENAME" = "noble" ] || [ "$UBUNTU_CODENAME" = "oracular" ]; then
-    print_warning "Ubuntu 24.04+ detected - patching install script for python-argparse compatibility"
+# Always apply python-argparse fix regardless of Ubuntu version
+# The python-argparse package is deprecated and causes issues on many systems
+print_warning "Applying python-argparse compatibility fix..."
 
-    # Backup original script
-    cp "$INSTALL_SCRIPT" "$INSTALL_SCRIPT.backup"
+# Backup original script
+cp "$INSTALL_SCRIPT" "$INSTALL_SCRIPT.backup"
 
-    # Apply patch: exclude python-argparse for noble and newer releases
-    # Find the line with mantic check and add noble to the exclusion
-    sed -i 's/if \[ $RELEASE_CODENAME != "mantic" \]; then/if [ $RELEASE_CODENAME != "mantic" ] \&\& [ $RELEASE_CODENAME != "noble" ] \&\& [ $RELEASE_CODENAME != "oracular" ]; then/g' "$INSTALL_SCRIPT"
+# Remove python-argparse from the package list entirely
+# This is safer than trying to patch conditional logic
+sed -i 's/python-argparse//g' "$INSTALL_SCRIPT"
 
-    print_status "Install script patched for Ubuntu 24.04+ compatibility"
-else
-    print_status "No compatibility patches needed for $UBUNTU_CODENAME"
-fi
+# Also patch the conditional check to include current codename (belt and suspenders)
+sed -i "s/if \[ \$RELEASE_CODENAME != \"mantic\" \]; then/if [ \$RELEASE_CODENAME != \"mantic\" ] \&\& [ \$RELEASE_CODENAME != \"noble\" ] \&\& [ \$RELEASE_CODENAME != \"oracular\" ] \&\& [ \$RELEASE_CODENAME != \"$UBUNTU_CODENAME\" ]; then/g" "$INSTALL_SCRIPT"
+
+print_status "Install script patched - python-argparse removed"
 
 # Step 6: Install prerequisites
 echo ""

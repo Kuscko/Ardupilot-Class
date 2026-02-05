@@ -29,11 +29,11 @@ git submodule update --init --recursive
 
 ### Error: "Package 'python-argparse' has no installation candidate"
 
-**Cause:** Ubuntu 24.04+ no longer includes `python-argparse` as a separate package (it's part of Python standard library)
+**Cause:** The `argparse` module has been part of Python's standard library since Python 2.7 and Python 3.2. The separate `python-argparse` package is obsolete and no longer available in modern Python environments. This is a Python version issue, not an Ubuntu version issue.
 
 **Fix:**
 
-Apply patch before running prerequisites installer:
+Remove `python-argparse` from the package list before running prerequisites installer:
 
 ```bash
 cd ~/ardupilot
@@ -41,8 +41,8 @@ cd ~/ardupilot
 # Backup the original script
 cp Tools/environment_install/install-prereqs-ubuntu.sh Tools/environment_install/install-prereqs-ubuntu.sh.backup
 
-# Apply the fix
-sed -i 's/if \[ $RELEASE_CODENAME != "mantic" \]; then/if [ $RELEASE_CODENAME != "mantic" ] \&\& [ $RELEASE_CODENAME != "noble" ] \&\& [ $RELEASE_CODENAME != "oracular" ]; then/g' Tools/environment_install/install-prereqs-ubuntu.sh
+# Remove python-argparse from the package list
+sed -i 's/python-argparse//g' Tools/environment_install/install-prereqs-ubuntu.sh
 
 # Now run the installer
 ./Tools/environment_install/install-prereqs-ubuntu.sh -y

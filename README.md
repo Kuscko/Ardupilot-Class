@@ -31,73 +31,6 @@ This repository contains a complete onboarding environment for new engineers lea
 
 ---
 
-## Repository Structure
-
-```
-AEVEX/
-├── README.md                             # This file
-│
-├── Onboarding_Documentation/
-│   ├── README.md                         # High-level onboarding overview
-│   └── ArduPilot_Onboarding_Guide.md    # Main onboarding guide
-│
-├── ArduPilot_Build_Instructions/
-│   ├── README.md                         # Build instructions overview
-│   ├── BUILD_GUIDE.md                    # Complete build guide
-│   └── TROUBLESHOOTING.md                # Build troubleshooting reference
-│
-├── Installation_Scripts/
-│   ├── README.md                         # Installation scripts overview
-│   ├── INSTALLATION_GUIDE.md             # Script usage guide
-│   ├── install_ardupilot_plane_4.5.7.sh # Automated installer
-│   ├── install_mavproxy.sh               # MAVProxy installer
-│   └── setup_x_server.md                 # X server setup for WSL2
-│
-├── SITL_Mission_Plans/
-│   ├── README.md                         # Mission planning overview
-│   ├── SITL_QUICK_START.md               # SITL quick start guide
-│   ├── EXAMPLE_MISSIONS.md               # Example mission files
-│   └── PARAMETER_GUIDE.md                # Parameter configuration reference
-│
-├── Lua_Scripts/
-│   ├── README.md                         # Lua scripting overview
-│   ├── LUA_SCRIPTING_GUIDE.md            # Complete Lua guide
-│   ├── hello_world.lua                   # Example: Hello World
-│   ├── altitude_monitor.lua              # Example: Altitude monitoring
-│   ├── battery_monitor.lua               # Example: Battery monitoring
-│   ├── auto_mode_switch.lua              # Example: Automatic mode switching
-│   ├── waypoint_logger.lua               # Example: Waypoint logging
-│   └── servo_sweep.lua                   # Example: Servo control
-│
-├── MAVLink_MavlinkRouter/
-│   ├── README.md                         # MAVLink overview
-│   ├── MAVLINK_GUIDE.md                  # MAVLink protocol guide
-│   ├── MAVLINK_ROUTER_GUIDE.md           # mavlink-router setup guide
-│   ├── example_configs/                  # mavlink-router configs
-│   │   ├── sitl_multi_gcs.conf
-│   │   ├── telemetry_radio.conf
-│   │   └── companion_computer.conf
-│   └── example_python_scripts/           # Python MAVLink examples
-│       ├── mavlink_monitor.py
-│       └── arm_disarm.py
-│
-├── EKF_Notes/
-│   ├── README.md                         # EKF overview
-│   └── EKF_FUNDAMENTALS.md               # EKF fundamentals guide
-│
-├── Sensor_Drivers/
-│   ├── README.md                         # Sensor driver overview
-│   └── SENSOR_DRIVER_GUIDE.md            # Sensor driver architecture guide
-│
-└── Slides_Notes/
-    ├── README.md                         # Presentation materials overview
-    ├── ONBOARDING_PRESENTATION_OUTLINE.md # Full presentation outline
-    ├── QUICK_REFERENCE_CARD.md           # Quick reference card
-    └── ONBOARDING_CHECKLIST.md           # Progress tracking checklist
-```
-
----
-
 ## 1. ArduPilot Build Instructions
 
 **Purpose:** Learn to build ArduPilot from source in WSL2/Ubuntu
@@ -195,7 +128,7 @@ AEVEX/
 - [MAVLINK_GUIDE.md](MAVLink_MavlinkRouter/MAVLINK_GUIDE.md) - MAVLink protocol guide
 - [MAVLINK_ROUTER_GUIDE.md](MAVLink_MavlinkRouter/MAVLINK_ROUTER_GUIDE.md) - mavlink-router setup
 - [example_configs/](MAVLink_MavlinkRouter/example_configs/) - Router configuration examples
-- [example_python_scripts/](MAVLink_MavlinkRouter/example_python_scripts/) - Python examples
+- [example_python_scripts/](MAVLink_MavlinkRouter/example_python_scripts/) - Python examples (arm_disarm.py, mavlink_monitor.py, telemetry_logger.py)
 
 **What you'll learn:**
 - MAVLink message structure
@@ -264,7 +197,7 @@ AEVEX/
 - [ONBOARDING_CHECKLIST.md](Slides_Notes/ONBOARDING_CHECKLIST.md) - Progress tracking
 
 **What you'll find:**
-- 8-session presentation outline (2-3 hours total)
+- Presentation outline for structured learning sessions
 - Slide content for each topic
 - Hands-on exercise plans
 - Quick reference card for daily use
@@ -510,7 +443,7 @@ After completing onboarding, consider contributing to ArduPilot:
 **Commit:** 0358a9c210bc6c965006f5d6029239b7033616df
 **Binaries:** https://firmware.ardupilot.org/Plane/stable-4.5.7/
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-04
 **Documentation Version:** 1.0
 
 ---
