@@ -93,7 +93,7 @@ If you prefer manual installation or need to troubleshoot:
 ### Step 1: System Setup
 ```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y git python3 python3-pip
+sudo apt install -y git python3 python3-pip python3-venv
 ```
 
 ### Step 2: Clone Repository
@@ -106,30 +106,36 @@ git checkout Plane-4.5.7
 git submodule update --init --recursive
 ```
 
-### Step 3: Install Prerequisites
+### Step 3: Create Virtual Environment
+```bash
+# Create and activate virtual environment BEFORE installing prerequisites
+# This ensures all Python packages go into the venv
+python3 -m venv ~/.venv-ardupilot
+source ~/.venv-ardupilot/bin/activate
+```
+
+### Step 4: Install Prerequisites
 ```bash
 cd ~/ardupilot
+# With venv activated, all Python packages will install to venv
 ./Tools/environment_install/install-prereqs-ubuntu.sh -y
 . ~/.profile
 
-# Create and activate virtual environment
-python3 -m venv ~/.venv-ardupilot
-source ~/.venv-ardupilot/bin/activate
-
-# Install Python packages in virtual environment
+# Install additional packages
 pip install --upgrade pip pymavlink mavproxy
 ```
 
-### Step 4: Build
+### Step 5: Build
 ```bash
 cd ~/ardupilot/ArduPlane
 ../waf configure --board sitl
 ../waf plane
 ```
 
-### Step 5: Test
+### Step 6: Test
 ```bash
-# Activate virtual environment if not already active
+# Virtual environment should still be active from Step 3
+# If not, activate it:
 source ~/.venv-ardupilot/bin/activate
 
 # Run SITL

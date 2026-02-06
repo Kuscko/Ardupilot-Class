@@ -73,7 +73,7 @@ print_status "System updated"
 # Step 2: Install basic dependencies
 echo ""
 echo "Step 2: Installing basic dependencies..."
-sudo apt install -y git python3 python3-pip
+sudo apt install -y git python3 python3-pip python3-venv
 print_status "Basic dependencies installed"
 
 # Step 3: Clone ArduPilot (if not already cloned)
@@ -122,35 +122,65 @@ else
     exit 1
 fi
 
-# Step 5: Patch install-prereqs-ubuntu.sh for python-argparse compatibility
+# Step 5: Create and activate virtual environment
 echo ""
-echo "Step 5: Patching install script for python-argparse compatibility..."
+echo "Step 5: Setting up Python virtual environment..."
+
+# Check if venv exists and is valid
+if [ -d "$VENV_PATH" ]; then
+    if [ ! -f "$VENV_PATH/bin/activate" ]; then
+        print_warning "Incomplete virtual environment found, removing..."
+        rm -rf "$VENV_PATH"
+    else
+        print_warning "Virtual environment already exists at $VENV_PATH"
+    fi
+fi
+
+if [ ! -d "$VENV_PATH" ]; then
+    echo -e "${BLUE}Creating virtual environment at $VENV_PATH${NC}"
+    python3 -m venv "$VENV_PATH"
+    print_status "Virtual environment created"
+fi
+
+echo -e "${BLUE}Activating virtual environment...${NC}"
+source "$VENV_PATH/bin/activate"
+print_status "Virtual environment activated"
+
+# Step 6: Patch install-prereqs-ubuntu.sh for venv compatibility
+echo ""
+echo "Step 6: Patching install script for virtual environment compatibility..."
 INSTALL_SCRIPT="./Tools/environment_install/install-prereqs-ubuntu.sh"
 
 # Detect Ubuntu version (for logging only)
 UBUNTU_CODENAME=$(lsb_release -sc 2>/dev/null || echo "unknown")
 print_status "Detected Ubuntu codename: $UBUNTU_CODENAME"
 
-# Always apply python-argparse fix regardless of Ubuntu version
-# The python-argparse package is deprecated and causes issues on many systems
-print_warning "Applying python-argparse compatibility fix..."
+print_warning "Applying compatibility fixes..."
 
 # Backup original script
 cp "$INSTALL_SCRIPT" "$INSTALL_SCRIPT.backup"
 
-# Remove python-argparse from the package list entirely
-# This is safer than trying to patch conditional logic
+# Fix 1: Remove python-argparse (deprecated package)
 sed -i 's/python-argparse//g' "$INSTALL_SCRIPT"
 
-# Also patch the conditional check to include current codename (belt and suspenders)
+# Fix 2: Remove --user flag from pip commands (conflicts with venv)
+# Replace the PIP_USER_ARGUMENT variable to be empty instead of --user
+sed -i 's/PIP_USER_ARGUMENT="--user"/PIP_USER_ARGUMENT=""/g' "$INSTALL_SCRIPT"
+sed -i 's/PIP_USER_ARGUMENT=--user/PIP_USER_ARGUMENT=""/g' "$INSTALL_SCRIPT"
+# Also catch direct --user usage
+sed -i 's/pip3 install --user/pip3 install/g' "$INSTALL_SCRIPT"
+sed -i 's/pip install --user/pip install/g' "$INSTALL_SCRIPT"
+
+# Fix 3: Patch the conditional check to include current codename
 sed -i "s/if \[ \$RELEASE_CODENAME != \"mantic\" \]; then/if [ \$RELEASE_CODENAME != \"mantic\" ] \&\& [ \$RELEASE_CODENAME != \"noble\" ] \&\& [ \$RELEASE_CODENAME != \"oracular\" ] \&\& [ \$RELEASE_CODENAME != \"$UBUNTU_CODENAME\" ]; then/g" "$INSTALL_SCRIPT"
 
-print_status "Install script patched - python-argparse removed"
+print_status "Install script patched for virtual environment use"
 
-# Step 6: Install prerequisites
+# Step 7: Install prerequisites (Python packages will install to venv)
 echo ""
-echo "Step 6: Installing ArduPilot prerequisites..."
+echo "Step 7: Installing ArduPilot prerequisites..."
 echo "This may take several minutes..."
+echo -e "${BLUE}Note: Python packages will be installed to the virtual environment${NC}"
 ./Tools/environment_install/install-prereqs-ubuntu.sh -y
 print_status "Prerequisites installed"
 
@@ -165,31 +195,23 @@ if [ -f "$HOME/.bashrc" ]; then
 fi
 print_status "Profile reloaded"
 
-# Step 7: Create and activate virtual environment
+# Step 8: Install additional Python packages
 echo ""
-echo "Step 7: Setting up Python virtual environment..."
-if [ ! -d "$VENV_PATH" ]; then
-    echo -e "${BLUE}Creating virtual environment at $VENV_PATH${NC}"
-    python3 -m venv "$VENV_PATH"
-    print_status "Virtual environment created"
-else
-    print_warning "Virtual environment already exists at $VENV_PATH"
-fi
-
-echo -e "${BLUE}Activating virtual environment...${NC}"
-source "$VENV_PATH/bin/activate"
-print_status "Virtual environment activated"
-
-# Step 8: Install Python packages
-echo ""
-echo "Step 8: Installing Python MAVLink packages..."
+echo "Step 8: Installing additional Python packages..."
 pip install --upgrade pip
 pip install --upgrade pymavlink mavproxy
-print_status "Python packages installed"
+print_status "Additional Python packages installed"
 
-# Step 9: Build SITL
+# Step 9: Verify virtual environment packages
 echo ""
-echo "Step 9: Building ArduPlane for SITL..."
+echo "Step 9: Verifying Python packages in virtual environment..."
+echo -e "${BLUE}Checking package locations:${NC}"
+python -c "import pymavlink; print('pymavlink location:', pymavlink.__file__)"
+print_status "Packages verified in virtual environment"
+
+# Step 10: Build SITL
+echo ""
+echo "Step 10: Building ArduPlane for SITL..."
 cd "$INSTALL_DIR"
 echo "Configuring build system..."
 ./waf configure --board sitl
@@ -198,9 +220,9 @@ echo "Building (this may take 5-15 minutes on first build)..."
 ./waf plane
 print_status "Build completed successfully"
 
-# Step 10: Verify installation
+# Step 11: Verify installation
 echo ""
-echo "Step 10: Verifying installation..."
+echo "Step 11: Verifying installation..."
 BINARY_PATH="$INSTALL_DIR/build/sitl/bin/arduplane"
 if [ -f "$BINARY_PATH" ]; then
     print_status "Binary found: $BINARY_PATH"
