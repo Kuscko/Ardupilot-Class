@@ -2,7 +2,7 @@
 # ArduPilot Plane 4.5.7 Installation Script
 # Target: Ubuntu 22.04 LTS (WSL2)
 # Version: 1.0
-# Last Updated: 2026-02-03
+# Last Updated: 2026-02-05
 
 set -e  # Exit on error
 
@@ -10,11 +10,15 @@ set -e  # Exit on error
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Target version
 ARDUPILOT_TAG="Plane-4.5.7"
 ARDUPILOT_COMMIT="0358a9c210bc6c965006f5d6029239b7033616df"
+
+# Virtual environment path
+VENV_PATH="$HOME/.venv-ardupilot"
 
 echo -e "${GREEN}=====================================${NC}"
 echo -e "${GREEN}ArduPilot Plane 4.5.7 Installer${NC}"
@@ -161,15 +165,31 @@ if [ -f "$HOME/.bashrc" ]; then
 fi
 print_status "Profile reloaded"
 
-# Step 7: Install Python packages
+# Step 7: Create and activate virtual environment
 echo ""
-echo "Step 7: Installing Python MAVLink packages..."
-python3 -m pip install --user --upgrade pymavlink mavproxy
+echo "Step 7: Setting up Python virtual environment..."
+if [ ! -d "$VENV_PATH" ]; then
+    echo -e "${BLUE}Creating virtual environment at $VENV_PATH${NC}"
+    python3 -m venv "$VENV_PATH"
+    print_status "Virtual environment created"
+else
+    print_warning "Virtual environment already exists at $VENV_PATH"
+fi
+
+echo -e "${BLUE}Activating virtual environment...${NC}"
+source "$VENV_PATH/bin/activate"
+print_status "Virtual environment activated"
+
+# Step 8: Install Python packages
+echo ""
+echo "Step 8: Installing Python MAVLink packages..."
+pip install --upgrade pip
+pip install --upgrade pymavlink mavproxy
 print_status "Python packages installed"
 
-# Step 8: Build SITL
+# Step 9: Build SITL
 echo ""
-echo "Step 8: Building ArduPlane for SITL..."
+echo "Step 9: Building ArduPlane for SITL..."
 cd "$INSTALL_DIR"
 echo "Configuring build system..."
 ./waf configure --board sitl
@@ -178,9 +198,9 @@ echo "Building (this may take 5-15 minutes on first build)..."
 ./waf plane
 print_status "Build completed successfully"
 
-# Step 9: Verify installation
+# Step 10: Verify installation
 echo ""
-echo "Step 9: Verifying installation..."
+echo "Step 10: Verifying installation..."
 BINARY_PATH="$INSTALL_DIR/build/sitl/bin/arduplane"
 if [ -f "$BINARY_PATH" ]; then
     print_status "Binary found: $BINARY_PATH"
@@ -198,13 +218,24 @@ echo ""
 echo "Installation directory: $INSTALL_DIR"
 echo "ArduPilot version: $ARDUPILOT_TAG"
 echo "Commit: $CURRENT_COMMIT"
+echo "Virtual environment: $VENV_PATH"
+echo ""
+echo -e "${YELLOW}Important: Virtual Environment Setup${NC}"
+echo "To use ArduPilot tools, activate the virtual environment:"
+echo "  source ~/.venv-ardupilot/bin/activate"
+echo ""
+echo "For automatic activation, add to your ~/.bashrc:"
+echo "  if [ -f \"\$HOME/.venv-ardupilot/bin/activate\" ] && [ -z \"\$VIRTUAL_ENV\" ]; then"
+echo "      source \"\$HOME/.venv-ardupilot/bin/activate\""
+echo "  fi"
 echo ""
 echo "Next steps:"
-echo "  1. Test SITL:"
-echo "     cd ~/ardupilot/ArduPlane"
+echo "  1. Activate the virtual environment (or add auto-activation to ~/.bashrc)"
+echo "  2. Test SITL:"
+echo "     cd ~/ardupilot"
 echo "     Tools/autotest/sim_vehicle.py -v ArduPlane --console --map"
 echo ""
-echo "  2. Review onboarding documentation"
-echo "  3. Try example mission plans and Lua scripts"
+echo "  3. Review onboarding documentation"
+echo "  4. Try example mission plans and Lua scripts"
 echo ""
 print_status "Happy flying!"

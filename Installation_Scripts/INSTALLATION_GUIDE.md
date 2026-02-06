@@ -111,7 +111,13 @@ git submodule update --init --recursive
 cd ~/ardupilot
 ./Tools/environment_install/install-prereqs-ubuntu.sh -y
 . ~/.profile
-python3 -m pip install --user --upgrade pymavlink mavproxy
+
+# Create and activate virtual environment
+python3 -m venv ~/.venv-ardupilot
+source ~/.venv-ardupilot/bin/activate
+
+# Install Python packages in virtual environment
+pip install --upgrade pip pymavlink mavproxy
 ```
 
 ### Step 4: Build
@@ -123,6 +129,10 @@ cd ~/ardupilot/ArduPlane
 
 ### Step 5: Test
 ```bash
+# Activate virtual environment if not already active
+source ~/.venv-ardupilot/bin/activate
+
+# Run SITL
 Tools/autotest/sim_vehicle.py -v ArduPlane --console --map
 ```
 
@@ -149,10 +159,14 @@ cd ~
 
 ### Issue: Python package installation fails
 
-**Fix:**
+**Fix:** Use the virtual environment:
 ```bash
-python3 -m pip install --user --upgrade pip
-python3 -m pip install --user --upgrade pymavlink mavproxy
+# Activate virtual environment
+source ~/.venv-ardupilot/bin/activate
+
+# Update pip and install packages
+pip install --upgrade pip
+pip install --upgrade pymavlink mavproxy
 ```
 
 ### Issue: Build fails with submodule errors
@@ -191,6 +205,10 @@ ls -lh ~/ardupilot/build/sitl/bin/arduplane
 
 ### Check MAVProxy
 ```bash
+# Activate virtual environment
+source ~/.venv-ardupilot/bin/activate
+
+# Check MAVProxy version
 mavproxy.py --version
 # Should show MAVProxy version
 ```
@@ -216,7 +234,11 @@ git submodule update --init --recursive
 
 ### Update Python Packages
 ```bash
-python3 -m pip install --user --upgrade pymavlink mavproxy
+# Activate virtual environment
+source ~/.venv-ardupilot/bin/activate
+
+# Update packages
+pip install --upgrade pymavlink mavproxy
 ```
 
 ### Rebuild
@@ -241,11 +263,14 @@ cd ~/ardupilot/ArduPlane
 
 ### Installation
 ```bash
+# Activate virtual environment
+source ~/.venv-ardupilot/bin/activate
+
 # Required
-python3 -m pip install --user --upgrade pymavlink mavproxy
+pip install --upgrade pymavlink mavproxy
 
 # Optional
-python3 -m pip install --user --upgrade matplotlib scipy opencv-python
+pip install --upgrade matplotlib scipy opencv-python
 ```
 
 ---
@@ -349,5 +374,5 @@ wsl --set-version Ubuntu-22.04 2
 
 ---
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-05
 **Target Version:** ArduPilot Plane 4.5.7
