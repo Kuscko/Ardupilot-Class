@@ -535,7 +535,7 @@ libraries/
 
 **Prerequisites for participants:**
 - WSL2 installed
-- Ubuntu 22.04 LTS ready
+- Ubuntu 24.04 LTS ready
 - Internet access
 - Text editor (VS Code recommended)
 

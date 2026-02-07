@@ -1,7 +1,8 @@
 #!/bin/bash
 # ArduPilot Plane 4.5.7 Installation Script
-# Target: Ubuntu 22.04 LTS (WSL2)
+# Target: Ubuntu 22.04 LTS / Ubuntu 24.04 LTS (WSL2)
 # Last Updated: 2026-02-06
+# Verified: ArduPilot 4.5.7 works on Ubuntu 24.04
 
 set -e
 
@@ -148,6 +149,22 @@ echo "Step 8: Installing additional Python packages..."
 pip install --upgrade pip pymavlink mavproxy
 print_status "Python packages installed"
 
+# Step 8.5: Enable system GUI packages for MAVProxy modules
+echo ""
+echo "Step 8.5: Configuring GUI module support for MAVProxy..."
+# MAVProxy console and map modules require wxPython which is difficult to build
+# Use system packages instead by adding system site-packages to venv path
+echo "import site; site.addsitedir('/usr/lib/python3/dist-packages')" > "$VENV_PATH/lib/python3.12/site-packages/system_packages.pth"
+print_status "GUI module support configured"
+
+# Verify wxPython is accessible
+if python -c "import wx" 2>/dev/null; then
+    print_status "wxPython accessible from virtual environment"
+else
+    print_warning "wxPython not found - console and map modules may not work"
+    print_warning "Install with: sudo apt install python3-wxgtk4.0"
+fi
+
 # Step 9: Verify installation
 echo ""
 echo "Step 9: Verifying Python packages..."
@@ -196,8 +213,14 @@ echo "          source \"\$HOME/.venv-ardupilot/bin/activate\""
 echo "      fi"
 echo "  fi"
 echo ""
+echo -e "${YELLOW}Configure Display (for GUI windows):${NC}"
+echo "  WSLg (Windows 11) - No configuration needed! Already works."
+echo "  XLaunch (Windows 10/11) - See setup_x_server.md"
+echo ""
 echo -e "${YELLOW}Test SITL:${NC}"
 echo "  cd ~/ardupilot"
 echo "  Tools/autotest/sim_vehicle.py -v ArduPlane --console --map"
+echo ""
+echo -e "${GREEN}Note: Verified working on Ubuntu 24.04 LTS${NC}"
 echo ""
 print_status "Happy flying!"

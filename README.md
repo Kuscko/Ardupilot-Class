@@ -6,6 +6,11 @@ This repository contains a complete onboarding environment for new engineers lea
 
 **Target Firmware:** Plane 4.5.7 (commit: 0358a9c210bc6c965006f5d6029239b7033616df)
 
+**Platform:** Ubuntu 24.04 LTS (WSL2)
+- **Verified Working** on Ubuntu 24.04 LTS as of 2026-02-06
+- Python 3.12.3 fully compatible
+- WSLg GUI support out-of-the-box (Windows 11)
+
 ---
 
 ## Quick Start
@@ -33,7 +38,7 @@ This repository contains a complete onboarding environment for new engineers lea
 
 ## 1. ArduPilot Build Instructions
 
-**Purpose:** Learn to build ArduPilot from source in WSL2/Ubuntu
+**Purpose:** Learn to build ArduPilot from source in WSL2/Ubuntu 24.04
 
 **Key Files:**
 - [BUILD_GUIDE.md](ArduPilot_Build_Instructions/BUILD_GUIDE.md) - Complete step-by-step build guide

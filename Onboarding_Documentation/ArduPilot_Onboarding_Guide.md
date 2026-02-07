@@ -118,7 +118,7 @@ ArduPilot development is typically done in a Linux environment. On Windows, WSL2
 #### Installation Steps
 
 1. Open Control Panel → Programs → Turn Windows features on or off → Check 'Windows Subsystem for Linux' → OK → Restart
-2. Open Microsoft Store, search 'Ubuntu 22.04 LTS', install it
+2. Open Microsoft Store, search 'Ubuntu 24.04 LTS', install it
 3. Launch Ubuntu, create username and password when prompted
 4. Run the update command shown below
 
@@ -201,7 +201,7 @@ On first run, SITL builds the required binaries. Three windows appear:
 7. Try RTL mode: `mode RTL`
 8. Disarm: `disarm`
 
-> ✅ **CHECKPOINT:** Take a screenshot showing SITL with map, console, and command prompt visible.
+> **CHECKPOINT:** Take a screenshot showing SITL with map, console, and command prompt visible.
 
 ---
 
@@ -502,7 +502,7 @@ Key points: Script returns function and interval (milliseconds). Function called
 | param:set('NAME', value) | Set parameter value |
 | vehicle:set_mode(num) | Change flight mode |
 
-> ✅ **EXERCISE:** Create a Lua script monitoring altitude. When above SCR_USER1 parameter value, send warning to GCS. Test in SITL.
+> **EXERCISE:** Create a Lua script monitoring altitude. When above SCR_USER1 parameter value, send warning to GCS. Test in SITL.
 
 ---
 

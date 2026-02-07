@@ -1,6 +1,6 @@
 # ArduPilot Installation Scripts
 
-Automated installation scripts for ArduPilot Plane 4.5.7 on Ubuntu 22.04/WSL2.
+Automated installation scripts for ArduPilot Plane 4.5.7 on Ubuntu 24.04 LTS (WSL2).
 
 ## Quick Start
 
@@ -14,7 +14,7 @@ chmod +x install_ardupilot_plane_4.5.7.sh
 
 ## Prerequisites
 
-- Ubuntu 22.04 LTS (WSL2 recommended)
+- Ubuntu 24.04 LTS (WSL2 recommended)
 - Internet connection (~500MB download)
 - Sudo privileges
 - 10GB+ free disk space
@@ -87,18 +87,6 @@ if [ -f "$HOME/.venv-ardupilot/bin/activate" ]; then
 fi
 ```
 
-## X Server (WSL2 Only)
-
-For graphical SITL windows, you need an X server. See [setup_x_server.md](setup_x_server.md).
-
-**Quick setup:**
-1. Install VcXsrv on Windows
-2. Add to ~/.bashrc:
-   ```bash
-   export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
-   ```
-3. Test with `xeyes`
-
 ## Troubleshooting
 
 ### Permission Denied
@@ -123,12 +111,12 @@ source ~/.venv-ardupilot/bin/activate
 2. Verify: `echo $DISPLAY`
 3. See [setup_x_server.md](setup_x_server.md)
 
-## Python 3.10.12 Compatibility
+## Python 3.12 Compatibility
 
-Python 3.10.12 (Ubuntu 22.04 default) is **fully compatible** with ArduPilot Plane 4.5.7.
+Python 3.12.3 (Ubuntu 24.04 default) is **fully compatible** with ArduPilot Plane 4.5.7.
 
 - ArduPilot requires: Python 3.8.0+
-- Your system has: Python 3.10.12 ✓
+- Ubuntu 24.04 has: Python 3.12.3 ✓
 
 ## Documentation
 

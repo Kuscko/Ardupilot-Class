@@ -9,7 +9,7 @@ Use this checklist to track your progress through the onboarding process.
 ### Days 1-2: Development Environment and SITL
 
 - [ ] Install WSL2 on Windows
-- [ ] Install Ubuntu 22.04 LTS in WSL
+- [ ] Install Ubuntu 24.04 LTS in WSL
 - [ ] Update system packages (`sudo apt update && sudo apt upgrade`)
 - [ ] Install git, python3, python3-pip
 - [ ] Clone ArduPilot repository to `~/ardupilot`

@@ -27,9 +27,9 @@ This guide walks you through building ArduPilot Plane 4.5.7 from source in WSL2/
    - Check "Windows Subsystem for Linux"
    - Restart when prompted
 
-3. Install Ubuntu 22.04 LTS:
+3. Install Ubuntu 24.04 LTS:
    - Open Microsoft Store
-   - Search "Ubuntu 22.04 LTS"
+   - Search "Ubuntu 24.04 LTS"
    - Click Install
    - Launch Ubuntu and create username/password
 
@@ -79,48 +79,118 @@ git submodule update --init --recursive
 
 ---
 
-## Step 3: Install Build Prerequisites
+## Step 3: Create Virtual Environment (Recommended)
+
+Using a virtual environment isolates Python packages and prevents system conflicts:
 
 ```bash
-# Run the ArduPilot prerequisite installer
+# Create virtual environment
+python3 -m venv ~/.venv-ardupilot
+
+# Activate virtual environment
+source ~/.venv-ardupilot/bin/activate
+```
+
+**For permanent activation**, add to `~/.bashrc`:
+```bash
+# Auto-activate ArduPilot virtual environment
+if [ -f "$HOME/.venv-ardupilot/bin/activate" ]; then
+    if ! type deactivate &> /dev/null; then
+        source "$HOME/.venv-ardupilot/bin/activate"
+    fi
+fi
+```
+
+---
+
+## Step 4: Patch Prerequisites Script
+
+Patch the ArduPilot prerequisites script for venv compatibility:
+
+```bash
+cd ~/ardupilot
+
+# Backup original script
+cp ./Tools/environment_install/install-prereqs-ubuntu.sh ./Tools/environment_install/install-prereqs-ubuntu.sh.backup
+
+# Get Ubuntu codename (noble for 24.04)
+UBUNTU_CODENAME=$(lsb_release -sc)
+
+# Apply patches
+sed -i 's/python-argparse//g' ./Tools/environment_install/install-prereqs-ubuntu.sh
+sed -i 's/PIP_USER_ARGUMENT="--user"/PIP_USER_ARGUMENT=""/g' ./Tools/environment_install/install-prereqs-ubuntu.sh
+sed -i 's/pip3 install --user/pip3 install/g' ./Tools/environment_install/install-prereqs-ubuntu.sh
+sed -i 's/pip install --user/pip install/g' ./Tools/environment_install/install-prereqs-ubuntu.sh
+sed -i "s/if \[ \$RELEASE_CODENAME != \"mantic\" \]; then/if [ \$RELEASE_CODENAME != \"mantic\" ] \&\& [ \$RELEASE_CODENAME != \"noble\" ] \&\& [ \$RELEASE_CODENAME != \"$UBUNTU_CODENAME\" ]; then/g" ./Tools/environment_install/install-prereqs-ubuntu.sh
+```
+
+**What these patches do:**
+- Remove obsolete `python-argparse` package
+- Install packages in venv instead of `--user`
+- Add support for Ubuntu 24.04 (noble)
+
+---
+
+## Step 5: Install Build Prerequisites
+
+```bash
+# Make sure venv is activated
+source ~/.venv-ardupilot/bin/activate
+
+# Run the patched prerequisites installer
 cd ~/ardupilot
 ./Tools/environment_install/install-prereqs-ubuntu.sh -y
 
 # Reload your profile to apply environment changes
-. ~/.profile
+source ~/.profile
+source ~/.bashrc
 
 # Install Python MAVLink packages
-python3 -m pip install --user --upgrade pymavlink mavproxy
+pip install --upgrade pip pymavlink mavproxy
 ```
 
 This script installs:
 - ARM cross-compiler toolchains
-- Python development packages
+- Python development packages (including python3-wxgtk4.0)
 - MAVProxy (ground control software)
-- Other build dependencies
-
-**Note:** If you encounter an error about `python-argparse` not being available, this is because the `argparse` module has been part of Python's standard library since Python 2.7/3.2 and the separate package is obsolete. Apply this fix before running the installer:
-
-```bash
-cd ~/ardupilot
-sed -i 's/python-argparse//g' Tools/environment_install/install-prereqs-ubuntu.sh
-```
-
-See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for details.
+- Build tools and libraries
 
 ---
 
-## Step 4: Build ArduPilot for SITL
+## Step 6: Configure GUI Module Support
+
+**CRITICAL for MAVProxy console and map windows:**
+
+MAVProxy modules require wxPython, which is difficult to build from source. Instead, make the system wxPython accessible to your virtual environment:
 
 ```bash
-# Navigate to ArduPlane directory
-cd ~/ardupilot/ArduPlane
+# Add system packages to venv path
+echo "import site; site.addsitedir('/usr/lib/python3/dist-packages')" > ~/.venv-ardupilot/lib/python3.12/site-packages/system_packages.pth
+
+# Verify wxPython is accessible
+python -c "import wx; print('wxPython version:', wx.__version__)"
+```
+
+**Expected output:** `wxPython version: 4.2.1`
+
+If wxPython is not found:
+```bash
+sudo apt install -y python3-wxgtk4.0 python3-matplotlib python3-opencv
+```
+
+---
+
+## Step 7: Build ArduPilot for SITL
+
+```bash
+# Navigate to ArduPilot directory
+cd ~/ardupilot
 
 # Configure for SITL (Software-In-The-Loop simulation)
-../waf configure --board sitl
+./waf configure --board sitl
 
 # Build ArduPlane
-../waf plane
+./waf plane
 ```
 
 **First build will take 5-15 minutes.** Subsequent builds are much faster (incremental compilation).
@@ -137,7 +207,27 @@ Binary location: `~/ardupilot/build/sitl/bin/arduplane`
 
 ---
 
-## Step 5: Build for Hardware (Optional)
+## Step 8: Configure Display (WSLg or VcXsrv)
+
+**For Windows 11 / WSL 2.0+ (Recommended - WSLg):**
+
+WSLg works out of the box! Just make sure your `~/.bashrc` does NOT override DISPLAY:
+
+```bash
+# Verify DISPLAY is set automatically
+echo $DISPLAY  # Should show: :0
+
+# Make sure these lines are commented out in ~/.bashrc:
+# export DISPLAY=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}'):0
+```
+
+**For Windows 10 (VcXsrv/XLaunch):**
+
+See [setup_x_server.md](../Installation_Scripts/setup_x_server.md) for detailed VcXsrv configuration.
+
+---
+
+## Step 9: Build for Hardware (Optional)
 
 To build for actual flight controller hardware:
 
@@ -162,18 +252,28 @@ Output location: `~/ardupilot/build/CubeOrangePlus/bin/arduplane.apj`
 
 ---
 
-## Step 6: Verify SITL Installation
+## Step 10: Verify SITL Installation
 
 ```bash
+# Activate venv (if not already active)
+source ~/.venv-ardupilot/bin/activate
+
 # Start SITL to verify everything works
-cd ~/ardupilot/ArduPlane
+cd ~/ardupilot
 Tools/autotest/sim_vehicle.py -v ArduPlane --console --map
 ```
 
 **Expected behavior:**
-- Three windows should open: MAVProxy command prompt, console, and map
-- After a few seconds, you should see "GPS: 3D Fix" in the console
-- Map should show aircraft position
+- **Three windows** should open:
+  1. ArduPlane terminal (simulator)
+  2. MAVProxy console (command interface)
+  3. Map window (aircraft position)
+- After a few seconds: "GPS: 3D Fix" in the console
+- Map shows aircraft at CMAC location
+
+**If only 1 window opens:** MAVProxy modules failed to load. Go back to Step 6.
+
+**If "Can't open display" error:** Check Step 8 for display configuration.
 
 Press Ctrl+C to exit SITL.
 
@@ -241,18 +341,33 @@ chmod +x Tools/autotest/sim_vehicle.py
 chmod +x waf
 ```
 
-### Issue: Display/X11 Errors in SITL
+### Issue: MAVProxy Modules Not Loading
 
-**Symptoms:** Map window doesn't open, X11 errors
+**Symptoms:**
+```
+Failed to load module: No module named 'console'
+Failed to load module: No module named 'map'
+```
+Only ArduPlane terminal appears, no console or map windows.
 
 **Solution:**
-Install X server for Windows:
-- Download and install VcXsrv or Xming
-- In WSL, add to `~/.bashrc`:
-  ```bash
-  export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
-  ```
-- Reload: `source ~/.bashrc`
+Follow Step 6 to configure GUI module support. This makes system wxPython accessible to the venv.
+
+### Issue: Display/X11 Errors in SITL
+
+**Symptoms:** "Can't open display" error
+
+**Solution:**
+
+**For Windows 11 (WSLg):**
+```bash
+# Make sure DISPLAY override is commented out in ~/.bashrc
+source ~/.bashrc
+echo $DISPLAY  # Should show :0
+```
+
+**For Windows 10 (VcXsrv):**
+See [setup_x_server.md](../Installation_Scripts/setup_x_server.md) - VcXsrv must be started with `-listen tcp` flag for WSL2.
 
 ---
 
@@ -312,5 +427,6 @@ After successful build:
 
 ---
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-06
 **ArduPilot Version:** Plane 4.5.7 (commit 0358a9c210bc)
+**Verified:** Ubuntu 24.04 LTS with Python 3.12.3
