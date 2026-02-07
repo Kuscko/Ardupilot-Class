@@ -16,7 +16,7 @@ SITL (Software-In-The-Loop) is a simulator that runs the actual ArduPilot firmwa
 ### Basic Startup
 
 ```bash
-cd ~/ardupilot/ArduPlane
+cd ~/ardupilot
 Tools/autotest/sim_vehicle.py -v ArduPlane --console --map
 ```
 

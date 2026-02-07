@@ -15,17 +15,6 @@ VENV_PATH="$HOME/.venv-ardupilot"
 
 echo -e "${GREEN}Installing MAVProxy and dependencies...${NC}"
 
-# Create or verify virtual environment
-if [ ! -d "$VENV_PATH" ]; then
-    echo -e "${BLUE}Creating virtual environment...${NC}"
-    python3 -m venv "$VENV_PATH"
-else
-    echo -e "${YELLOW}Using existing virtual environment${NC}"
-fi
-
-# Activate virtual environment
-source "$VENV_PATH/bin/activate"
-
 # Update pip and install packages
 echo -e "${BLUE}Installing packages...${NC}"
 pip install --upgrade pip pymavlink mavproxy
