@@ -235,6 +235,35 @@ arm throttle force
 
 ---
 
+## VSCode Integration Issues
+
+### Virtual environment not activating in VSCode terminals
+
+**Symptoms:**
+- No `(.venv-ardupilot)` prefix when opening new VSCode terminal
+- Must manually activate venv each time
+
+**Cause:** VSCode sets `VIRTUAL_ENV` variable without sourcing the activation script
+
+**Fix:**
+
+Update your `~/.bashrc` and `~/.profile` to check for actual activation:
+
+```bash
+# Auto-activate ArduPilot virtual environment
+# Check if venv is actually activated (not just VIRTUAL_ENV set)
+if [ -f "$HOME/.venv-ardupilot/bin/activate" ]; then
+    # Check if the deactivate function exists (created by activate script)
+    if ! type deactivate &> /dev/null; then
+        source "$HOME/.venv-ardupilot/bin/activate"
+    fi
+fi
+```
+
+This checks for the `deactivate` function which only exists when the venv is properly activated, rather than just checking if `VIRTUAL_ENV` is empty.
+
+---
+
 ## Performance Issues
 
 ### Build is very slow (> 15 minutes)
@@ -378,4 +407,4 @@ When asking for help, include:
 
 ---
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-06

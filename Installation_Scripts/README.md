@@ -1,339 +1,156 @@
-# Automated Installation Scripts
+# ArduPilot Installation Scripts
 
-## Overview
-
-These scripts automate the installation of ArduPilot Plane 4.5.7 development environment on Ubuntu 22.04/WSL2, including all dependencies, build tools, Python packages, and ground station software [1]. The scripts eliminate manual configuration steps and ensure consistent environment setup across different systems.
-
-## Prerequisites
-
-Before running installation scripts, ensure you have:
-
-- Ubuntu 22.04 LTS (native Linux or WSL2 on Windows)
-- Internet connection (downloads ~500MB of packages)
-- Sudo privileges (for package installation)
-- 10GB+ free disk space
-
-## What You'll Learn
-
-By completing this module, you will:
-
-- Use automated scripts to set up ArduPilot development environment
-- Understand what dependencies ArduPilot requires and why
-- Configure X server for WSL2 to display SITL windows
-- Troubleshoot common installation issues
-- Verify successful installation and test your environment
+Automated installation scripts for ArduPilot Plane 4.5.7 on Ubuntu 22.04/WSL2.
 
 ## Quick Start
 
-### Option 1: Complete Installation (Recommended)
-
-This script installs everything needed for ArduPilot development:
-
 ```bash
-cd ~/Desktop/Work/AEVEX/Installation_Scripts
+cd ~
 chmod +x install_ardupilot_plane_4.5.7.sh
 ./install_ardupilot_plane_4.5.7.sh
 ```
 
-**What it installs:**
-- Build tools (gcc, g++, make, cmake)
-- Python 3 and development packages
-- ArduPilot build dependencies
-- ArduPilot Plane 4.5.7 source code
-- MAVProxy ground station
-- pymavlink library
-- Supporting Python packages
+**Time:** 15-30 minutes
 
-**Time:** 15-30 minutes (depending on connection speed)
+## Prerequisites
 
-### Option 2: Individual Components
+- Ubuntu 22.04 LTS (WSL2 recommended)
+- Internet connection (~500MB download)
+- Sudo privileges
+- 10GB+ free disk space
 
-Install only specific components:
+## What Gets Installed
+
+| Component | Description |
+|-----------|-------------|
+| Build tools | GCC, G++, Make, WAF |
+| Python 3.10+ | With pip and venv |
+| ArduPilot | Plane 4.5.7 source code |
+| Python packages | pymavlink, MAVProxy |
+| Libraries | libxml2, libxslt, git |
+
+## Available Scripts
+
+### install_ardupilot_plane_4.5.7.sh
+
+Complete ArduPilot development environment setup.
 
 ```bash
-# Install only MAVProxy
+chmod +x install_ardupilot_plane_4.5.7.sh
+./install_ardupilot_plane_4.5.7.sh
+```
+
+### install_mavproxy.sh
+
+Install or update MAVProxy only.
+
+```bash
 chmod +x install_mavproxy.sh
 ./install_mavproxy.sh
 ```
 
-## Complete Installation Guide
+## Verification
 
-See **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** for comprehensive step-by-step instructions covering:
-
-- Pre-installation system preparation
-- Running installation scripts
-- Environment variable configuration
-- Post-installation verification
-- Troubleshooting failed installations
-
-## Hands-On Practice
-
-### Exercise 1: Fresh Installation
-
-Perform a complete installation and verify success:
+After installation:
 
 ```bash
-# Step 1: Run installer
-cd ~/Desktop/Work/AEVEX/Installation_Scripts
-./install_ardupilot_plane_4.5.7.sh
+# Activate virtual environment
+source ~/.venv-ardupilot/bin/activate
 
-# Step 2: Reload shell environment
-source ~/.bashrc
-
-# Step 3: Verify ArduPilot installation
+# Verify version
 cd ~/ardupilot
 git log --oneline -1
-# Should show: 0358a9c2 ArduPlane: update version to 4.5.7
+# Expected: 0358a9c2 ArduPlane: update version to 4.5.7
 
-# Step 4: Verify MAVProxy
-sim_vehicle.py --version
-# Should show: sim_vehicle.py version ...
-
-# Step 5: Test SITL
-cd ~/ardupilot/ArduPlane
-sim_vehicle.py
+# Test SITL
+Tools/autotest/sim_vehicle.py -v ArduPlane --console --map
 ```
 
-**Expected Result:** SITL starts successfully with console, map, and MAVProxy windows
+## Virtual Environment
 
-### Exercise 2: Validate Python Environment
+All Python packages are installed in an isolated virtual environment at `~/.venv-ardupilot`.
 
-Check that all Python packages are correctly installed:
-
+**Manual activation:**
 ```bash
-# List MAVLink-related packages
-pip3 list | grep -E '(pymavlink|MAVProxy|dronekit)'
-
-# Test pymavlink import
-python3 -c "import pymavlink; print('pymavlink:', pymavlink.__version__)"
-
-# Test MAVProxy import
-python3 -c "from MAVProxy import mavproxy; print('MAVProxy installed')"
+source ~/.venv-ardupilot/bin/activate
 ```
 
-**Expected Output:**
-```
-pymavlink           2.4.xx
-MAVProxy            1.8.xx
-pymavlink: 2.4.xx
-MAVProxy installed
-```
-
-### Exercise 3: Verify Build System
-
-Test that the build system works correctly:
-
+**Auto-activation (add to ~/.bashrc):**
 ```bash
-cd ~/ardupilot
-
-# Check WAF is executable
-./waf --version
-
-# Configure for SITL
-./waf configure --board sitl
-
-# Build ArduPlane (tests compiler and dependencies)
-./waf plane
-
-# Verify build output
-ls -lh build/sitl/bin/arduplane
+# Auto-activate ArduPilot virtual environment
+# Check if venv is actually activated (not just VIRTUAL_ENV set)
+if [ -f "$HOME/.venv-ardupilot/bin/activate" ]; then
+    # Check if the deactivate function exists (created by activate script)
+    if ! type deactivate &> /dev/null; then
+        source "$HOME/.venv-ardupilot/bin/activate"
+    fi
+fi
 ```
 
-**Expected Result:** Successfully configured and built ArduPlane binary
+## X Server (WSL2 Only)
 
-## X Server Setup for WSL2
+For graphical SITL windows, you need an X server. See [setup_x_server.md](setup_x_server.md).
 
-Windows users running WSL2 need an X server to display SITL map and console windows.
+**Quick setup:**
+1. Install VcXsrv on Windows
+2. Add to ~/.bashrc:
+   ```bash
+   export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
+   ```
+3. Test with `xeyes`
 
-### Quick Setup
+## Troubleshooting
 
-1. Install VcXsrv or X410 on Windows
-2. Configure DISPLAY variable in WSL2
-3. Test X11 forwarding
-
-See **[setup_x_server.md](setup_x_server.md)** for detailed instructions with screenshots.
-
-### Verify X Server
-
-Test that X11 forwarding works:
-
-```bash
-# Check DISPLAY variable is set
-echo $DISPLAY
-# Should show: localhost:0 or similar
-
-# Test X11 with simple application
-sudo apt-get install -y x11-apps
-xeyes &
-# Should display eyes window on Windows desktop
-```
-
-## Key Concepts
-
-### ArduPilot Dependencies
-
-The installation script installs several categories of dependencies [1]:
-
-**Build Tools:**
-- GCC/G++ compilers for C/C++ code
-- Make and CMake for build automation
-- WAF build system (included in ArduPilot)
-
-**Python Environment:**
-- Python 3.x interpreter
-- pip package manager
-- Development headers (python3-dev)
-
-**ArduPilot-Specific:**
-- pymavlink - MAVLink protocol library
-- MAVProxy - Ground control station
-- future, lxml - Python compatibility libraries
-
-**System Libraries:**
-- libxml2, libxslt - XML processing
-- libtool, pkg-config - Build configuration
-- git - Version control
-
-### Installation Script Logic
-
-The scripts handle several edge cases:
-
-1. **Ubuntu Version Detection:** Checks Ubuntu version to avoid deprecated packages
-2. **Package Availability:** Skips packages not available in newer Ubuntu versions
-3. **Existing Installations:** Detects and updates existing ArduPilot installations
-4. **Error Handling:** Continues even if individual package installations fail
-
-## Script Contents
-
-| Script | Purpose | Time | Components |
-|--------|---------|------|------------|
-| install_ardupilot_plane_4.5.7.sh | Complete environment setup | 15-30 min | All dependencies, ArduPilot source, MAVProxy |
-| install_mavproxy.sh | MAVProxy only | 5 min | MAVProxy and pymavlink |
-
-## Common Issues
-
-### Issue: "python-argparse" package not found
-
-**Symptom:** Installation script reports error about python-argparse
-
-**Cause:** The `argparse` module has been part of Python's standard library since Python 2.7 and Python 3.2. The separate `python-argparse` package is obsolete and unavailable in modern Python environments.
-
-**Solution:** Script automatically removes this deprecated package from the install list. No action required.
-
-### Issue: X server windows don't appear (WSL2)
-
-**Symptom:** SITL starts but no map or console windows appear
-
-**Solutions:**
-1. Verify X server is running on Windows
-2. Check DISPLAY variable: `echo $DISPLAY`
-3. Add to ~/.bashrc: `export DISPLAY=:0`
-4. Reload shell: `source ~/.bashrc`
-5. See [setup_x_server.md](setup_x_server.md) for complete guide
-
-### Issue: "Permission denied" when running script
-
-**Symptom:** Cannot execute installation script
-
-**Solution:**
+### Permission Denied
 ```bash
 chmod +x install_ardupilot_plane_4.5.7.sh
-./install_ardupilot_plane_4.5.7.sh
 ```
 
-### Issue: pip install fails with "externally-managed-environment"
-
-**Symptom:** pip reports environment is externally managed (Ubuntu 23.04+)
-
-**Solutions:**
+### Running from /mnt/c/
+Don't build from Windows filesystem - it's very slow.
 ```bash
-# Option 1: Use system package manager (preferred)
-sudo apt-get install python3-pymavlink
-
-# Option 2: Use virtual environment
-python3 -m venv ~/ardupilot-env
-source ~/ardupilot-env/bin/activate
-pip3 install pymavlink MAVProxy
-
-# Option 3: User install (if script doesn't already use --user)
-pip3 install --user pymavlink MAVProxy
+cd ~
 ```
 
-### Issue: MAVProxy commands not found after installation
-
-**Symptom:** `sim_vehicle.py` or `mavproxy.py` not found
-
-**Solution:**
+### Commands Not Found
+Activate the virtual environment:
 ```bash
-# Add Python scripts to PATH
-echo 'export PATH=$PATH:$HOME/.local/bin' >> ~/.bashrc
-source ~/.bashrc
-
-# Verify
-which sim_vehicle.py
+source ~/.venv-ardupilot/bin/activate
 ```
 
-See **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** for complete troubleshooting guide.
+### X Windows Don't Appear
+1. Check X server is running
+2. Verify: `echo $DISPLAY`
+3. See [setup_x_server.md](setup_x_server.md)
 
-## Post-Installation Verification
+## Python 3.10.12 Compatibility
 
-After installation, verify everything works:
+Python 3.10.12 (Ubuntu 22.04 default) is **fully compatible** with ArduPilot Plane 4.5.7.
 
-```bash
-# 1. Check ArduPilot version
-cd ~/ardupilot
-git log --oneline -1
+- ArduPilot requires: Python 3.8.0+
+- Your system has: Python 3.10.12 ✓
 
-# 2. Check build system
-./waf configure --board sitl
-./waf plane
+## Documentation
 
-# 3. Check Python packages
-python3 -c "import pymavlink; print('OK')"
+- [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md) - Complete manual installation steps
+- [setup_x_server.md](setup_x_server.md) - X server configuration for WSL2
 
-# 4. Run SITL test
-cd ArduPlane
-sim_vehicle.py --console --map
-# Should start successfully
-```
+## Resources
 
-**All checks passed?** You're ready to start developing with ArduPilot!
-
-## Additional Resources
-
-### Official Documentation
-
-- **[ArduPilot Linux Installation](https://ardupilot.org/dev/docs/building-setup-linux.html)** [1] - Official installation guide
-- **[MAVProxy Installation](https://ardupilot.org/mavproxy/docs/getting_started/download_and_installation.html)** [2] - MAVProxy setup
-- **[WSL2 Setup](https://learn.microsoft.com/en-us/windows/wsl/install)** [3] - Microsoft WSL2 documentation
-- **[SITL Setup](https://ardupilot.org/dev/docs/setting-up-sitl-on-linux.html)** [4] - SITL environment configuration
-
-### Python Package Documentation
-
-- **[pymavlink Documentation](https://www.ardusub.com/developers/pymavlink.html)** - Python MAVLink library
-- **[MAVProxy Documentation](https://ardupilot.org/mavproxy/)** - Ground control station guide
-- **[pip User Guide](https://pip.pypa.io/en/stable/user_guide/)** - Python package installation
-
-### Community Support
-
-- [ArduPilot Discord](https://ardupilot.org/discord) - Real-time installation help
-- [Discourse Forums: Installation](https://discuss.ardupilot.org/c/installation/16) - Community Q&A
-- [GitHub Issues](https://github.com/ArduPilot/ardupilot/issues) - Report installation bugs
+- [ArduPilot Dev Docs](https://ardupilot.org/dev/)
+- [MAVProxy Documentation](https://ardupilot.org/mavproxy/)
+- [ArduPilot Discord](https://ardupilot.org/discord)
+- [ArduPilot Forum](https://discuss.ardupilot.org/)
 
 ## Next Steps
 
-After successful installation:
-
-1. **Build ArduPilot** - Compile from source ([Build Instructions](../ArduPilot_Build_Instructions/))
-2. **Run SITL** - Test in simulation ([SITL Mission Plans](../SITL_Mission_Plans/))
-3. **Explore Code** - Understand ArduPilot architecture ([Sensor Drivers](../Sensor_Drivers/))
-4. **Learn MAVLink** - Master communication protocol ([MAVLink Guide](../MAVLink_MavlinkRouter/))
+1. Activate virtual environment
+2. Test SITL with different flight modes
+3. Review onboarding documentation
+4. Try example mission plans
+5. Explore Lua scripting
 
 ---
 
-**Sources:**
-
-[1] https://ardupilot.org/dev/docs/building-setup-linux.html
-[2] https://ardupilot.org/mavproxy/docs/getting_started/download_and_installation.html
-[3] https://learn.microsoft.com/en-us/windows/wsl/install
-[4] https://ardupilot.org/dev/docs/setting-up-sitl-on-linux.html
+**Last Updated:** 2026-02-06
+**Version:** ArduPilot Plane 4.5.7

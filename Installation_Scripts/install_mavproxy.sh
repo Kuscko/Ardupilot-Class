@@ -1,54 +1,55 @@
 #!/bin/bash
 # MAVProxy Installation Script
-# For use with ArduPilot SITL
-# Last Updated: 2026-02-05
+# Last Updated: 2026-02-06
 
 set -e
 
+# Colors
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# Configuration
 VENV_PATH="$HOME/.venv-ardupilot"
 
 echo -e "${GREEN}Installing MAVProxy and dependencies...${NC}"
 
-# Create virtual environment if it doesn't exist
+# Create or verify virtual environment
 if [ ! -d "$VENV_PATH" ]; then
-    echo -e "${BLUE}Creating virtual environment at $VENV_PATH${NC}"
+    echo -e "${BLUE}Creating virtual environment...${NC}"
     python3 -m venv "$VENV_PATH"
 else
-    echo -e "${YELLOW}Virtual environment already exists at $VENV_PATH${NC}"
+    echo -e "${YELLOW}Using existing virtual environment${NC}"
 fi
 
 # Activate virtual environment
-echo -e "${BLUE}Activating virtual environment...${NC}"
 source "$VENV_PATH/bin/activate"
 
-# Update pip in virtual environment
-echo -e "${BLUE}Updating pip...${NC}"
-pip install --upgrade pip
+# Update pip and install packages
+echo -e "${BLUE}Installing packages...${NC}"
+pip install --upgrade pip pymavlink mavproxy
 
-# Install MAVProxy and pymavlink
-echo -e "${BLUE}Installing MAVProxy and pymavlink...${NC}"
-pip install --upgrade pymavlink mavproxy
+# Install optional dependencies
+echo -e "${BLUE}Installing optional modules...${NC}"
+pip install --upgrade matplotlib scipy opencv-python
 
-# Install optional dependencies for better functionality
-echo -e "${YELLOW}Installing optional MAVProxy modules...${NC}"
-pip install --upgrade \
-    matplotlib \
-    scipy \
-    opencv-python
-
+# Summary
 echo ""
-echo -e "${GREEN}MAVProxy installation complete!${NC}"
+echo -e "${GREEN}Installation complete!${NC}"
 echo ""
-echo "Virtual environment location: $VENV_PATH"
+echo "Virtual environment: $VENV_PATH"
 echo ""
 echo "To use MAVProxy:"
 echo "  source ~/.venv-ardupilot/bin/activate"
 echo "  mavproxy.py --version"
 echo ""
-echo "Or add auto-activation to ~/.bashrc (recommended):"
-echo "  echo 'source ~/.venv-ardupilot/bin/activate' >> ~/.bashrc"
+echo "For auto-activation, add to ~/.bashrc:"
+echo "  # Auto-activate ArduPilot virtual environment"
+echo "  # Check if venv is actually activated (not just VIRTUAL_ENV set)"
+echo "  if [ -f \"\$HOME/.venv-ardupilot/bin/activate\" ]; then"
+echo "      # Check if the deactivate function exists (created by activate script)"
+echo "      if ! type deactivate &> /dev/null; then"
+echo "          source \"\$HOME/.venv-ardupilot/bin/activate\""
+echo "      fi"
+echo "  fi"
