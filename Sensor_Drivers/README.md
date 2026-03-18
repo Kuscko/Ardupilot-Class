@@ -2,54 +2,20 @@
 
 ## Overview
 
-ArduPilot's sensor driver architecture provides a modular, extensible framework for integrating GPS, barometers, compasses, IMUs, and other sensors with the flight controller [1]. Understanding this architecture is essential for debugging sensor issues, adding new sensor support, or optimizing sensor performance.
-
-**Why Learn Sensor Drivers:**
-- Troubleshoot sensor failures and configuration issues
-- Add support for new sensor hardware
-- Optimize sensor performance for specific applications
-- Understand how ArduPilot processes sensor data
-- Contribute sensor-related code improvements
+ArduPilot uses a front-end/back-end driver architecture for GPS, IMUs, barometers, compasses, and other sensors. Understanding it is essential for debugging sensor issues, adding new hardware, or reading sensor code.
 
 ## Prerequisites
 
-Before starting this module, you should:
-
-- Have completed ArduPilot build setup and understand C++ basics
-- Be familiar with ArduPilot architecture and libraries
-- Understand sensor types (GPS, IMU, barometer, compass)
-- Know how to navigate the ArduPilot codebase
-- Have experience running SITL for testing
-
-## What You'll Learn
-
-By completing this module, you will:
-
-- Understand ArduPilot's sensor driver architecture
-- Locate sensor driver code in the codebase
-- Identify the front-end/back-end driver pattern
-- Configure sensor parameters for different hardware
-- Debug sensor initialization and runtime issues
-- Test sensor drivers in SITL with simulated sensors
-- Add support for new sensor types
+- ArduPilot build setup, basic C++ knowledge
+- Familiar with ArduPilot libraries and SITL
 
 ## Key Concepts
 
 ### Sensor Driver Architecture
 
-ArduPilot uses a consistent architecture across all sensor types [2]:
+**Front-End (AP_Sensor):** Unified API for vehicle code, manages multiple instances, handles failover and filtering.
 
-**Front-End (AP_Sensor):**
-- Provides unified API for vehicle code
-- Manages multiple sensor instances
-- Handles sensor selection and failover
-- Performs sensor fusion and filtering
-
-**Back-End (AP_Sensor_Backend):**
-- Implements hardware-specific communication
-- Reads raw sensor data
-- Converts to standard units
-- Reports sensor health
+**Back-End (AP_Sensor_Backend):** Hardware-specific communication, raw data reading, unit conversion, health reporting.
 
 **Example: GPS Architecture**
 ```
@@ -62,44 +28,32 @@ AP_GPS (front-end)
 
 ### Sensor Driver Locations
 
-**Key Sensor Libraries** in `libraries/`:
-
 | Sensor Type | Library | Description |
 |-------------|---------|-------------|
-| GPS | `AP_GPS/` | GPS receivers (u-blox, NMEA, etc.) |
+| GPS | `AP_GPS/` | GPS receivers |
 | IMU | `AP_InertialSensor/` | Accelerometers and gyroscopes |
 | Barometer | `AP_Baro/` | Pressure/altitude sensors |
 | Compass | `AP_Compass/` | Magnetometers |
-| Rangefinder | `AP_RangeFinder/` | Distance sensors (lidar, sonar) |
-| Airspeed | `AP_Airspeed/` | Pitot tubes and airspeed sensors |
+| Rangefinder | `AP_RangeFinder/` | Lidar, sonar |
+| Airspeed | `AP_Airspeed/` | Pitot tubes |
 | Optical Flow | `AP_OpticalFlow/` | Optical flow sensors |
 | Battery | `AP_BattMonitor/` | Battery monitors |
 
 ### Driver Initialization Flow
 
-1. **Detection:** Front-end probes for available sensors
-2. **Instantiation:** Creates back-end for detected hardware
-3. **Configuration:** Applies parameters (orientation, offsets, etc.)
-4. **Calibration:** Runs calibration if needed (compass, accel)
-5. **Runtime:** Continuous data reading and health monitoring
+1. **Detection** — Front-end probes for available sensors
+2. **Instantiation** — Creates back-end for detected hardware
+3. **Configuration** — Applies parameters (orientation, offsets)
+4. **Calibration** — Compass, accelerometer calibration
+5. **Runtime** — Continuous data reading and health monitoring
 
 ### Sensor Parameters
 
-Each sensor type has associated parameters [3]:
+**GPS:** `GPS_TYPE`, `GPS_AUTO_SWITCH`, `GPS_BLEND_MASK`
 
-**GPS Parameters (GPS_*):**
-- `GPS_TYPE` - GPS receiver type
-- `GPS_AUTO_SWITCH` - Automatic GPS switching
-- `GPS_BLEND_MASK` - GPS blending configuration
+**Compass:** `COMPASS_TYPEMASK`, `COMPASS_ORIENT`, `COMPASS_OFS_X/Y/Z`
 
-**Compass Parameters (COMPASS_*):**
-- `COMPASS_TYPEMASK` - Enabled compass types
-- `COMPASS_ORIENT` - Compass orientation
-- `COMPASS_OFS_X/Y/Z` - Calibration offsets
-
-**Barometer Parameters (BARO_*):**
-- `BARO_PROBE_EXT` - External barometer detection
-- `BARO_ALT_OFFSET` - Altitude offset
+**Barometer:** `BARO_PROBE_EXT`, `BARO_ALT_OFFSET`
 
 See **[SENSOR_DRIVER_GUIDE.md](SENSOR_DRIVER_GUIDE.md)** for complete parameter reference.
 
@@ -107,127 +61,70 @@ See **[SENSOR_DRIVER_GUIDE.md](SENSOR_DRIVER_GUIDE.md)** for complete parameter 
 
 ### Exercise 1: Explore GPS Driver Code
 
-Navigate the GPS driver implementation:
-
 ```bash
 cd ~/ardupilot/libraries/AP_GPS
-
-# List GPS back-ends
 ls -1 AP_GPS_*.cpp
-
-# View front-end interface
 less AP_GPS.h
-
-# Examine u-blox back-end
 less AP_GPS_UBLOX.cpp
 ```
 
-**Key Methods to Find:**
-- `detect()` - Hardware detection
-- `read()` - Data reading from hardware
-- `send_blob()` - Configuration commands
-- `_parse_gps()` - Message parsing
+Key methods: `detect()`, `read()`, `send_blob()`, `_parse_gps()`
 
 ### Exercise 2: Monitor Sensor Data in SITL
-
-Start SITL and monitor sensor outputs:
 
 ```bash
 cd ~/ardupilot/ArduPlane
 sim_vehicle.py
 ```
 
-In MAVProxy console:
+In MAVProxy:
 
 ```bash
-# GPS status
 gps 0
-
-# IMU status
-ftp list @SYS/imu*.csv
-
-# Barometer status
 watch SCALED_PRESSURE
-
-# Compass status
 watch RAW_IMU
 ```
 
 ### Exercise 3: Configure Multiple GPS Instances
 
-Simulate multiple GPS receivers:
-
 ```bash
-# Enable dual GPS
-param set GPS_TYPE 1     # Primary GPS
-param set GPS_TYPE2 1    # Secondary GPS
-param set GPS_AUTO_SWITCH 1  # Enable auto-switching
-
-# Check GPS status
+param set GPS_TYPE 1
+param set GPS_TYPE2 1
+param set GPS_AUTO_SWITCH 1
 status gps
 ```
 
-**Expected:** SITL reports two GPS instances, automatically selects best
-
 ### Exercise 4: Test Sensor Parameters
 
-Experiment with sensor configuration:
-
 ```bash
-# Load example sensor parameters
 cd ~/Desktop/Work/AEVEX/Sensor_Drivers
 param load sensor_params_example.param
-
-# Check compass orientation
 param show COMPASS_ORIENT
-
-# Test barometer altitude offset
-param set BARO_ALT_OFFSET 10.0  # 10m offset
+param set BARO_ALT_OFFSET 10.0
 ```
 
 ### Exercise 5: Monitor Sensor Health
-
-Use Python script to monitor sensor health:
 
 ```bash
 cd ~/Desktop/Work/AEVEX/Sensor_Drivers
 python3 sensor_test.py --connect tcp:127.0.0.1:5760
 ```
 
-This script displays:
-- GPS satellite count and fix type
-- IMU health and vibration levels
-- Barometer altitude and variance
-- Compass health and interference levels
+Displays GPS satellite count/fix, IMU health/vibration, barometer altitude/variance, compass health.
 
 ### Exercise 6: Trace Sensor Driver Execution
 
-Add debug output to understand driver flow:
-
 ```bash
-# Edit GPS driver to add debug prints
 cd ~/ardupilot/libraries/AP_GPS
 # Add: hal.console->printf("GPS: detected u-blox\n"); to detect()
 
-# Rebuild
 cd ~/ardupilot
 ./waf plane
-
-# Run and observe debug output
-cd ArduPlane
-./arduplane --help
 ```
 
 ## Complete Guide
 
-See **[SENSOR_DRIVER_GUIDE.md](SENSOR_DRIVER_GUIDE.md)** for comprehensive documentation including:
-
-- Detailed driver architecture explanation
-- Complete code walkthrough for each sensor type
-- Adding new sensor support
-- Sensor calibration procedures
-- Hardware integration guidelines
-- Debugging techniques
+See **[SENSOR_DRIVER_GUIDE.md](SENSOR_DRIVER_GUIDE.md)** for full architecture, code walkthroughs, adding new sensors, calibration, and debugging.
 
 ## Configuration Files
 
@@ -236,158 +133,81 @@ See **[SENSOR_DRIVER_GUIDE.md](SENSOR_DRIVER_GUIDE.md)** for comprehensive docum
 
 ## Common Issues
 
-### Issue: "No GPS detected"
+### "No GPS detected"
 
-**Symptom:** ArduPilot reports "No GPS" or GPS not initializing
+1. Set `GPS_TYPE = 1` (auto-detect)
+2. Verify `SERIAL3_PROTOCOL` for GPS port
+3. Check baud rate (`SERIAL3_BAUD`)
+4. Verify RX/TX not swapped and GPS has power
 
-**Solutions:**
-1. Check `GPS_TYPE` parameter matches hardware
-2. Verify serial port configuration (SERIAL3_PROTOCOL for GPS)
-3. Check baud rate: `SERIAL3_BAUD` should match GPS (typically 38400 or 115200)
-4. Verify physical connection (RX/TX not swapped)
-5. Check GPS has power and antenna
-
-**Debug in SITL:**
 ```bash
-param set GPS_TYPE 1  # Auto-detect
-param show SERIAL*    # Check serial config
+param set GPS_TYPE 1
+param show SERIAL*
 ```
 
-### Issue: Compass inconsistent or unhealthy
+### Compass inconsistent
 
-**Symptom:** Pre-arm check fails: "Compass inconsistent"
+1. Calibrate in multiple orientations
+2. Move away from magnetic interference
+3. Check `COMPASS_ORIENT`
+4. Disable unhealthy instances or use external compass
 
-**Solutions:**
-1. Perform compass calibration in multiple orientations
-2. Check for magnetic interference (move away from metal, power wires)
-3. Verify compass orientation: `COMPASS_ORIENT`
-4. Disable unhealthy compass instances
-5. Consider external compass away from interference
-
-**Calibration:**
 ```bash
-# In MAVProxy
 compassmot start
-# Follow on-screen instructions
 compassmot accept
 ```
 
-### Issue: IMU errors or high vibration
+### IMU errors or high vibration
 
-**Symptom:** "IMU errors" or "High vibration" warnings
+1. Check ClipCount in logs (< 1000/min)
+2. Soft-mount flight controller
+3. Balance propellers, secure components
+4. Run `accelcal`, review vibration in logs (< 30 m/s²)
 
-**Solutions:**
-1. Check IMU health in logs (ClipCount < 1000 per minute)
-2. Verify proper mounting (soft-mount flight controller)
-3. Balance propellers and secure components
-4. Check accelerometer calibration: `accelcal`
-5. Review vibration levels in logs (< 30 m/s² acceptable)
+### Barometer altitude drifting
 
-### Issue: Barometer altitude drifting
+1. Ensure temperature compensation
+2. Protect from direct airflow and light
+3. Use `BARO_ALT_OFFSET` if needed
+4. Check EKF GPS + barometer fusion
 
-**Symptom:** Altitude estimate drifts over time
+### New sensor not detected
 
-**Solutions:**
-1. Ensure barometer has temperature compensation
-2. Protect barometer from direct airflow
-3. Shield from light (some sensors light-sensitive)
-4. Use altitude offset if needed: `BARO_ALT_OFFSET`
-5. Check EKF fusion of GPS + barometer
-
-### Issue: New sensor not detected
-
-**Symptom:** Custom or new sensor hardware not recognized
-
-**Solutions:**
-1. Verify sensor type parameter configured
-2. Check I2C/SPI bus configuration
-3. Confirm sensor address (I2C) or CS pin (SPI)
-4. Review driver probe/detect logic
-5. Add debug output to driver initialization
-6. Check hardware compatibility (voltage levels, timing)
-
-See **[SENSOR_DRIVER_GUIDE.md](SENSOR_DRIVER_GUIDE.md)** for detailed troubleshooting.
-
-## Sensor Testing Best Practices
-
-**In SITL:**
-- Test sensor failover (disable GPS, check behavior)
-- Simulate sensor noise and interference
-- Verify parameter changes take effect
-- Test multiple sensor instances
-
-**On Hardware:**
-- Always calibrate sensors after installation
-- Verify sensor orientation matches configuration
-- Test in representative environment
-- Monitor sensor health during test flights
-- Review logs after flights for sensor issues
+1. Verify sensor type parameter
+2. Check I2C/SPI bus and address/CS pin
+3. Review driver probe/detect logic
+4. Add debug output to initialization
 
 ## Adding New Sensor Support
 
-**Steps to add new sensor driver:**
+```cpp
+class AP_GPS_NewType : public AP_GPS_Backend {
+    // Implement detection, reading, parsing
+};
+```
 
-1. **Create back-end class:**
-   ```cpp
-   class AP_GPS_NewType : public AP_GPS_Backend {
-       // Implement detection, reading, parsing
-   };
-   ```
-
-2. **Register in front-end:**
-   - Add to `AP_GPS::detect()`
-   - Add parameter for sensor type
-
-3. **Implement required methods:**
-   - `detect()` - Hardware detection
-   - `read()` - Data reading
-   - `handle_message()` - Message parsing
-
-4. **Test thoroughly:**
-   - SITL simulation
-   - Hardware integration
-   - Failover scenarios
+1. Register in `AP_GPS::detect()`
+2. Add parameter for sensor type
+3. Implement `detect()`, `read()`, `handle_message()`
+4. Test in SITL and on hardware
 
 See **[SENSOR_DRIVER_GUIDE.md](SENSOR_DRIVER_GUIDE.md)** for detailed implementation guide.
 
 ## Additional Resources
 
-### Official ArduPilot Documentation
-
-- **[Sensor Configuration](https://ardupilot.org/plane/docs/common-sensor-setup.html)** [1] - Sensor setup guide
-- **[Developer: Sensor Drivers](https://ardupilot.org/dev/docs/learning-ardupilot-the-example-sketches.html)** [2] - Driver development
-- **[GPS Configuration](https://ardupilot.org/plane/docs/common-gps-how-it-works.html)** [3] - GPS setup
-- **[Compass Calibration](https://ardupilot.org/plane/docs/common-compass-calibration-in-mission-planner.html)** - Compass setup
-- **[IMU Calibration](https://ardupilot.org/plane/docs/common-accelerometer-calibration.html)** - Accelerometer setup
-
-### Code Navigation
-
-- **[AP_GPS Library](https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_GPS)** - GPS driver code
-- **[AP_InertialSensor Library](https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_InertialSensor)** - IMU drivers
-- **[AP_Compass Library](https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_Compass)** - Compass drivers
-- **[AP_Baro Library](https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_Baro)** - Barometer drivers
-
-### Hardware Documentation
-
-- **[Supported GPS Receivers](https://ardupilot.org/plane/docs/common-gps-selection.html)** - Compatible GPS hardware
-- **[Supported IMUs](https://ardupilot.org/plane/docs/common-autopilots.html)** - Flight controller IMUs
-- **[External Sensors](https://ardupilot.org/plane/docs/common-optional-hardware.html)** - Additional sensor options
-
-### Community Resources
-
-- [ArduPilot Discord: Hardware Channel](https://ardupilot.org/discord)
-- [Discourse: Sensor Topics](https://discuss.ardupilot.org/c/hardware-discussion/15)
-- [GitHub: Sensor Issues](https://github.com/ArduPilot/ardupilot/labels/Component-Sensors)
+- [Sensor Configuration](https://ardupilot.org/plane/docs/common-sensor-setup.html)
+- [Developer: Sensor Drivers](https://ardupilot.org/dev/docs/learning-ardupilot-the-example-sketches.html)
+- [GPS Configuration](https://ardupilot.org/plane/docs/common-gps-how-it-works.html)
+- [Compass Calibration](https://ardupilot.org/plane/docs/common-compass-calibration-in-mission-planner.html)
+- [IMU Calibration](https://ardupilot.org/plane/docs/common-accelerometer-calibration.html)
+- [AP_GPS Library](https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_GPS)
+- [AP_InertialSensor Library](https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_InertialSensor)
 
 ## Next Steps
 
-After completing this sensor driver module:
-
-1. **Analyze Flight Logs** - Learn to interpret sensor data in logs ([Flight Log Analysis](../Advanced_Topics/Flight_Log_Analysis/))
-2. **EKF Deep Dive** - Understand how sensors feed EKF ([EKF Notes](../EKF_Notes/))
-3. **Custom Hardware** - Integrate custom sensors ([Payload Integration](../Advanced_Topics/Payload_Integration/))
-4. **Contribute Code** - Add support for new sensors ([Code Contribution](../Advanced_Topics/Code_Contribution_Workflow/))
-5. **Performance Optimization** - Optimize sensor processing ([Performance Optimization](../Advanced_Topics/Performance_Optimization/))
+1. Analyze flight logs — [Flight Log Analysis](../Advanced_Topics/Flight_Log_Analysis/)
+2. EKF deep dive — [EKF Notes](../EKF_Notes/)
+3. Custom hardware integration — [Payload Integration](../Advanced_Topics/Payload_Integration/)
 
 ---
 

@@ -1,6 +1,8 @@
 # Installation Guide
 
-Complete step-by-step guide for ArduPilot Plane 4.5.7 installation.
+Complete step-by-step guide for ArduPilot Plane 4.5.7 installation on Ubuntu 22.04 LTS (Jammy Jellyfish).
+
+> **Platform note:** Ubuntu 22.04 (jammy) is natively supported by ArduPilot's `install-prereqs-ubuntu.sh`. No virtual environment or script patching is required.
 
 ## Automated Installation
 
@@ -24,7 +26,7 @@ For troubleshooting or custom setups:
 
 ```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y git python3 python3-pip python3-venv
+sudo apt install -y git python3 python3-pip lsb-release
 ```
 
 ### 2. Clone Repository
@@ -37,66 +39,28 @@ git checkout Plane-4.5.7
 git submodule update --init --recursive
 ```
 
-### 3. Create Virtual Environment
+### 3. Install Prerequisites
 
-```bash
-python3 -m venv ~/.venv-ardupilot
-source ~/.venv-ardupilot/bin/activate
-```
-
-**Important:** Activate venv BEFORE installing prerequisites to ensure packages install in the venv.
-
-### 4. Patch Prerequisites Script for venv Compatibility
+Ubuntu 22.04 (jammy) is fully supported by ArduPilot's prereqs script — run it directly:
 
 ```bash
 cd ~/ardupilot
-
-# Backup the original script
-cp ./Tools/environment_install/install-prereqs-ubuntu.sh ./Tools/environment_install/install-prereqs-ubuntu.sh.backup
-
-# Get Ubuntu codename
-UBUNTU_CODENAME=$(lsb_release -sc)
-
-# Apply patches for venv compatibility
-sed -i 's/python-argparse//g' ./Tools/environment_install/install-prereqs-ubuntu.sh
-sed -i 's/PIP_USER_ARGUMENT="--user"/PIP_USER_ARGUMENT=""/g' ./Tools/environment_install/install-prereqs-ubuntu.sh
-sed -i 's/pip3 install --user/pip3 install/g' ./Tools/environment_install/install-prereqs-ubuntu.sh
-sed -i 's/pip install --user/pip install/g' ./Tools/environment_install/install-prereqs-ubuntu.sh
-sed -i "s/if \[ \$RELEASE_CODENAME != \"mantic\" \]; then/if [ \$RELEASE_CODENAME != \"mantic\" ] \&\& [ \$RELEASE_CODENAME != \"noble\" ] \&\& [ \$RELEASE_CODENAME != \"$UBUNTU_CODENAME\" ]; then/g" ./Tools/environment_install/install-prereqs-ubuntu.sh
-```
-
-### 5. Install Prerequisites
-
-```bash
-# Run the patched prerequisites installer
 ./Tools/environment_install/install-prereqs-ubuntu.sh -y
 
 # Reload shell profile
 source ~/.profile
 source ~/.bashrc
-
-# Install Python packages
-pip install --upgrade pip pymavlink mavproxy
 ```
 
-### 6. Configure GUI Module Support for MAVProxy
+This installs all build tools, Python packages (pymavlink, MAVProxy), and `python3-wxgtk4.0` for MAVProxy's console and map windows.
 
-**CRITICAL:** MAVProxy console and map modules require wxPython, which is difficult to build from source. Instead, make system wxPython accessible to the virtual environment:
+### 4. Upgrade Python Packages
 
 ```bash
-# Add system packages to venv path
-echo "import site; site.addsitedir('/usr/lib/python3/dist-packages')" > ~/.venv-ardupilot/lib/python3.12/site-packages/system_packages.pth
-
-# Verify wxPython is accessible
-python -c "import wx; print('wxPython version:', wx.__version__)"
+python3 -m pip install --user --upgrade pymavlink mavproxy
 ```
 
-If wxPython is not found, install it:
-```bash
-sudo apt install -y python3-wxgtk4.0 python3-matplotlib python3-opencv
-```
-
-### 7. Build ArduPlane
+### 5. Build ArduPlane
 
 ```bash
 cd ~/ardupilot
@@ -104,7 +68,7 @@ cd ~/ardupilot
 ./waf plane
 ```
 
-### 8. Configure Display for GUI Windows
+### 6. Configure Display for GUI Windows
 
 **For Windows 11 / WSL 2.0+ (WSLg):**
 
@@ -122,10 +86,9 @@ echo $DISPLAY  # Should show: :0
 
 See [setup_x_server.md](setup_x_server.md) for detailed VcXsrv setup instructions.
 
-### 9. Test SITL
+### 7. Test SITL
 
 ```bash
-source ~/.venv-ardupilot/bin/activate
 cd ~/ardupilot
 Tools/autotest/sim_vehicle.py -v ArduPlane --console --map
 ```
@@ -159,17 +122,16 @@ ls -lh ~/ardupilot/build/sitl/bin/arduplane
 ### Test Python Packages
 
 ```bash
-source ~/.venv-ardupilot/bin/activate
-python -c "import pymavlink; print('pymavlink OK')"
-python -c "import wx; print('wxPython OK')"
+python3 -c "import pymavlink; print('pymavlink OK')"
+python3 -c "import wx; print('wxPython OK')"
 mavproxy.py --version
 ```
 
 ### Test MAVProxy Modules
 
 ```bash
-python -c "from MAVProxy.modules import mavproxy_console; print('✓ Console module')"
-python -c "from MAVProxy.modules import mavproxy_map; print('✓ Map module')"
+python3 -c "from MAVProxy.modules import mavproxy_console; print('✓ Console module')"
+python3 -c "from MAVProxy.modules import mavproxy_map; print('✓ Map module')"
 ```
 
 ---
@@ -180,44 +142,41 @@ python -c "from MAVProxy.modules import mavproxy_map; print('✓ Map module')"
 |-------|----------|
 | Permission denied | `chmod +x *.sh` |
 | Running from /mnt/c/ | Move to WSL home: `cd ~` |
-| Python packages fail | Activate venv: `source ~/.venv-ardupilot/bin/activate` |
 | Submodule errors | `git submodule update --init --recursive` |
 | Compiler not found | Re-run prerequisites script |
-| MAVProxy modules not loading | See "MAVProxy Modules Not Loading" below |
-| Only 1 window appears | See "Configure GUI Module Support" in Step 6 |
+| Only 1 window appears | See "Only One SITL Window Opens" below |
 | Can't open display error | See [setup_x_server.md](setup_x_server.md) |
-
-### python-argparse Error
-
-**Issue:** Package 'python-argparse' has no installation candidate
-
-**Cause:** argparse is built into Python 3.2+. The separate package is obsolete.
-
-**Solution:** Apply the patch in Step 4 before running the prerequisites installer.
 
 ### MAVProxy Modules Not Loading
 
 **Issue:**
-```
+
+```text
 Failed to load module: No module named 'console'
 Failed to load module: No module named 'map'
 ```
 
-**Cause:** wxPython is not accessible in the virtual environment.
+**Cause:** `python3-wxgtk4.0` was not installed.
 
-**Solution:** Follow Step 6 to configure GUI module support. This creates a `.pth` file that makes system wxPython accessible to the venv.
+**Solution:**
+
+```bash
+sudo apt install -y python3-wxgtk4.0
+```
+
+This is normally handled automatically by `install-prereqs-ubuntu.sh` on jammy. If it was skipped, run the prereqs script again or install directly.
 
 ### Only One SITL Window Opens
 
 **Issue:** Only ArduPlane terminal appears, no console or map windows.
 
-**Cause:** MAVProxy modules failed to load (see above).
+**Cause:** MAVProxy failed to load `wx` (wxPython not installed).
 
 **Solution:**
-1. Follow Step 6 to configure GUI module support
-2. Verify: `python -c "import wx"`
-3. If wxPython not installed: `sudo apt install python3-wxgtk4.0`
-4. Restart SITL
+
+1. `sudo apt install -y python3-wxgtk4.0`
+2. Verify: `python3 -c "import wx"`
+3. Restart SITL
 
 ### WSL1 vs WSL2
 
@@ -230,7 +189,7 @@ wsl --list --verbose
 
 Upgrade to WSL2 (Windows PowerShell as Admin):
 ```powershell
-wsl --set-version Ubuntu-24.04 2
+wsl --set-version Ubuntu-22.04 2
 ```
 
 ---
@@ -249,8 +208,7 @@ git submodule update --init --recursive
 ### Update Python Packages
 
 ```bash
-source ~/.venv-ardupilot/bin/activate
-pip install --upgrade pymavlink mavproxy
+python3 -m pip install --user --upgrade pymavlink mavproxy
 ```
 
 ### Rebuild
@@ -290,5 +248,6 @@ cd ~/ardupilot
 
 ---
 
-**Last Updated:** 2026-02-06
+**Last Updated:** 2026-03-17
 **Target:** ArduPilot Plane 4.5.7
+**Platform:** Ubuntu 22.04 LTS (Jammy Jellyfish)

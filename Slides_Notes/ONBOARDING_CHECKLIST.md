@@ -9,7 +9,7 @@ Use this checklist to track your progress through the onboarding process.
 ### Days 1-2: Development Environment and SITL
 
 - [ ] Install WSL2 on Windows
-- [ ] Install Ubuntu 24.04 LTS in WSL
+- [ ] Install Ubuntu 22.04 LTS in WSL
 - [ ] Update system packages (`sudo apt update && sudo apt upgrade`)
 - [ ] Install git, python3, python3-pip
 - [ ] Clone ArduPilot repository to `~/ardupilot`
@@ -56,7 +56,6 @@ Use this checklist to track your progress through the onboarding process.
 - [ ] Configure geofence (FENCE_ENABLE, FENCE_RADIUS, FENCE_ALT_MAX)
 - [ ] Test RTL mode manually
 - [ ] Understand failsafe trigger conditions
-- [ ] Review failsafe documentation
 
 **Checkpoint:** Do you understand how failsafes protect the aircraft?
 
@@ -100,7 +99,6 @@ Use this checklist to track your progress through the onboarding process.
 - [ ] Send command to autopilot
 - [ ] Arm/disarm vehicle via MAVLink
 - [ ] Understand system ID and component ID
-- [ ] Review MAVLink common messages documentation
 - [ ] Install mavlink-router (optional)
 - [ ] Configure mavlink-router for multiple endpoints
 - [ ] Test routing SITL to multiple GCS applications
@@ -124,8 +122,6 @@ Use this checklist to track your progress through the onboarding process.
   - [ ] battery:voltage()
   - [ ] param:get/set()
   - [ ] vehicle:set_mode()
-- [ ] Review example Lua scripts
-- [ ] Troubleshoot Lua script loading issues
 
 **Checkpoint:** Can you create and run custom Lua scripts?
 
@@ -146,9 +142,7 @@ Use this checklist to track your progress through the onboarding process.
   - [ ] NAV_LAND (21)
   - [ ] NAV_RTL (20)
 - [ ] Create square pattern mission
-- [ ] Create altitude test mission
 - [ ] Test mission with speed changes
-- [ ] Save and reload missions
 
 **Checkpoint:** Can you create and execute custom missions?
 
@@ -170,7 +164,6 @@ Use this checklist to track your progress through the onboarding process.
   - [ ] EK3_ALT_SOURCE
 - [ ] Understand EKF pre-arm checks
 - [ ] Interpret EKF variance errors
-- [ ] Review EKF documentation
 
 **Checkpoint:** Do you understand how EKF fuses sensor data?
 
@@ -215,7 +208,7 @@ Use this checklist to track your progress through the onboarding process.
 
 ### Practical Exercises
 
-Complete at least 3 of these exercises:
+Complete at least 3 of these:
 
 - [ ] **Exercise 1:** Create a mission that flies a specific pattern (triangle, figure-8, etc.)
 - [ ] **Exercise 2:** Write a Lua script that monitors battery and triggers RTL at custom threshold
@@ -236,7 +229,6 @@ Complete at least 3 of these exercises:
 - [ ] Review EKF fundamentals document
 - [ ] Study sensor driver guide
 - [ ] Review build instructions
-- [ ] Study troubleshooting guide
 
 ---
 
@@ -246,10 +238,8 @@ Complete at least 3 of these exercises:
 - [ ] Bookmark ArduPilot developer documentation
 - [ ] Bookmark MAVLink common messages
 - [ ] Join ArduPilot Discourse forum
-- [ ] Join ArduPilot Discord (optional)
 - [ ] Star ArduPilot GitHub repository
 - [ ] Know where to find parameter reference
-- [ ] Know where to find mission command reference
 
 ---
 
@@ -257,7 +247,6 @@ Complete at least 3 of these exercises:
 
 ### Continuous Learning
 
-- [ ] Subscribe to ArduPilot development updates
 - [ ] Review monthly release notes
 - [ ] Explore advanced topics:
   - [ ] PID tuning
@@ -265,32 +254,31 @@ Complete at least 3 of these exercises:
   - [ ] Advanced Lua scripting
   - [ ] Custom MAVLink messages
   - [ ] Flight log analysis
-- [ ] Contribute to ArduPilot (optional):
-  - [ ] Report bugs
-  - [ ] Improve documentation
-  - [ ] Submit pull requests
 
 ### Help Others
 
 - [ ] Answer questions from new team members
 - [ ] Improve onboarding documentation
 - [ ] Share lessons learned
-- [ ] Create additional examples/scripts
 
 ---
 
 ## Notes & Reflections
 
-**What went well:**
+### What went well
+
 -
 
-**What was challenging:**
+### What was challenging
+
 -
 
-**Questions for follow-up:**
+### Questions for follow-up
+
 -
 
-**Suggestions for improving onboarding:**
+### Suggestions for improving onboarding
+
 -
 
 ---

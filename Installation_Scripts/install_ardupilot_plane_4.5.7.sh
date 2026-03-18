@@ -1,8 +1,10 @@
 #!/bin/bash
 # ArduPilot Plane 4.5.7 Installation Script
-# Target: Ubuntu 22.04 LTS / Ubuntu 24.04 LTS (WSL2)
-# Last Updated: 2026-02-06
-# Verified: ArduPilot 4.5.7 works on Ubuntu 24.04
+# Target: Ubuntu 22.04 LTS (Jammy Jellyfish) (WSL2)
+# Last Updated: 2026-03-17
+#
+# Ubuntu 22.04 (jammy) is natively supported by ArduPilot's install-prereqs-ubuntu.sh.
+# No patching required. No virtual environment required.
 
 set -e
 
@@ -16,7 +18,6 @@ NC='\033[0m'
 # Configuration
 ARDUPILOT_TAG="Plane-4.5.7"
 ARDUPILOT_COMMIT="0358a9c210bc6c965006f5d6029239b7033616df"
-VENV_PATH="$HOME/.venv-ardupilot"
 INSTALL_DIR="$HOME/ardupilot"
 
 # Output functions
@@ -55,9 +56,10 @@ sudo apt update && sudo apt upgrade -y
 print_status "System updated"
 
 # Step 2: Install basic dependencies
+# lsb-release is required by install-prereqs-ubuntu.sh
 echo ""
 echo "Step 2: Installing basic dependencies..."
-sudo apt install -y git python3 python3-pip python3-venv
+sudo apt install -y git python3 python3-pip lsb-release
 print_status "Basic dependencies installed"
 
 # Step 3: Clone ArduPilot
@@ -95,46 +97,11 @@ else
     exit 1
 fi
 
-# Step 5: Create and activate virtual environment
+# Step 5: Install prerequisites
+# On Ubuntu 22.04 (jammy), the ArduPilot prereqs script runs without modification.
+# It natively handles: python-argparse exclusion, python3-wxgtk4.0 install, pip --user packages.
 echo ""
-echo "Step 5: Setting up Python virtual environment..."
-
-# Remove incomplete venv if found
-[ -d "$VENV_PATH" ] && [ ! -f "$VENV_PATH/bin/activate" ] && rm -rf "$VENV_PATH"
-
-# Create venv if needed
-if [ ! -d "$VENV_PATH" ]; then
-    python3 -m venv "$VENV_PATH"
-    print_status "Virtual environment created"
-else
-    print_warning "Using existing virtual environment"
-fi
-
-source "$VENV_PATH/bin/activate"
-print_status "Virtual environment activated"
-
-# Step 6: Patch install script for venv compatibility
-echo ""
-echo "Step 6: Patching install script for venv compatibility..."
-INSTALL_SCRIPT="./Tools/environment_install/install-prereqs-ubuntu.sh"
-UBUNTU_CODENAME=$(lsb_release -sc 2>/dev/null || echo "unknown")
-print_status "Detected Ubuntu: $UBUNTU_CODENAME"
-
-# Backup original
-cp "$INSTALL_SCRIPT" "$INSTALL_SCRIPT.backup"
-
-# Apply fixes
-sed -i 's/python-argparse//g' "$INSTALL_SCRIPT"
-sed -i 's/PIP_USER_ARGUMENT="--user"/PIP_USER_ARGUMENT=""/g' "$INSTALL_SCRIPT"
-sed -i 's/pip3 install --user/pip3 install/g' "$INSTALL_SCRIPT"
-sed -i 's/pip install --user/pip install/g' "$INSTALL_SCRIPT"
-sed -i "s/if \[ \$RELEASE_CODENAME != \"mantic\" \]; then/if [ \$RELEASE_CODENAME != \"mantic\" ] \&\& [ \$RELEASE_CODENAME != \"noble\" ] \&\& [ \$RELEASE_CODENAME != \"$UBUNTU_CODENAME\" ]; then/g" "$INSTALL_SCRIPT"
-
-print_status "Install script patched"
-
-# Step 7: Install prerequisites
-echo ""
-echo "Step 7: Installing ArduPilot prerequisites..."
+echo "Step 5: Installing ArduPilot prerequisites..."
 echo "This may take several minutes..."
 ./Tools/environment_install/install-prereqs-ubuntu.sh -y
 print_status "Prerequisites installed"
@@ -143,45 +110,40 @@ print_status "Prerequisites installed"
 [ -f "$HOME/.profile" ] && . "$HOME/.profile"
 [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
 
-# Step 8: Install additional Python packages
+# Step 6: Install additional Python packages
+# The prereqs script installs pymavlink and MAVProxy via pip --user.
+# This step upgrades them to ensure the latest versions.
 echo ""
-echo "Step 8: Installing additional Python packages..."
-pip install --upgrade pip pymavlink mavproxy
-print_status "Python packages installed"
+echo "Step 6: Upgrading Python packages..."
+python3 -m pip install --user --upgrade pymavlink mavproxy
+print_status "Python packages upgraded"
 
-# Step 8.5: Enable system GUI packages for MAVProxy modules
+# Step 7: Verify installation
 echo ""
-echo "Step 8.5: Configuring GUI module support for MAVProxy..."
-# MAVProxy console and map modules require wxPython which is difficult to build
-# Use system packages instead by adding system site-packages to venv path
-echo "import site; site.addsitedir('/usr/lib/python3/dist-packages')" > "$VENV_PATH/lib/python3.12/site-packages/system_packages.pth"
-print_status "GUI module support configured"
+echo "Step 7: Verifying Python packages..."
+python3 -c "import pymavlink; print('pymavlink:', pymavlink.__file__)"
 
-# Verify wxPython is accessible
-if python -c "import wx" 2>/dev/null; then
-    print_status "wxPython accessible from virtual environment"
+# Verify wxPython (installed via apt by the prereqs script for jammy)
+if python3 -c "import wx" 2>/dev/null; then
+    print_status "wxPython accessible (required for MAVProxy console and map)"
 else
-    print_warning "wxPython not found - console and map modules may not work"
-    print_warning "Install with: sudo apt install python3-wxgtk4.0"
+    print_warning "wxPython not found - installing now..."
+    sudo apt install -y python3-wxgtk4.0
 fi
 
-# Step 9: Verify installation
-echo ""
-echo "Step 9: Verifying Python packages..."
-python -c "import pymavlink; print('pymavlink:', pymavlink.__file__)"
 print_status "Packages verified"
 
-# Step 10: Build SITL
+# Step 8: Build SITL
 echo ""
-echo "Step 10: Building ArduPlane for SITL..."
+echo "Step 8: Building ArduPlane for SITL..."
 cd "$INSTALL_DIR"
 ./waf configure --board sitl
 ./waf plane
 print_status "Build completed"
 
-# Step 11: Verify binary
+# Step 9: Verify binary
 echo ""
-echo "Step 11: Verifying installation..."
+echo "Step 9: Verifying installation..."
 BINARY_PATH="$INSTALL_DIR/build/sitl/bin/arduplane"
 if [ ! -f "$BINARY_PATH" ]; then
     print_error "Binary not found at $BINARY_PATH"
@@ -198,20 +160,6 @@ echo ""
 echo "Installation directory:  $INSTALL_DIR"
 echo "ArduPilot version:       $ARDUPILOT_TAG"
 echo "Commit:                  $CURRENT_COMMIT"
-echo "Virtual environment:     $VENV_PATH"
-echo ""
-echo -e "${YELLOW}To use ArduPilot:${NC}"
-echo "  source ~/.venv-ardupilot/bin/activate"
-echo ""
-echo -e "${YELLOW}For auto-activation, add to ~/.bashrc:${NC}"
-echo "  # Auto-activate ArduPilot virtual environment"
-echo "  # Check if venv is actually activated (not just VIRTUAL_ENV set)"
-echo "  if [ -f \"\$HOME/.venv-ardupilot/bin/activate\" ]; then"
-echo "      # Check if the deactivate function exists (created by activate script)"
-echo "      if ! type deactivate &> /dev/null; then"
-echo "          source \"\$HOME/.venv-ardupilot/bin/activate\""
-echo "      fi"
-echo "  fi"
 echo ""
 echo -e "${YELLOW}Configure Display (for GUI windows):${NC}"
 echo "  WSLg (Windows 11) - No configuration needed! Already works."
@@ -221,6 +169,6 @@ echo -e "${YELLOW}Test SITL:${NC}"
 echo "  cd ~/ardupilot"
 echo "  Tools/autotest/sim_vehicle.py -v ArduPlane --console --map"
 echo ""
-echo -e "${GREEN}Note: Verified working on Ubuntu 24.04 LTS${NC}"
+echo -e "${GREEN}Note: Verified working on Ubuntu 22.04 LTS (Jammy Jellyfish)${NC}"
 echo ""
 print_status "Happy flying!"

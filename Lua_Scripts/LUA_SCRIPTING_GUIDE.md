@@ -1,15 +1,6 @@
 # Lua Scripting for ArduPilot
 
-## Introduction
-
-Lua scripting allows you to add custom behaviors to ArduPilot without modifying the C++ source code. Scripts run alongside the main flight code and can:
-
-- Read sensor data (GPS, battery, attitude)
-- Read and modify parameters
-- Control servos and motors
-- Change flight modes
-- Send messages to ground station
-- Implement custom logic
+Lua scripting adds custom behaviors to ArduPilot without modifying C++ source code. Scripts can read sensors, modify parameters, control servos, change flight modes, and send GCS messages.
 
 **Target Version:** Plane 4.5.7
 
@@ -17,54 +8,24 @@ Lua scripting allows you to add custom behaviors to ArduPilot without modifying 
 
 ## Enabling Lua Scripting
 
-### Step 1: Enable Scripting Parameter
-
 ```bash
-# In MAVProxy or SITL
+# Enable scripting
 param set SCR_ENABLE 1
-```
 
-### Step 2: Restart SITL
-
-Restart SITL to create the `scripts/` directory:
-
-```bash
-# Exit SITL (Ctrl+C)
-# Restart
+# Restart SITL to create scripts/ directory
 cd ~/ardupilot/ArduPlane
 Tools/autotest/sim_vehicle.py -v ArduPlane -L CMAC --console --map
 ```
 
-### Step 3: Place Scripts in Directory
+Place `.lua` files in `~/ardupilot/ArduPlane/scripts/`. Scripts load at startup — restart SITL after adding new scripts.
 
-Scripts must be placed in:
-```
-~/ardupilot/ArduPlane/scripts/
-```
+On hardware, place scripts on SD card at `/APM/scripts/`.
 
-For SITL, place `.lua` files directly in this directory.
-
-### Step 4: Restart SITL Again
-
-Scripts are loaded at startup. After adding new scripts:
-
-```bash
-# Restart SITL to load scripts
-# Ctrl+C and restart
-```
-
-### Verifying Scripts Loaded
-
-Check console for messages like:
-```
-Loaded script: my_script.lua
-```
+Check console for: `Loaded script: my_script.lua`
 
 ---
 
 ## Lua Script Structure
-
-Every ArduPilot Lua script follows this pattern:
 
 ```lua
 -- Script name: example.lua
@@ -82,11 +43,7 @@ end
 return update, 1000  -- Initial call after 1000ms
 ```
 
-**Key points:**
-- Script must return a function and interval
-- Function is called repeatedly at the specified interval
-- Interval is in milliseconds (1000 = 1 second)
-- Return `update, 0` to stop the script
+Key points: script must return a function and interval; interval is in milliseconds; `return update, 0` stops the script.
 
 ---
 
@@ -108,10 +65,7 @@ end
 return update, 5000
 ```
 
-**Test:**
-1. Place in `~/ardupilot/ArduPlane/scripts/hello_world.lua`
-2. Restart SITL
-3. Watch console for "Hello from Lua!" messages every 5 seconds
+Place in `~/ardupilot/ArduPlane/scripts/hello_world.lua`, restart SITL, watch console.
 
 ---
 
@@ -148,16 +102,11 @@ end
 return update, 1000
 ```
 
-**Setup:**
 ```bash
-# Set warning altitude
 param set SCR_USER1 120  # Warn above 120m
-
-# Restart SITL and place script
-# Fly above 120m to test
 mode FBWA
 arm throttle
-rc 3 1800  # Climb
+rc 3 1800  # Climb to test
 ```
 
 ---
@@ -199,15 +148,7 @@ end
 return update, 2000
 ```
 
-**Message Severity Levels:**
-- 0 = Emergency
-- 1 = Alert
-- 2 = Critical
-- 3 = Error
-- 4 = Warning
-- 5 = Notice
-- 6 = Info
-- 7 = Debug
+**Message Severity Levels:** 0=Emergency, 1=Alert, 2=Critical, 3=Error, 4=Warning, 5=Notice, 6=Info, 7=Debug
 
 ---
 
@@ -244,16 +185,7 @@ end
 return update, 2000
 ```
 
-**Flight Mode Numbers (Plane):**
-- 0 = MANUAL
-- 1 = CIRCLE
-- 2 = STABILIZE
-- 5 = FBWA
-- 6 = FBWB
-- 10 = AUTO
-- 11 = RTL
-- 12 = LOITER
-- 15 = GUIDED
+**Flight Mode Numbers (Plane):** 0=MANUAL, 1=CIRCLE, 2=STABILIZE, 5=FBWA, 6=FBWB, 10=AUTO, 11=RTL, 12=LOITER, 15=GUIDED
 
 ---
 
@@ -337,16 +269,13 @@ return update, 50
 ### GCS Communication
 
 ```lua
--- Send text message to ground station
 gcs:send_text(severity, "Message")
-
 -- Severity: 0=emergency, 4=warning, 6=info
 ```
 
 ### AHRS (Attitude/Heading Reference)
 
 ```lua
--- Get current location
 local location = ahrs:get_location()
 if location then
     local lat = location:lat() * 1e-7  -- Degrees
@@ -354,7 +283,6 @@ if location then
     local alt = location:alt() * 0.01  -- Meters
 end
 
--- Get roll, pitch, yaw
 local roll, pitch, yaw = ahrs:get_roll(), ahrs:get_pitch(), ahrs:get_yaw()
 -- Returns radians
 ```
@@ -362,76 +290,47 @@ local roll, pitch, yaw = ahrs:get_roll(), ahrs:get_pitch(), ahrs:get_yaw()
 ### Battery
 
 ```lua
--- Get battery voltage (battery 0)
 local voltage = battery:voltage(0)
-
--- Get battery current
 local current = battery:current_amps(0)
-
--- Get remaining capacity
 local remaining = battery:capacity_remaining_pct(0)  -- Percentage
 ```
 
 ### Parameters
 
 ```lua
--- Get parameter value
 local value = param:get('PARAM_NAME')
-
--- Set parameter value
 param:set('PARAM_NAME', value)
-
--- Set and save
 param:set_and_save('PARAM_NAME', value)
 ```
 
 ### Vehicle Control
 
 ```lua
--- Get current mode
 local mode = vehicle:get_mode()
-
--- Set mode (mode number)
 vehicle:set_mode(11)  -- RTL for Plane
-
--- Get armed state
 local armed = arming:is_armed()
 ```
 
 ### Servo Control
 
 ```lua
--- Set servo PWM with timeout
--- servo_num: 1-16
--- pwm: 1000-2000
--- timeout_ms: how long to hold position
+-- servo_num: 1-16, pwm: 1000-2000, timeout_ms: hold duration
 SRV_Channels:set_output_pwm_chan_timeout(servo_num, pwm, timeout_ms)
 ```
 
 ### Mission
 
 ```lua
--- Get current waypoint index
 local wp = mission:get_current_nav_index()
-
--- Get total waypoint count
 local count = mission:num_commands()
-
--- Set current waypoint
 mission:set_current_cmd(wp_num)
 ```
 
 ### GPS
 
 ```lua
--- Get GPS status
-local gps_status = gps:status(0)  -- GPS 0
--- 0 = No GPS, 1 = No fix, 2 = 2D fix, 3 = 3D fix
-
--- Get GPS location
+local gps_status = gps:status(0)  -- 0=No GPS, 1=No fix, 2=2D, 3=3D
 local gps_loc = gps:location(0)
-
--- Get number of satellites
 local num_sats = gps:num_sats(0)
 ```
 
@@ -439,127 +338,62 @@ local num_sats = gps:num_sats(0)
 
 ## Script User Parameters
 
-Scripts can use 6 user parameters: `SCR_USER1` through `SCR_USER6`
+Scripts can use `SCR_USER1` through `SCR_USER6` for configurable values.
 
 ```lua
--- In script
 local threshold = param:get('SCR_USER1')
-
--- In MAVProxy
-param set SCR_USER1 100
 ```
 
-**Use cases:**
-- Altitude thresholds
-- Speed limits
-- Enable/disable script features
-- Timing intervals
+```bash
+param set SCR_USER1 100
+```
 
 ---
 
 ## Debugging Lua Scripts
 
-### Print to Console
-
 ```lua
 gcs:send_text(6, "Debug: variable = " .. tostring(variable))
 ```
 
-### Check Script Loading
-
-Console messages on startup:
-```
-Loaded script: my_script.lua
-```
-
-### Script Not Loading
-
-**Reasons:**
-1. Syntax error in script
-2. SCR_ENABLE not set to 1
-3. Insufficient memory (increase SCR_HEAP_SIZE)
-4. Script not in correct directory
-5. SITL not restarted after adding script
-
-**Check:**
-```bash
-param show SCR_*
-# SCR_ENABLE should be 1
-```
-
-### Increase Memory for Scripts
+**Script not loading causes:** syntax error, `SCR_ENABLE` not set, insufficient memory, wrong directory, SITL not restarted.
 
 ```bash
+param show SCR_*        # SCR_ENABLE should be 1
 param set SCR_HEAP_SIZE 100000
-# Restart SITL
 ```
 
 ---
 
-## Lua Script Best Practices
-
-### 1. Return Interval Wisely
+## Best Practices
 
 ```lua
--- Too fast: wastes CPU
-return update, 10  -- Every 10ms - rarely needed
+-- Use appropriate update intervals
+return update, 1000   -- Most scripts: 1 second
+return update, 5000   -- Infrequent checks
 
--- Reasonable: most scripts
-return update, 1000  -- Every 1 second
-
--- For infrequent checks
-return update, 5000  -- Every 5 seconds
-```
-
-### 2. Check for nil
-
-```lua
+-- Always check for nil
 local location = ahrs:get_location()
 if not location then
-    -- No GPS fix yet
     return update, 1000
 end
-```
 
-### 3. Use String Formatting
-
-```lua
--- Good
+-- Use string formatting
 gcs:send_text(6, string.format("Alt: %.1fm, Speed: %.1fm/s", alt, speed))
 
--- Avoid concatenation in loops
-```
+-- Never block ArduPilot
+-- BAD: while true do ... end
+-- GOOD: use return interval pattern
 
-### 4. Avoid Infinite Loops
-
-```lua
--- BAD: Never do this
-while true do
-    -- Blocks ArduPilot!
-end
-
--- GOOD: Use return interval
-function update()
-    -- Do work
-    return update, 1000
-end
-```
-
-### 5. State Management
-
-```lua
--- Use variables to track state
+-- Track state with variables
 local last_state = false
-
 function update()
     if condition and not last_state then
-        -- Trigger only once when condition becomes true
         do_something()
         last_state = true
     elseif not condition then
         last_state = false
     end
-
     return update, 1000
 end
 ```
@@ -568,27 +402,19 @@ end
 
 ## Advanced Topics
 
-### Accessing Parameters by Index
+### Accessing Parameters
 
 ```lua
--- Get parameter by name
 local val = param:get('PARAM_NAME')
-
--- Get parameter by index
 local val = Parameter('PARAM_NAME'):get()
-
--- Set parameter
 Parameter('PARAM_NAME'):set(value)
 ```
 
-### Accessing RC Channels
+### RC Channels
 
 ```lua
--- Read RC input
 local rc_val = rc:get_pwm(3)  -- Channel 3 (throttle)
-
--- RC channel override
-rc:override(3, 1500)  -- Override channel 3 to 1500
+rc:override(3, 1500)
 ```
 
 ### Location Objects
@@ -596,12 +422,8 @@ rc:override(3, 1500)  -- Override channel 3 to 1500
 ```lua
 local home = ahrs:get_home()
 local current = ahrs:get_location()
-
 if home and current then
-    -- Calculate distance
     local dist = home:get_distance(current)
-
-    -- Calculate bearing
     local bearing = home:get_bearing(current)
 end
 ```
@@ -659,31 +481,21 @@ return update, 2000
 
 ## Testing Scripts in SITL
 
-### Basic Testing Flow
-
-1. **Write script** and place in `~/ardupilot/ArduPlane/scripts/`
-2. **Restart SITL** to load script
-3. **Check console** for "Loaded script" message
-4. **Trigger script behavior** (fly, change modes, etc.)
-5. **Observe output** in console
-6. **Modify and repeat**
-
-### Quick Iteration
+1. Write script and place in `~/ardupilot/ArduPlane/scripts/`
+2. Restart SITL to load script
+3. Check console for "Loaded script" message
+4. Trigger script behavior (fly, change modes, etc.)
+5. Observe output in console, modify and repeat
 
 ```bash
 # Edit script in another terminal
 nano ~/ardupilot/ArduPlane/scripts/my_script.lua
-
-# In SITL MAVProxy window:
-# Ctrl+C to stop
-# Up arrow + Enter to restart quickly
+# In SITL: Ctrl+C to stop, up arrow + Enter to restart
 ```
 
 ---
 
-## Lua Script Library
-
-Place these example scripts in your scripts directory for reference:
+## Script Library Layout
 
 ```bash
 ~/ardupilot/ArduPlane/scripts/

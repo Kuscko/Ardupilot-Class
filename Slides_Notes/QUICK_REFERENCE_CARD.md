@@ -3,12 +3,14 @@
 ## Essential SITL Commands
 
 ### Starting SITL
+
 ```bash
 cd ~/ardupilot/ArduPlane
 Tools/autotest/sim_vehicle.py -v ArduPlane -L CMAC --console --map
 ```
 
 ### Basic Flight
+
 ```bash
 mode FBWA              # Stabilized flight
 arm throttle           # Enable motors
@@ -51,6 +53,7 @@ disarm                 # Disable motors
 ## Critical Parameters
 
 ### TECS (Altitude/Speed Control)
+
 ```bash
 TECS_TIME_CONST    # Response speed (default 5.0)
 TECS_CLMB_MAX      # Max climb rate m/s (default 5.0)
@@ -59,6 +62,7 @@ TECS_SPDWEIGHT     # Speed vs alt priority (default 1.0)
 ```
 
 ### Airspeed
+
 ```bash
 ARSPD_FBW_MIN      # Min airspeed m/s (default 12)
 ARSPD_FBW_MAX      # Max airspeed m/s (default 22)
@@ -66,6 +70,7 @@ TRIM_ARSPD_CM      # Cruise airspeed cm/s (default 1500)
 ```
 
 ### Throttle
+
 ```bash
 THR_MIN            # Min throttle % (default 0)
 THR_MAX            # Max throttle % (default 75)
@@ -73,6 +78,7 @@ TRIM_THROTTLE      # Cruise throttle % (default 45)
 ```
 
 ### Failsafes
+
 ```bash
 FS_SHORT_ACTN      # Short failsafe action (0=none, 1=RTL)
 FS_LONG_ACTN       # Long failsafe action (0=none, 2=Land)
@@ -85,12 +91,14 @@ BATT_CRT_VOLT      # Critical battery voltage
 ## Lua Scripting Quick Start
 
 ### Enable Scripting
+
 ```bash
 param set SCR_ENABLE 1
 # Restart SITL
 ```
 
 ### Basic Script Template
+
 ```lua
 function update()
     gcs:send_text(6, "Hello!")
@@ -100,6 +108,7 @@ return update, 1000
 ```
 
 ### Common API Functions
+
 ```lua
 ahrs:get_location()        -- Get position
 battery:voltage(0)         -- Get battery voltage
@@ -114,6 +123,7 @@ gcs:send_text(level, msg)  -- Send message
 ## MAVLink Python Quick Start
 
 ### Connect to Autopilot
+
 ```python
 from pymavlink import mavutil
 
@@ -123,6 +133,7 @@ print(f"Connected to system {master.target_system}")
 ```
 
 ### Read Messages
+
 ```python
 msg = master.recv_match(type='VFR_HUD', blocking=True, timeout=5)
 if msg:
@@ -131,6 +142,7 @@ if msg:
 ```
 
 ### Arm Vehicle
+
 ```python
 master.arducopter_arm()
 # or
@@ -170,20 +182,22 @@ master.mav.command_long_send(
 ## Troubleshooting Quick Fixes
 
 ### GPS Not Locking (SITL)
+
 ```bash
 # Wait 10-30 seconds
 # Check console for "GPS: 3D Fix"
 ```
 
 ### Can't Arm
+
 ```bash
 # Check PreArm messages in console
-# Common fixes:
 mode FBWA                # Switch to FBWA
 arm throttle force       # Force arm (SITL only)
 ```
 
 ### SITL Won't Start
+
 ```bash
 cd ~/ardupilot/ArduPlane
 ../waf plane            # Rebuild
@@ -191,6 +205,7 @@ cd ~/ardupilot/ArduPlane
 ```
 
 ### Slow Build
+
 ```bash
 # Verify building in WSL filesystem
 pwd  # Should show /home/username/...
@@ -202,20 +217,11 @@ pwd  # Should show /home/username/...
 ## File Locations
 
 ```bash
-# ArduPilot installation
-~/ardupilot/
-
-# SITL binary
-~/ardupilot/build/sitl/bin/arduplane
-
-# Lua scripts (SITL)
-~/ardupilot/ArduPlane/scripts/
-
-# Vehicle code
-~/ardupilot/ArduPlane/
-
-# Sensor drivers
-~/ardupilot/libraries/AP_GPS/
+~/ardupilot/                              # ArduPilot installation
+~/ardupilot/build/sitl/bin/arduplane      # SITL binary
+~/ardupilot/ArduPlane/scripts/            # Lua scripts (SITL)
+~/ardupilot/ArduPlane/                    # Vehicle code
+~/ardupilot/libraries/AP_GPS/             # Sensor drivers
 ~/ardupilot/libraries/AP_InertialSensor/
 ~/ardupilot/libraries/AP_Baro/
 ```
@@ -226,19 +232,19 @@ pwd  # Should show /home/username/...
 
 | Resource | URL |
 |----------|-----|
-| **Plane Docs** | https://ardupilot.org/plane/ |
-| **Dev Docs** | https://ardupilot.org/dev/ |
-| **Parameters** | https://ardupilot.org/plane/docs/parameters.html |
-| **MAVLink** | https://mavlink.io/en/messages/common.html |
-| **Forum** | https://discuss.ardupilot.org/ |
-| **GitHub** | https://github.com/ArduPilot/ardupilot |
+| **Plane Docs** | <https://ardupilot.org/plane/> |
+| **Dev Docs** | <https://ardupilot.org/dev/> |
+| **Parameters** | <https://ardupilot.org/plane/docs/parameters.html> |
+| **MAVLink** | <https://mavlink.io/en/messages/common.html> |
+| **Forum** | <https://discuss.ardupilot.org/> |
+| **GitHub** | <https://github.com/ArduPilot/ardupilot> |
 
 ---
 
 ## Common MAVLink Messages
 
 | Message | ID | Contains |
-|---------|-----|----------|
+| ------- | -- | -------- |
 | HEARTBEAT | 0 | Mode, armed state |
 | ATTITUDE | 30 | Roll, pitch, yaw |
 | GLOBAL_POSITION_INT | 33 | Position, velocity |

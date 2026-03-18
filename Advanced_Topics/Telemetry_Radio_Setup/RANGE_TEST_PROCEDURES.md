@@ -1,50 +1,16 @@
 # Telemetry Radio Range Test Procedures
 
-Comprehensive procedures for testing and validating telemetry radio range and link quality.
-
 **Author:** Patrick Kelly (@Kuscko)
-**Version:** 1.0
-**Last Updated:** 2026-02-03
-
----
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Pre-Test Preparation](#pre-test-preparation)
-3. [Ground Range Test](#ground-range-test)
-4. [Flight Range Test](#flight-range-test)
-5. [Interference Testing](#interference-testing)
-6. [Data Analysis](#data-analysis)
-7. [Troubleshooting](#troubleshooting)
 
 ---
 
 ## Overview
 
-### Purpose
+Range testing validates maximum usable range, link quality at distance, interference robustness, and antenna performance.
 
-Range testing validates:
-- Maximum usable range for telemetry link
-- Link quality at various distances
-- Robustness to interference
-- Antenna performance
-- Power setting effectiveness
+**Test types:** Ground Range, Flight Range, Interference, Obstacle (NLOS).
 
-### Test Types
-
-1. **Ground Range Test**: Quick validation on the ground (line of sight)
-2. **Flight Range Test**: Real-world validation during flight
-3. **Interference Test**: Validation in RF-noisy environments
-4. **Obstacle Test**: Non-line-of-sight performance
-
-### Safety Requirements
-
-- Always maintain visual line of sight during flight tests
-- Have safety pilot ready to take manual control
-- Test in open area away from people and property
-- Follow local regulations for radio transmissions
-- Ensure failsafe settings are configured properly
+**Safety:** Maintain visual line of sight, configure failsafe before flight, test in open area.
 
 ---
 
@@ -52,172 +18,56 @@ Range testing validates:
 
 ### Equipment Checklist
 
-**Required:**
 - [ ] Telemetry radio pair (ground + air)
 - [ ] Flight controller with telemetry configured
 - [ ] Laptop with Mission Planner/QGC
-- [ ] Fully charged batteries (vehicle + laptop)
+- [ ] Fully charged batteries
 - [ ] GPS with clear sky view
-- [ ] Measuring tape or GPS distance app
 - [ ] Notepad for recording results
-
-**Optional:**
-- [ ] Spectrum analyzer (for interference analysis)
-- [ ] RSSI logger script
-- [ ] Second person for distance measurement
-- [ ] Walkie-talkies for coordination
-- [ ] Camera to document test setup
 
 ### Radio Configuration
 
 ```bash
-# Configure both radios identically
 python3 sik_radio_config.py --port /dev/ttyUSB0 --baud 57600 --air-speed 64 --netid 25 --txpower 20 --ecc --mavlink
-
-# Verify settings on both radios
-python3 sik_radio_config.py --port /dev/ttyUSB0
-python3 sik_radio_config.py --port /dev/ttyUSB1  # Air radio (if accessible)
+python3 sik_radio_config.py --port /dev/ttyUSB0  # Verify settings
 ```
 
-**Recommended Settings for Range Testing:**
-- Serial baud: 57600
-- Air speed: 64 kbps (or lower for longer range)
-- Network ID: Unique value (avoid 25 if others nearby)
-- TX Power: Maximum (check local regulations)
-- ECC: Enabled
-- MAVLink: Enabled
+**Recommended:** Serial baud 57600, Air speed 64 kbps, TX Power maximum (check regulations), ECC and MAVLink enabled.
 
 ### ArduPilot Configuration
 
 ```bash
-# Configure telemetry port (example: SERIAL2 for TELEM2 port)
 SERIAL2_PROTOCOL,2        # MAVLink2
-SERIAL2_BAUD,57          # 57600 baud
-
-# Configure failsafe for lost link
-FS_LONG_ACTN,1           # RTL on long failsafe
-FS_LONG_TIMEOUT,20       # 20 seconds
-
-# Reduce telemetry stream rates to extend range
-SR2_EXTRA1,2             # Attitude at 2 Hz
-SR2_EXTRA2,2             # VFR_HUD at 2 Hz
-SR2_EXTRA3,1             # AHRS at 1 Hz
-SR2_POSITION,2           # Global position at 2 Hz
-SR2_RAW_SENS,1           # Raw sensors at 1 Hz
-SR2_RC_CHAN,1            # RC channels at 1 Hz
+SERIAL2_BAUD,57           # 57600 baud
+FS_LONG_ACTN,1            # RTL on long failsafe
+FS_LONG_TIMEOUT,20
+SR2_EXTRA1,2
+SR2_EXTRA2,2
+SR2_EXTRA3,1
+SR2_POSITION,2
+SR2_RAW_SENS,1
+SR2_RC_CHAN,1
 ```
 
-### Pre-Flight Checks
+**Pre-Flight Verification:**
 
-1. **Radio Connection:**
-   - Green LED solid on both radios (linked)
-   - Mission Planner shows heartbeat
-   - Can receive telemetry data
-
-2. **RSSI Baseline:**
-   - Record RSSI at 1 meter distance
-   - Should be >200 (max 255)
-
-3. **GPS Lock:**
-   - GPS has 3D fix
-   - HDOP < 2.0
-   - 8+ satellites
-
-4. **Failsafe Test:**
-   - Turn off ground radio
-   - Verify vehicle enters failsafe mode
-   - Turn on ground radio
-   - Verify failsafe clears
+- Green LED solid on both radios (linked)
+- Record RSSI baseline at 1m (should be > 200)
+- GPS 3D fix, HDOP < 2.0, 8+ satellites
+- Test failsafe: turn off ground radio, verify failsafe, restore
 
 ---
 
 ## Ground Range Test
 
-### Procedure Overview
-
-Test telemetry link range with vehicle stationary on the ground.
-
-### Test Setup
-
-```
-    [Ground Station]  <--- distance --->  [Vehicle]
-         |                                    |
-    Ground Radio                          Air Radio
-```
-
-**Location Requirements:**
-- Flat, open area (field, parking lot)
-- Minimal obstacles
-- Low RF interference
-- At least 1 km clear distance
-
 ### Step-by-Step Procedure
 
-#### Step 1: Baseline Test (0-10 meters)
-
-1. Place vehicle 1 meter from ground station
-2. Power on vehicle and ground station
-3. Verify telemetry link established
-4. Record RSSI values:
-   ```
-   Distance: 1m
-   Local RSSI: ___
-   Remote RSSI: ___
-   Noise: ___
-   ```
-
-5. Note in Mission Planner or use AT command:
-   ```bash
-   # Check RSSI with configuration script
-   python3 sik_radio_config.py --port /dev/ttyUSB0 --show-rssi
-   ```
-
-#### Step 2: Near Range Test (10-100 meters)
-
-1. Move vehicle to 10m, 25m, 50m, 100m increments
-2. At each distance:
-   - Verify telemetry link active
-   - Record RSSI values
-   - Send test command (mode change, waypoint)
-   - Verify command acknowledgment
-   - Note any packet loss in Mission Planner
-
-3. Data collection table:
-   ```
-   Distance | Local RSSI | Remote RSSI | Noise | Link Quality | Notes
-   ---------|------------|-------------|-------|--------------|------
-   10m      |            |             |       |              |
-   25m      |            |             |       |              |
-   50m      |            |             |       |              |
-   100m     |            |             |       |              |
-   ```
-
-#### Step 3: Medium Range Test (100-500 meters)
-
-1. Continue moving to 150m, 200m, 300m, 400m, 500m
-2. At each distance:
-   - Check link status
-   - Record RSSI
-   - Monitor for dropouts
-   - Test command/control responsiveness
-
-3. If link degrades (RSSI < 100):
-   - Note distance where degradation starts
-   - Attempt to re-establish link
-   - Record recovery distance
-
-#### Step 4: Maximum Range Test (500m+)
-
-1. Continue increasing distance until link lost
-2. Walk back toward ground station until link restores
-3. Record:
-   - Maximum distance with reliable link
-   - Distance where link was lost
-   - Distance where link recovered
+1. **Baseline (0-10m):** Record RSSI at 1m, 5m, 10m.
+2. **Near range (10-100m):** Move vehicle to 25m, 50m, 100m. Record RSSI, send test command, verify ACK.
+3. **Medium range (100-500m):** Continue at 150m, 200m, 300m, 400m, 500m. Note if RSSI drops below 100.
+4. **Maximum range (500m+):** Continue until link lost. Walk back; record recovery distance.
 
 ### Data Logging Script
-
-Use this Python script to log RSSI during test:
 
 ```python
 #!/usr/bin/env python3
@@ -225,7 +75,6 @@ Use this Python script to log RSSI during test:
 import time
 from pymavlink import mavutil
 
-# Connect to vehicle
 master = mavutil.mavlink_connection('udp:127.0.0.1:14550')
 master.wait_heartbeat()
 
@@ -234,15 +83,12 @@ print("Time,LocalRSSI,RemoteRSSI,Noise,RxErrors,Fixed")
 
 try:
     while True:
-        # Request radio status
         master.mav.request_data_stream_send(
             master.target_system,
             master.target_component,
             mavutil.mavlink.MAV_DATA_STREAM_EXTRA3,
-            1, 1
-        )
+            1, 1)
 
-        # Wait for RADIO_STATUS message
         msg = master.recv_match(type='RADIO_STATUS', blocking=True, timeout=2)
         if msg:
             print(f"{time.time()},{msg.rssi},{msg.remrssi},{msg.noise},{msg.rxerrors},{msg.fixed}")
@@ -253,160 +99,65 @@ except KeyboardInterrupt:
     print("\nLogging stopped")
 ```
 
-### Expected Results
+### Link Quality Thresholds
 
-**Good Link Quality:**
-- RSSI > 150 at all tested distances
-- No packet loss
-- Commands acknowledged immediately
-- Smooth telemetry updates
-
-**Marginal Link:**
-- RSSI 100-150
-- Occasional packet loss (< 5%)
-- Delayed command acknowledgment
-- Intermittent telemetry gaps
-
-**Poor Link:**
-- RSSI < 100
-- Frequent packet loss (> 10%)
-- Commands fail
-- Telemetry unreliable
+| Quality  | RSSI    | Packet Loss | Notes                    |
+| -------- | ------- | ----------- | ------------------------ |
+| Good     | > 150   | 0%          | Smooth telemetry         |
+| Marginal | 100-150 | < 5%        | Delayed ACKs possible    |
+| Poor     | < 100   | > 10%       | Unreliable, do not fly   |
 
 ---
 
 ## Flight Range Test
 
-### Procedure Overview
+### Mission Profile
 
-Validate telemetry range during actual flight operations.
-
-### Test Flight Plan
-
-```
-Mission profile:
 1. Takeoff to 100m AGL
 2. Fly straight away from home
 3. Monitor RSSI continuously
-4. Turn around at:
-   - Planned distance (e.g., 500m), OR
-   - RSSI drops below threshold (150), OR
-   - Link lost for 5+ seconds
-5. Return to home
-6. Land
-```
+4. Turn at planned distance, RSSI < 150, or link lost 5+ seconds
+5. Return and land
 
 ### Auto Mission Example
 
-Create waypoint mission:
-
-```
+```text
 QGC WPL 110
 0    1    0    16    0    0    0    0    -35.363261    149.165237    584.0    1
 1    0    3    22    0    0    0    0    -35.363261    149.165237    100.0    1
 2    0    3    16    0    0    0    0    -35.363261    149.170237    100.0    1
 3    0    3    16    0    0    0    0    -35.363261    149.175237    100.0    1
-4    0    3    16    0    0    0    0    -35.363261    149.180237    100.0    1
-5    0    3    16    0    0    0    0    -35.363261    149.165237    100.0    1
-6    0    3    20    0    0    0    0    0              0              0        1
+4    0    3    16    0    0    0    0    -35.363261    149.165237    100.0    1
+5    0    3    20    0    0    0    0    0              0              0        1
 ```
 
-Each waypoint ~500m apart (adjust based on expected range).
+### Pre-Flight Setup
 
-### Flight Test Procedure
+```bash
+FS_LONG_ACTN,1
+FS_LONG_TIMEOUT,10
+LOG_BITMASK,65535
+```
 
-#### Pre-Flight
+### In-Flight Actions
 
-1. Configure failsafe:
-   ```
-   FS_LONG_ACTN,1        # RTL on link loss
-   FS_LONG_TIMEOUT,10    # 10 second timeout
-   ```
-
-2. Set up logging:
-   ```
-   LOG_BITMASK,65535     # Log everything
-   LOG_DISARMED,0
-   ```
-
-3. Start RSSI logger script (see above)
-
-4. Verify GPS lock and home position set
-
-#### In-Flight
-
-1. Takeoff manually to 100m AGL
-2. Switch to AUTO mode
-3. Monitor on ground station:
-   - RSSI values (local + remote)
-   - Distance from home
-   - Telemetry update rate
-   - Any error messages
-
-4. If RSSI drops below 150:
-   - Note distance
-   - Switch to RTL or LOITER
-   - Allow link to recover
-   - Resume test if desired
-
-5. If link lost:
-   - Vehicle should trigger failsafe RTL
-   - Wait for vehicle to return to range
-   - Link should re-establish
-   - Let vehicle complete RTL
-
-#### Post-Flight
-
-1. Download logs from vehicle
-2. Analyze RSSI vs. distance
-3. Check for errors or warnings
-4. Review failsafe activation (if any)
-
-### Data Collection
-
-Record during flight:
-- Maximum distance achieved
-- RSSI at maximum distance
-- Any link dropouts (time, duration, distance)
-- Failsafe activations
-- Recovery behavior
+- If RSSI drops below 150: note distance, switch to LOITER/RTL.
+- If link lost: vehicle triggers failsafe RTL; wait for return; link re-establishes.
 
 ---
 
 ## Interference Testing
 
-### Urban/RF-Noisy Environment Test
-
-1. **Test Location:**
-   - Near buildings with WiFi
-   - Near other RC pilots
-   - Near cell towers
-   - Industrial areas
-
-2. **Procedure:**
-   - Perform ground range test
-   - Compare results to open-field test
-   - Note degradation in range
-
-3. **Spectrum Analysis:**
-   - Use spectrum analyzer to identify interference
-   - Try different frequencies if radio supports it
-   - Adjust NetID to avoid conflicts
-
-### Multi-Radio Interference
-
-1. Have multiple radios operating on same frequency
-2. Test with different NetIDs:
-   - Same NetID: Links interfere
-   - Different NetID: Links coexist
+1. Test in urban/RF-noisy environment (near WiFi, cell towers, other RC pilots)
+2. Compare ground range results vs open-field baseline
+3. Use spectrum analyzer to identify interference; adjust `MIN_FREQ`/`MAX_FREQ` to avoid busy bands
+4. Verify different `NETID` values prevent interference between radio pairs
 
 ---
 
 ## Data Analysis
 
 ### RSSI vs. Distance Plot
-
-Plot RSSI values against distance:
 
 ```python
 import matplotlib.pyplot as plt
@@ -426,210 +177,84 @@ plt.savefig('rssi_range_test.png')
 plt.show()
 ```
 
-### Link Budget Calculation
+### Link Budget
 
-Estimate theoretical range:
+```text
+Path Loss (dB) = 20*log10(distance_m) + 20*log10(freq_MHz) + 32.45
 
-```
-Path Loss (dB) = 20 * log10(distance_m) + 20 * log10(freq_MHz) + 32.45
+For 915MHz at 1km:
+  Path Loss = 60 + 59.2 + 32.45 = 151.65 dB
 
-For 915 MHz at 1 km:
-Path Loss = 20 * log10(1000) + 20 * log10(915) + 32.45
-         = 60 + 59.2 + 32.45
-         = 151.65 dB
-
-Link Budget:
-TX Power: 20 dBm
-TX Antenna Gain: 2 dBi
-RX Antenna Gain: 2 dBi
-RX Sensitivity: -117 dBm (for 64 kbps)
-
-Link Margin = TX + TX_Gain + RX_Gain - Path_Loss - RX_Sensitivity
-           = 20 + 2 + 2 - 151.65 - (-117)
-           = -10.65 dB
-
-Negative margin = link will fail at 1 km
+Link Margin = TX(20dBm) + TX_Gain(2dBi) + RX_Gain(2dBi) - Path_Loss - RX_Sensitivity(-117dBm)
+            = 20 + 2 + 2 - 151.65 + 117 = -10.65 dB  → link will fail at 1km
 ```
 
-Reduce air speed or increase TX power to improve range.
+Reduce air speed or increase TX power to improve margin.
 
-### Performance Metrics
-
-Calculate from test data:
-
-```
-Maximum Range = _____ meters
-
-Reliable Range (RSSI > 150) = _____ meters
-
-Critical Range (RSSI > 100) = _____ meters
-
-Range Margin = (Reliable Range / Planned Mission Range) * 100 = _____%
-```
-
-**Target: 200% margin** (if mission is 500m, reliable range should be 1000m)
+**Target:** 200% range margin (if mission is 500m, reliable range should be 1000m).
 
 ---
 
 ## Troubleshooting
 
-### Poor Range Performance
+### Poor Range (< 500m with standard settings)
 
-**Symptom:** Range < 500m with standard settings
-
-**Possible Causes:**
-1. **Antenna Issues:**
-   - Check antenna connections tight
-   - Verify antennas not damaged
-   - Try different antenna orientations
-   - Upgrade to higher-gain antenna
-
-2. **Power Settings:**
-   - Increase TX power to maximum safe level
-   - Check power supply adequate (voltage stable)
-
-3. **Air Speed Too High:**
-   - Reduce from 64 kbps to 32 or 16 kbps
-   - Lower data rate = longer range
-
-4. **Interference:**
-   - Change network ID
-   - Test in different location
-   - Use spectrum analyzer to find quiet frequency
-
-5. **Terrain/Obstacles:**
-   - Ensure line of sight
-   - Test at higher altitude
-   - Avoid flying behind hills/buildings
+- Check antenna connections and orientation; try higher-gain antenna
+- Increase TXPOWER to maximum legal level
+- Reduce AIR_SPEED from 64 to 32 or 16 kbps
+- Change NETID; test in different location; use spectrum analyzer
 
 ### Intermittent Link
 
-**Symptom:** Link drops randomly
-
-**Possible Causes:**
-1. **Vibration:**
-   - Secure radio and antenna
-   - Check for loose connections
-   - Add vibration damping
-
-2. **Multipath Fading:**
-   - Change altitude
-   - Change antenna polarization
-   - Enable diversity (if supported)
-
-3. **Electrical Interference:**
-   - Route telemetry cables away from ESCs/motors
-   - Add ferrite beads to cables
-   - Ensure proper grounding
+- Secure radio and antenna; add vibration damping
+- Route cables away from ESCs/motors; add ferrite beads
+- Update SiK firmware (both radios must match)
+- Check for overheating at high power
 
 ### Asymmetric Link
 
-**Symptom:** One direction works, other doesn't
-
-**Possible Causes:**
-1. **Power Imbalance:**
-   - Check TX power settings match
-   - Verify power supply adequate on both ends
-
-2. **Antenna Mismatch:**
-   - Ensure both antennas same type
-   - Check antenna orientation
-
-3. **Hardware Failure:**
-   - Swap radios to isolate problem
-   - Check for damaged components
+- Verify TX power settings match on both radios
+- Ensure both antennas are same type and orientation
+- Swap radios to isolate hardware failure
 
 ---
 
 ## Best Practices
 
-### Radio Mounting
-
-- Mount away from motors/ESCs (EMI sources)
-- Keep antenna clear of carbon fiber/metal
+- Mount radio away from motors/ESCs; keep antenna clear of carbon fiber
 - Use vertical orientation for omnidirectional coverage
-- Secure firmly to prevent vibration
-
-### Antenna Selection
-
-- **Omni antennas:** 360° coverage, shorter range
-- **Directional antennas:** Longer range, must point at vehicle
-- **Diversity systems:** Best reliability, higher cost
-
-### Range Optimization
-
-1. **Lower air speed** = longer range (but less throughput)
-2. **Reduce telemetry rates** = less data to transmit
-3. **Maximum TX power** = stronger signal (check regulations)
-4. **Enable ECC** = better reliability with weak signal
-5. **Better antennas** = higher gain = longer range
-
-### Safety Margins
-
-- Plan for 50% of tested range in missions
-- Always have failsafe configured
-- Test in conditions similar to mission environment
+- Lower air speed = longer range (less throughput)
+- Enable ECC and MAVLink framing
+- Plan missions for 50% of tested range
 - Re-test after any hardware changes
 
 ---
 
 ## Test Report Template
 
-```
+```text
 TELEMETRY RADIO RANGE TEST REPORT
-Date: __________
-Tester: __________
-Location: __________
+Date: __________  Tester: __________  Location: __________
 
 EQUIPMENT:
-Radio Model: __________
-Firmware Version: __________
-Antenna Type: __________
-Vehicle Type: __________
+Radio Model: __________  Firmware: __________  Antenna: __________
 
 CONFIGURATION:
-Serial Baud: __________
-Air Speed: __________ kbps
-TX Power: __________ dBm
-Network ID: __________
-ECC: Enabled/Disabled
-MAVLink: Enabled/Disabled
+Serial Baud: __________  Air Speed: __ kbps  TX Power: __ dBm
+Network ID: __________  ECC: Y/N  MAVLink: Y/N
 
-GROUND TEST RESULTS:
-Maximum Range: __________ meters
-RSSI at Max Range: __________
-Link Lost at: __________ meters
-Link Recovered at: __________ meters
+GROUND TEST:
+Max reliable range: ____m  RSSI at max: ____  Link lost at: ____m
 
-FLIGHT TEST RESULTS:
-Maximum Range: __________ meters
-RSSI at Max Range: __________
-Failsafe Triggered: Yes/No
-Recovery Distance: __________ meters
+FLIGHT TEST:
+Max range: ____m  RSSI at max: ____  Failsafe triggered: Y/N
 
-ENVIRONMENTAL CONDITIONS:
-Weather: __________
-Temperature: __________
-RF Environment: Clean / Moderate / Noisy
+ENVIRONMENT: Weather: __________  RF Environment: Clean/Moderate/Noisy
 
-CONCLUSION:
-Pass/Fail
-Recommended Mission Range: __________ meters
-Notes: __________
+CONCLUSION: Pass/Fail  Recommended mission range: ____m
 ```
 
 ---
 
-## References
-
-- [SiK Radio Configuration](sik_radio_config.py)
-- [ArduPilot Telemetry Documentation](https://ardupilot.org/copter/docs/common-telemetry-landingpage.html)
-- [Mission Planner RSSI Monitoring](https://ardupilot.org/planner/)
-
----
-
-**Remember:**
-- Safety first - always have failsafe configured
-- Test in safe environment before critical missions
-- Document all results for future reference
-- Re-test after any configuration changes
+- [SiK Radio Configuration](https://ardupilot.org/copter/docs/common-sik-telemetry-radio.html)
+- [ArduPilot Telemetry](https://ardupilot.org/copter/docs/common-telemetry-landingpage.html)

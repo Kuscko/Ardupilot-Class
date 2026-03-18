@@ -5,6 +5,7 @@
 ### Hardware Connection
 
 **Pixhawk/Cube → Raspberry Pi:**
+
 - TELEM2 port → Raspberry Pi UART
 - TX → RX, RX → TX
 - GND → GND
@@ -25,6 +26,7 @@ param set SR2_RAW_SENS 2
 ### Raspberry Pi Setup
 
 **Enable UART:**
+
 ```bash
 # Edit /boot/config.txt
 sudo nano /boot/config.txt
@@ -38,6 +40,7 @@ sudo reboot
 ```
 
 **Test connection:**
+
 ```bash
 # Install MAVProxy
 pip3 install pymavlink mavproxy
@@ -67,7 +70,6 @@ roslaunch mavros apm.launch fcu_url:=/dev/serial0:921600
 
 ### Subscribe to Topics
 
-**Python example:**
 ```python
 #!/usr/bin/env python3
 import rospy
@@ -121,7 +123,7 @@ asyncio.run(run())
 
 ## DroneKit-Python
 
-### Install
+### DroneKit Install
 
 ```bash
 pip3 install dronekit
