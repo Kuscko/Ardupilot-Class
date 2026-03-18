@@ -6,9 +6,9 @@ This repository contains a complete onboarding environment for new engineers lea
 
 **Target Firmware:** Plane 4.5.7 (commit: 0358a9c210bc6c965006f5d6029239b7033616df)
 
-**Platform:** Ubuntu 24.04 LTS (WSL2)
-- **Verified Working** on Ubuntu 24.04 LTS as of 2026-02-06
-- Python 3.12.3 fully compatible
+**Platform:** Ubuntu 22.04 LTS (Jammy Jellyfish) (WSL2)
+- **Verified Working** on Ubuntu 22.04 LTS
+- Python 3.10 (stable, fully compatible with ArduPilot, MAVProxy, pymavlink, and ROS 2)
 - WSLg GUI support out-of-the-box (Windows 11)
 
 ---

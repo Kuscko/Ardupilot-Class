@@ -118,7 +118,7 @@ ArduPilot development is typically done in a Linux environment. On Windows, WSL2
 #### Installation Steps
 
 1. Open Control Panel → Programs → Turn Windows features on or off → Check 'Windows Subsystem for Linux' → OK → Restart
-2. Open Microsoft Store, search 'Ubuntu 24.04 LTS', install it
+2. Open Microsoft Store, search 'Ubuntu 22.04 LTS', install it
 3. Launch Ubuntu, create username and password when prompted
 4. Run the update command shown below
 

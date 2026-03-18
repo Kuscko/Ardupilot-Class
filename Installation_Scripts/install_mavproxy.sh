@@ -1,6 +1,10 @@
 #!/bin/bash
 # MAVProxy Installation Script
-# Last Updated: 2026-02-06
+# Target: Ubuntu 22.04 LTS (Jammy Jellyfish)
+# Last Updated: 2026-03-17
+#
+# Use this script to install or upgrade MAVProxy after the main
+# install_ardupilot_plane_4.5.7.sh has already run.
 
 set -e
 
@@ -10,35 +14,29 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# Configuration
-VENV_PATH="$HOME/.venv-ardupilot"
-
 echo -e "${GREEN}Installing MAVProxy and dependencies...${NC}"
 
 # Update pip and install packages
 echo -e "${BLUE}Installing packages...${NC}"
-pip install --upgrade pip pymavlink mavproxy
+python3 -m pip install --user --upgrade pip pymavlink mavproxy
 
 # Install optional dependencies
 echo -e "${BLUE}Installing optional modules...${NC}"
-pip install --upgrade matplotlib scipy opencv-python
+python3 -m pip install --user --upgrade matplotlib scipy opencv-python
+
+# Ensure wxPython is available (required for console and map modules)
+if ! python3 -c "import wx" 2>/dev/null; then
+    echo -e "${YELLOW}Installing wxPython via apt...${NC}"
+    sudo apt install -y python3-wxgtk4.0
+fi
 
 # Summary
 echo ""
 echo -e "${GREEN}Installation complete!${NC}"
 echo ""
-echo "Virtual environment: $VENV_PATH"
-echo ""
 echo "To use MAVProxy:"
-echo "  source ~/.venv-ardupilot/bin/activate"
 echo "  mavproxy.py --version"
 echo ""
-echo "For auto-activation, add to ~/.bashrc:"
-echo "  # Auto-activate ArduPilot virtual environment"
-echo "  # Check if venv is actually activated (not just VIRTUAL_ENV set)"
-echo "  if [ -f \"\$HOME/.venv-ardupilot/bin/activate\" ]; then"
-echo "      # Check if the deactivate function exists (created by activate script)"
-echo "      if ! type deactivate &> /dev/null; then"
-echo "          source \"\$HOME/.venv-ardupilot/bin/activate\""
-echo "      fi"
-echo "  fi"
+echo "To start SITL:"
+echo "  cd ~/ardupilot"
+echo "  Tools/autotest/sim_vehicle.py -v ArduPlane --console --map"

@@ -1,6 +1,6 @@
 # ArduPilot Installation Scripts
 
-Automated installation scripts for ArduPilot Plane 4.5.7 on Ubuntu 24.04 LTS (WSL2).
+Automated installation scripts for ArduPilot Plane 4.5.7 on Ubuntu 22.04 LTS (Jammy Jellyfish) (WSL2).
 
 ## Quick Start
 
@@ -14,7 +14,7 @@ chmod +x install_ardupilot_plane_4.5.7.sh
 
 ## Prerequisites
 
-- Ubuntu 24.04 LTS (WSL2 recommended)
+- Ubuntu 22.04 LTS (WSL2 recommended)
 - Internet connection (~500MB download)
 - Sudo privileges
 - 10GB+ free disk space
@@ -24,9 +24,10 @@ chmod +x install_ardupilot_plane_4.5.7.sh
 | Component | Description |
 |-----------|-------------|
 | Build tools | GCC, G++, Make, WAF |
-| Python 3.10+ | With pip and venv |
+| Python 3.10 | With pip (system packages, no venv required) |
 | ArduPilot | Plane 4.5.7 source code |
-| Python packages | pymavlink, MAVProxy |
+| Python packages | pymavlink, MAVProxy (via pip --user) |
+| wxPython | python3-wxgtk4.0 (for MAVProxy console and map) |
 | Libraries | libxml2, libxslt, git |
 
 ## Available Scripts
@@ -42,7 +43,7 @@ chmod +x install_ardupilot_plane_4.5.7.sh
 
 ### install_mavproxy.sh
 
-Install or update MAVProxy only.
+Install or update MAVProxy only (run after the main script if needed).
 
 ```bash
 chmod +x install_mavproxy.sh
@@ -54,9 +55,6 @@ chmod +x install_mavproxy.sh
 After installation:
 
 ```bash
-# Activate virtual environment
-source ~/.venv-ardupilot/bin/activate
-
 # Verify version
 cd ~/ardupilot
 git log --oneline -1
@@ -66,57 +64,43 @@ git log --oneline -1
 Tools/autotest/sim_vehicle.py -v ArduPlane --console --map
 ```
 
-## Virtual Environment
-
-All Python packages are installed in an isolated virtual environment at `~/.venv-ardupilot`.
-
-**Manual activation:**
-```bash
-source ~/.venv-ardupilot/bin/activate
-```
-
-**Auto-activation (add to ~/.bashrc):**
-```bash
-# Auto-activate ArduPilot virtual environment
-# Check if venv is actually activated (not just VIRTUAL_ENV set)
-if [ -f "$HOME/.venv-ardupilot/bin/activate" ]; then
-    # Check if the deactivate function exists (created by activate script)
-    if ! type deactivate &> /dev/null; then
-        source "$HOME/.venv-ardupilot/bin/activate"
-    fi
-fi
-```
-
 ## Troubleshooting
 
 ### Permission Denied
+
 ```bash
 chmod +x install_ardupilot_plane_4.5.7.sh
 ```
 
 ### Running from /mnt/c/
-Don't build from Windows filesystem - it's very slow.
+
+Don't build from Windows filesystem — it's very slow.
+
 ```bash
 cd ~
 ```
 
-### Commands Not Found
-Activate the virtual environment:
+### Commands Not Found (mavproxy.py, etc.)
+
+Reload your shell profile to pick up the PATH set by the prereqs script:
+
 ```bash
-source ~/.venv-ardupilot/bin/activate
+source ~/.profile
 ```
 
 ### X Windows Don't Appear
+
 1. Check X server is running
 2. Verify: `echo $DISPLAY`
 3. See [setup_x_server.md](setup_x_server.md)
 
-## Python 3.12 Compatibility
+### MAVProxy Console/Map Missing
 
-Python 3.12.3 (Ubuntu 24.04 default) is **fully compatible** with ArduPilot Plane 4.5.7.
+wxPython is required. Install it:
 
-- ArduPilot requires: Python 3.8.0+
-- Ubuntu 24.04 has: Python 3.12.3 ✓
+```bash
+sudo apt install -y python3-wxgtk4.0
+```
 
 ## Documentation
 
@@ -132,13 +116,13 @@ Python 3.12.3 (Ubuntu 24.04 default) is **fully compatible** with ArduPilot Plan
 
 ## Next Steps
 
-1. Activate virtual environment
-2. Test SITL with different flight modes
-3. Review onboarding documentation
-4. Try example mission plans
-5. Explore Lua scripting
+1. Test SITL with different flight modes
+2. Review onboarding documentation
+3. Try example mission plans
+4. Explore Lua scripting
 
 ---
 
-**Last Updated:** 2026-02-06
+**Last Updated:** 2026-03-17
 **Version:** ArduPilot Plane 4.5.7
+**Platform:** Ubuntu 22.04 LTS (Jammy Jellyfish)

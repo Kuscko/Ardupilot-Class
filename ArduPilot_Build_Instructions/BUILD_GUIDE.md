@@ -27,9 +27,9 @@ This guide walks you through building ArduPilot Plane 4.5.7 from source in WSL2/
    - Check "Windows Subsystem for Linux"
    - Restart when prompted
 
-3. Install Ubuntu 24.04 LTS:
+3. Install Ubuntu 22.04 LTS:
    - Open Microsoft Store
-   - Search "Ubuntu 24.04 LTS"
+   - Search "Ubuntu 22.04 LTS"
    - Click Install
    - Launch Ubuntu and create username/password
 
@@ -113,7 +113,7 @@ cd ~/ardupilot
 # Backup original script
 cp ./Tools/environment_install/install-prereqs-ubuntu.sh ./Tools/environment_install/install-prereqs-ubuntu.sh.backup
 
-# Get Ubuntu codename (noble for 24.04)
+# Get Ubuntu codename (jammy for 22.04)
 UBUNTU_CODENAME=$(lsb_release -sc)
 
 # Apply patches
@@ -121,13 +121,13 @@ sed -i 's/python-argparse//g' ./Tools/environment_install/install-prereqs-ubuntu
 sed -i 's/PIP_USER_ARGUMENT="--user"/PIP_USER_ARGUMENT=""/g' ./Tools/environment_install/install-prereqs-ubuntu.sh
 sed -i 's/pip3 install --user/pip3 install/g' ./Tools/environment_install/install-prereqs-ubuntu.sh
 sed -i 's/pip install --user/pip install/g' ./Tools/environment_install/install-prereqs-ubuntu.sh
-sed -i "s/if \[ \$RELEASE_CODENAME != \"mantic\" \]; then/if [ \$RELEASE_CODENAME != \"mantic\" ] \&\& [ \$RELEASE_CODENAME != \"noble\" ] \&\& [ \$RELEASE_CODENAME != \"$UBUNTU_CODENAME\" ]; then/g" ./Tools/environment_install/install-prereqs-ubuntu.sh
+sed -i "s/if \[ \$RELEASE_CODENAME != \"mantic\" \]; then/if [ \$RELEASE_CODENAME != \"mantic\" ] \&\& [ \$RELEASE_CODENAME != \"$UBUNTU_CODENAME\" ]; then/g" ./Tools/environment_install/install-prereqs-ubuntu.sh
 ```
 
 **What these patches do:**
-- Remove obsolete `python-argparse` package
+- Remove obsolete `python-argparse` package (not a valid apt package on any modern Ubuntu)
 - Install packages in venv instead of `--user`
-- Add support for Ubuntu 24.04 (noble)
+- Ensure the script accepts Ubuntu 22.04 (jammy)
 
 ---
 
@@ -164,14 +164,14 @@ This script installs:
 MAVProxy modules require wxPython, which is difficult to build from source. Instead, make the system wxPython accessible to your virtual environment:
 
 ```bash
-# Add system packages to venv path
-echo "import site; site.addsitedir('/usr/lib/python3/dist-packages')" > ~/.venv-ardupilot/lib/python3.12/site-packages/system_packages.pth
+# Add system packages to venv path (Ubuntu 22.04 uses Python 3.10)
+echo "import site; site.addsitedir('/usr/lib/python3/dist-packages')" > ~/.venv-ardupilot/lib/python3.10/site-packages/system_packages.pth
 
 # Verify wxPython is accessible
 python -c "import wx; print('wxPython version:', wx.__version__)"
 ```
 
-**Expected output:** `wxPython version: 4.2.1`
+**Expected output:** `wxPython version: 4.0.x`
 
 If wxPython is not found:
 ```bash
@@ -427,6 +427,6 @@ After successful build:
 
 ---
 
-**Last Updated:** 2026-02-06
+**Last Updated:** 2026-03-17
 **ArduPilot Version:** Plane 4.5.7 (commit 0358a9c210bc)
-**Verified:** Ubuntu 24.04 LTS with Python 3.12.3
+**Platform:** Ubuntu 22.04 LTS (Jammy Jellyfish) with Python 3.10
