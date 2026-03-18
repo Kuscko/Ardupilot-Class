@@ -2,26 +2,11 @@
 
 ## What is MAVLink?
 
-MAVLink (Micro Air Vehicle Link) is a lightweight messaging protocol for communicating with drones and unmanned vehicles. It's the communication standard between:
-
-- **Autopilot ↔ Ground Control Station (GCS)**
-- **Autopilot ↔ Companion Computer**
-- **Autopilot ↔ Telemetry Radio**
-- **Multiple GCS applications simultaneously**
-
-**Key Features:**
-- Lightweight and efficient (binary protocol)
-- Language-agnostic (libraries for C, Python, Java, etc.)
-- Extensible message set
-- Version 1 and Version 2 (v2 adds signing, extensions)
+MAVLink (Micro Air Vehicle Link) is a lightweight binary messaging protocol for communicating between autopilots, ground control stations, companion computers, and telemetry radios. It supports MAVLink 1 and v2 (adds signing and extensions).
 
 ---
 
 ## MAVLink Message Structure
-
-### Message Components
-
-Every MAVLink message contains:
 
 | Field | Size | Description |
 |-------|------|-------------|
@@ -35,174 +20,75 @@ Every MAVLink message contains:
 | Checksum | 2 bytes | CRC for error detection |
 | Signature | 13 bytes | Optional (v2 only) |
 
-### System ID and Component ID
+**System ID:** Autopilot default = 1, GCS = typically 255.
 
-**System ID:**
-- Unique identifier for each vehicle/system
-- Default autopilot: 1
-- Ground station: typically 255
-- Range: 1-255
-
-**Component ID:**
-- Identifies component within a system
-- Autopilot: 1 (MAV_COMP_ID_AUTOPILOT1)
-- Camera: 100 (MAV_COMP_ID_CAMERA)
-- Gimbal: 154 (MAV_COMP_ID_GIMBAL)
+**Component ID:** Autopilot = 1, Camera = 100, Gimbal = 154.
 
 ---
 
 ## Essential MAVLink Messages
 
-### Heartbeat (Message ID: 0)
+### Heartbeat (ID: 0)
 
-**Purpose:** Periodic "I'm alive" message
+Periodic "I'm alive" message at ~1 Hz. Contains vehicle type, autopilot type, base mode, custom mode, system status.
 
-**Fields:**
-- `type`: Vehicle type (fixed-wing, copter, etc.)
-- `autopilot`: Autopilot type (ArduPilot = 3)
-- `base_mode`: System mode flags
-- `custom_mode`: Vehicle-specific mode
-- `system_status`: System status (standby, active, etc.)
-
-**Frequency:** ~1 Hz
-
-**Python Example:**
 ```python
 from pymavlink import mavutil
 
-# Connect to autopilot
 master = mavutil.mavlink_connection('udp:127.0.0.1:14550')
-
-# Wait for heartbeat
 master.wait_heartbeat()
 print(f"Heartbeat from system {master.target_system}")
 ```
 
 ---
 
-### Attitude (Message ID: 30)
+### Attitude (ID: 30)
 
-**Purpose:** Current attitude (orientation) of vehicle
-
-**Fields:**
-- `time_boot_ms`: Timestamp
-- `roll`: Roll angle (radians)
-- `pitch`: Pitch angle (radians)
-- `yaw`: Yaw angle (radians)
-- `rollspeed`: Roll angular speed (rad/s)
-- `pitchspeed`: Pitch angular speed (rad/s)
-- `yawspeed`: Yaw angular speed (rad/s)
-
-**Frequency:** 10-50 Hz (depends on SR* parameters)
+Roll, pitch, yaw angles (radians) and angular speeds (rad/s). **Frequency:** 10-50 Hz.
 
 ---
 
-### Global Position Int (Message ID: 33)
+### Global Position Int (ID: 33)
 
-**Purpose:** Filtered global position (GPS + EKF)
-
-**Fields:**
-- `time_boot_ms`: Timestamp
-- `lat`: Latitude (degrees × 10^7)
-- `lon`: Longitude (degrees × 10^7)
-- `alt`: Altitude MSL (mm)
-- `relative_alt`: Altitude AGL (mm)
-- `vx`: X velocity (cm/s)
-- `vy`: Y velocity (cm/s)
-- `vz`: Z velocity (cm/s)
-- `hdg`: Heading (degrees × 100)
-
-**Frequency:** 1-10 Hz
+Filtered GPS + EKF position. Lat/lon in degrees × 10^7, altitudes in mm, velocities in cm/s. **Frequency:** 1-10 Hz.
 
 ---
 
-### VFR HUD (Message ID: 74)
+### VFR HUD (ID: 74)
 
-**Purpose:** Metrics displayed on Vehicle Flight Rules HUD
-
-**Fields:**
-- `airspeed`: Current airspeed (m/s)
-- `groundspeed`: Current groundspeed (m/s)
-- `heading`: Current heading (degrees)
-- `throttle`: Current throttle (%)
-- `alt`: Current altitude MSL (m)
-- `climb`: Current climb rate (m/s)
-
-**Frequency:** 1-10 Hz
+Airspeed (m/s), groundspeed (m/s), heading (deg), throttle (%), altitude MSL (m), climb rate (m/s). **Frequency:** 1-10 Hz.
 
 ---
 
-### Sys Status (Message ID: 1)
+### Sys Status (ID: 1)
 
-**Purpose:** System status and health
-
-**Fields:**
-- `onboard_control_sensors_present`: Sensor bitmask (present)
-- `onboard_control_sensors_enabled`: Sensor bitmask (enabled)
-- `onboard_control_sensors_health`: Sensor bitmask (healthy)
-- `load`: CPU load (%)
-- `voltage_battery`: Battery voltage (mV)
-- `current_battery`: Battery current (cA)
-- `battery_remaining`: Battery remaining (%)
-
-**Frequency:** 1 Hz
+Sensor bitmasks (present/enabled/healthy), CPU load, battery voltage (mV), current (cA), remaining (%). **Frequency:** 1 Hz.
 
 ---
 
-### GPS Raw Int (Message ID: 24)
+### GPS Raw Int (ID: 24)
 
-**Purpose:** Raw GPS data
-
-**Fields:**
-- `time_usec`: Timestamp (µs)
-- `fix_type`: GPS fix type (0=no fix, 3=3D fix)
-- `lat`: Latitude (degrees × 10^7)
-- `lon`: Longitude (degrees × 10^7)
-- `alt`: Altitude MSL (mm)
-- `eph`: GPS horizontal dilution of position
-- `epv`: GPS vertical dilution of position
-- `vel`: GPS ground speed (cm/s)
-- `cog`: Course over ground (degrees × 100)
-- `satellites_visible`: Number of satellites
-
-**Frequency:** 1-5 Hz
+Raw GPS data: fix type, lat/lon (deg × 10^7), altitude (mm), DOP values, ground speed (cm/s), satellite count. **Frequency:** 1-5 Hz.
 
 ---
 
 ### Mission Commands
 
-#### Mission Count (Message ID: 44)
+**Mission Count (ID: 44):** GCS declares number of mission items to upload.
 
-Sent by GCS to declare number of mission items to upload.
-
-#### Mission Item Int (Message ID: 73)
-
-Individual mission waypoint/command.
-
-**Key Fields:**
-- `seq`: Sequence number
-- `frame`: Coordinate frame
-- `command`: MAV_CMD (NAV_WAYPOINT, TAKEOFF, etc.)
-- `param1-4`: Command-specific parameters
-- `x`: Latitude (degrees × 10^7)
-- `y`: Longitude (degrees × 10^7)
-- `z`: Altitude (m)
+**Mission Item Int (ID: 73):** Individual waypoint/command with seq, frame, command, param1-4, lat (deg × 10^7), lon (deg × 10^7), alt (m).
 
 ---
 
-### Command Messages
+### Command Long (ID: 76)
 
-#### Command Long (Message ID: 76)
+| Command | ID | Description |
+|---------|----|-------------|
+| MAV_CMD_COMPONENT_ARM_DISARM | 400 | Arm/disarm vehicle |
+| MAV_CMD_DO_SET_MODE | 176 | Set flight mode |
+| MAV_CMD_NAV_TAKEOFF | 22 | Takeoff |
+| MAV_CMD_NAV_RETURN_TO_LAUNCH | 20 | Return to launch |
 
-Send command to vehicle (arm, set mode, etc.)
-
-**Common Commands:**
-- `MAV_CMD_COMPONENT_ARM_DISARM` (400): Arm/disarm vehicle
-- `MAV_CMD_DO_SET_MODE` (176): Set flight mode
-- `MAV_CMD_NAV_TAKEOFF` (22): Takeoff command
-- `MAV_CMD_NAV_RETURN_TO_LAUNCH` (20): Return to launch
-
-**Python Example:**
 ```python
 # Arm the vehicle
 master.mav.command_long_send(
@@ -219,15 +105,11 @@ master.mav.command_long_send(
 
 ## Message Streaming Rates
 
-ArduPilot controls message streaming rates with `SR*` parameters:
-
 | Parameter Group | Controls |
 |----------------|----------|
 | SR0_* | Serial 0 (USB) rates |
 | SR1_* | Serial 1 (Telem1) rates |
 | SR2_* | Serial 2 (Telem2) rates |
-
-### Rate Parameters
 
 | Parameter | Messages Affected |
 |-----------|-------------------|
@@ -238,15 +120,10 @@ ArduPilot controls message streaming rates with `SR*` parameters:
 | SR*_RAW_SENS | RAW_IMU, SCALED_PRESSURE |
 | SR*_RC_CHAN | SERVO_OUTPUT_RAW, RC_CHANNELS |
 
-**Value:** Hz (messages per second)
-- 0 = disabled
-- 1 = 1 Hz
-- 10 = 10 Hz
+Value = Hz (0=disabled).
 
-**Example:**
 ```bash
-# Set position updates to 5 Hz on Telem1
-param set SR1_POSITION 5
+param set SR1_POSITION 5  # 5 Hz position updates on Telem1
 ```
 
 ---
@@ -259,15 +136,12 @@ param set SR1_POSITION 5
 from pymavlink import mavutil
 import time
 
-# Connect to SITL
 master = mavutil.mavlink_connection('udp:127.0.0.1:14550')
 
-# Wait for heartbeat
 print("Waiting for heartbeat...")
 master.wait_heartbeat()
 print(f"Connected to system {master.target_system}")
 
-# Read messages
 while True:
     msg = master.recv_match(blocking=True, timeout=1)
     if msg:
@@ -277,7 +151,6 @@ while True:
 ### Get Specific Message
 
 ```python
-# Get VFR_HUD message
 msg = master.recv_match(type='VFR_HUD', blocking=True, timeout=5)
 if msg:
     print(f"Airspeed: {msg.airspeed} m/s")
@@ -288,9 +161,6 @@ if msg:
 ### Arm Vehicle
 
 ```python
-# Arm
-master.arducopter_arm()
-# or
 master.mav.command_long_send(
     master.target_system,
     master.target_component,
@@ -298,7 +168,6 @@ master.mav.command_long_send(
     0, 1, 0, 0, 0, 0, 0, 0
 )
 
-# Wait for ack
 ack = master.recv_match(type='COMMAND_ACK', blocking=True, timeout=5)
 print(f"Arm result: {ack.result}")
 ```
@@ -306,26 +175,13 @@ print(f"Arm result: {ack.result}")
 ### Set Flight Mode
 
 ```python
-# Set mode to GUIDED
 mode_id = master.mode_mapping()['GUIDED']
 master.set_mode(mode_id)
-
-# Or use command_long
-master.mav.command_long_send(
-    master.target_system,
-    master.target_component,
-    mavutil.mavlink.MAV_CMD_DO_SET_MODE,
-    0,
-    mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
-    mode_id,
-    0, 0, 0, 0, 0
-)
 ```
 
 ### Request Data Stream
 
 ```python
-# Request all streams at 10 Hz
 master.mav.request_data_stream_send(
     master.target_system,
     master.target_component,
@@ -339,30 +195,20 @@ master.mav.request_data_stream_send(
 
 ## MAVLink over Different Transports
 
-### Serial
-
 ```python
-# Direct serial connection
+# Serial
 master = mavutil.mavlink_connection('/dev/ttyUSB0', baud=57600)
-```
 
-### UDP
-
-```python
-# Listen for MAVLink on UDP port
+# UDP (listen)
 master = mavutil.mavlink_connection('udp:127.0.0.1:14550')
 
-# Send to specific UDP endpoint
+# UDP (send to endpoint)
 master = mavutil.mavlink_connection('udpout:192.168.1.100:14550')
-```
 
-### TCP
-
-```python
-# TCP server (listen)
+# TCP (server)
 master = mavutil.mavlink_connection('tcp:127.0.0.1:5760')
 
-# TCP client (connect)
+# TCP (client)
 master = mavutil.mavlink_connection('tcpout:192.168.1.100:5760')
 ```
 
@@ -370,18 +216,9 @@ master = mavutil.mavlink_connection('tcpout:192.168.1.100:5760')
 
 ## Monitoring MAVLink in SITL
 
-### MAVProxy Built-in
-
-MAVProxy shows message traffic in console window. Enable/disable with:
-
 ```bash
-# Show all messages
-set streamrate -1
-
-# Show specific message
-watch VFR_HUD
-
-# Stop watching
+set streamrate -1   # Show all messages
+watch VFR_HUD       # Show specific message
 unwatch VFR_HUD
 ```
 
@@ -389,10 +226,7 @@ unwatch VFR_HUD
 
 ```python
 #!/usr/bin/env python3
-"""
-Simple MAVLink monitor
-Displays key telemetry from autopilot
-"""
+"""Simple MAVLink monitor — displays key telemetry"""
 
 from pymavlink import mavutil
 import time
@@ -405,7 +239,6 @@ def monitor_mavlink(connection_string='udp:127.0.0.1:14550'):
     print(f"Connected to system {master.target_system}\n")
 
     while True:
-        # Get VFR HUD
         msg = master.recv_match(type='VFR_HUD', blocking=False)
         if msg:
             print(f"\r  Airspeed: {msg.airspeed:5.1f} m/s | "
@@ -421,18 +254,7 @@ if __name__ == '__main__':
 
 ---
 
-## MAVLink Message Reference
-
-### Online Resources
-
-- **MAVLink Common Messages:** https://mavlink.io/en/messages/common.html
-- **ArduPilot-specific Messages:** https://mavlink.io/en/messages/ardupilotmega.html
-- **MAVLink Protocol:** https://mavlink.io/en/guide/
-- **pymavlink Documentation:** https://mavlink.io/en/mavgen_python/
-
-### Command IDs (MAV_CMD)
-
-Common commands used in missions and command_long:
+## MAVLink Command ID Reference
 
 | ID | Command | Description |
 |----|---------|-------------|
@@ -447,19 +269,11 @@ Common commands used in missions and command_long:
 
 ---
 
-## Next Steps
-
-1. [ ] Practice with Python pymavlink scripts
-2. [ ] Monitor messages in SITL
-3. [ ] Learn [mavlink-router](MAVLINK_ROUTER_GUIDE.md) for routing
-4. [ ] Explore message structure with examples
-5. [ ] Build custom GCS or monitoring tools
-
----
-
 ## Additional Resources
 
 - [MAVLink Developer Guide](https://mavlink.io/en/)
+- [MAVLink Common Messages](https://mavlink.io/en/messages/common.html)
+- [ArduPilot-specific Messages](https://mavlink.io/en/messages/ardupilotmega.html)
 - [pymavlink Examples](https://github.com/ArduPilot/pymavlink/tree/master/examples)
 - [ArduPilot MAVLink Docs](https://ardupilot.org/dev/docs/mavlink-basics.html)
 - [Main Onboarding Guide](../Onboarding_Documentation/ArduPilot_Onboarding_Guide.md)

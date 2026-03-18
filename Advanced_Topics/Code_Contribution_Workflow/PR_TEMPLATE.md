@@ -29,8 +29,6 @@ Fixes #
 
 ## Testing
 
-<!-- Describe the testing performed to verify changes -->
-
 ### SITL Testing
 
 - [ ] Tested in SITL
@@ -38,9 +36,8 @@ Fixes #
 - [ ] Test scenario: <!-- Describe what you tested -->
 
 **SITL Test Results:**
-<!-- Paste SITL test results or describe behavior -->
 
-```
+```text
 # Example:
 # Tested square pattern mission in SITL
 # Aircraft completed mission successfully
@@ -52,9 +49,6 @@ Fixes #
 - [ ] Tested on hardware
 - [ ] Flight controller: <!-- e.g., Pixhawk 4, Cube Orange -->
 - [ ] Test scenario: <!-- Describe hardware test -->
-
-**Hardware Test Results:**
-<!-- Describe hardware test results if applicable -->
 
 ### Unit Tests
 
@@ -82,11 +76,8 @@ Fixes #
 - [ ] Updated relevant documentation
 - [ ] Added/updated code comments for complex logic
 - [ ] Updated parameter documentation if parameters added/modified
-- [ ] Updated library README if applicable
 
 ## Breaking Changes
-
-<!-- Does this PR introduce breaking changes? If yes, describe them -->
 
 - [ ] This PR introduces breaking changes
 - [ ] Migration guide provided (if breaking changes)
@@ -96,18 +87,11 @@ Fixes #
 
 ## Performance Impact
 
-<!-- Does this change affect performance? -->
-
 - [ ] No performance impact
 - [ ] Performance improvement (describe below)
 - [ ] Performance degradation (justify below)
 
-**Performance notes:**
-<!-- Describe performance impact -->
-
 ## Flash/RAM Impact
-
-<!-- Estimate flash and RAM impact -->
 
 - [ ] No significant flash/RAM impact
 - [ ] Flash size increase: <!-- Estimate in KB -->

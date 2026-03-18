@@ -26,6 +26,7 @@ WP_RADIUS,30           # Waypoint acceptance radius
 ## Path Tracking Analysis
 
 **In logs:**
+
 ```bash
 graph NTUN.WpDist  # Distance to waypoint
 graph NTUN.NavRoll # Navigation roll command

@@ -3,6 +3,7 @@
 ## GDB in SITL
 
 **Build with debug symbols:**
+
 ```bash
 cd ~/ardupilot/ArduPlane
 ./waf configure --board sitl --debug
@@ -10,13 +11,15 @@ cd ~/ardupilot/ArduPlane
 ```
 
 **Run with GDB:**
+
 ```bash
 gdb build/sitl/bin/arduplane
 (gdb) run --model quad
 ```
 
 **Useful GDB commands:**
-```
+
+```text
 break AP_AHRS::update  # Set breakpoint
 run                    # Start program
 continue               # Continue execution
@@ -27,6 +30,7 @@ backtrace              # Show call stack
 ## Printf Debugging
 
 **Add debug output:**
+
 ```cpp
 #include <GCS_MAVLink/GCS.h>
 gcs().send_text(MAV_SEVERITY_INFO, "Debug: value=%f", my_value);
@@ -35,6 +39,7 @@ gcs().send_text(MAV_SEVERITY_INFO, "Debug: value=%f", my_value);
 ## MAVLink Console
 
 **View console messages:**
+
 ```bash
 # In MAVProxy
 messages

@@ -2,58 +2,36 @@
 
 ## What is the EKF?
 
-The Extended Kalman Filter (EKF) is a sensor fusion algorithm that combines data from multiple sensors to estimate the vehicle's state (position, velocity, orientation) more accurately than any single sensor can provide.
-
-**In simple terms:** The EKF is the "brain" that figures out where the aircraft is and how it's moving by intelligently combining GPS, IMU, barometer, compass, and other sensor data.
+The Extended Kalman Filter (EKF) is a sensor fusion algorithm that combines GPS, IMU, barometer, compass, and other sensor data to estimate position, velocity, and orientation more accurately than any single sensor.
 
 ---
 
-## Why Do We Need the EKF?
-
-### The Problem: Sensor Imperfections
-
-Every sensor has weaknesses:
+## Sensor Limitations and the Need for Fusion
 
 | Sensor | Strength | Weakness |
 |--------|----------|----------|
-| **GPS** | Accurate absolute position | Slow update rate (5-20 Hz), ~2m error, lag |
-| **Accelerometer** | Very fast (400+ Hz), sensitive | Drifts over time, affected by vibration |
-| **Gyroscope** | Fast, measures rotation accurately | Drifts over time |
+| **GPS** | Accurate absolute position | Slow (5-20 Hz), ~2m error, lag |
+| **Accelerometer** | Very fast (400+ Hz) | Drifts over time, vibration-sensitive |
+| **Gyroscope** | Measures rotation accurately | Drifts over time |
 | **Barometer** | Good relative altitude | Affected by weather, temperature |
-| **Compass** | Provides heading reference | Interference from magnets, metal |
+| **Compass** | Heading reference | Interference from magnets, metal |
 
-### The Solution: Sensor Fusion
-
-The EKF combines all sensors, accounting for:
-- Each sensor's update rate
-- Each sensor's accuracy (measurement noise)
-- Physics constraints (aircraft can't teleport)
-- Correlation between measurements
-
-**Result:** Position/orientation estimate that's better than any single sensor.
+The EKF combines all sensors, accounting for update rates, accuracy, physics constraints, and measurement correlation.
 
 ---
 
 ## How the EKF Works
 
-### Core Concept: Predict + Update
+### Predict + Update Cycle
 
-The EKF runs in two steps:
-
-#### 1. **Prediction Step**
-
-Use physics and previous state to predict current state:
+**1. Prediction Step** (uses IMU):
 
 ```
 Predicted Position = Previous Position + (Velocity × Time)
 Predicted Velocity = Previous Velocity + (Acceleration × Time)
 ```
 
-This uses **IMU data** (accelerometers and gyroscopes).
-
-#### 2. **Update Step (Correction)**
-
-Compare prediction with actual sensor measurements:
+**2. Update Step** (correction against sensor measurements):
 
 ```
 GPS says: "You're at 35.328°N, -119.003°W"
@@ -63,29 +41,25 @@ EKF combines both, weighted by confidence in each
 Final estimate: "You're at 35.3278°N, -119.0035°W"
 ```
 
-The EKF "trusts" sensors based on their expected accuracy.
-
 ---
 
 ## EKF in ArduPilot
 
-ArduPilot uses **EKF3** (third generation Extended Kalman Filter), located in the `AP_NavEKF3` library.
+ArduPilot uses **EKF3** (`AP_NavEKF3` library).
 
-### What EKF3 Estimates
-
-EKF3 provides these critical estimates:
+### EKF3 State Estimates
 
 | State | Description |
 |-------|-------------|
 | **Position** | Latitude, longitude, altitude |
-| **Velocity** | North, East, Down velocities |
-| **Orientation** | Roll, pitch, yaw (attitude) |
-| **Angular Rates** | Roll rate, pitch rate, yaw rate |
-| **IMU Biases** | Accelerometer and gyro biases (drift correction) |
-| **Wind** | Estimated wind speed and direction |
-| **Magnetic Field** | Earth magnetic field + offsets |
+| **Velocity** | North, East, Down |
+| **Orientation** | Roll, pitch, yaw |
+| **Angular Rates** | Roll, pitch, yaw rates |
+| **IMU Biases** | Accelerometer and gyro drift correction |
+| **Wind** | Speed and direction |
+| **Magnetic Field** | Earth field + offsets |
 
-### EKF3 Inputs (Sensors)
+### EKF3 Inputs
 
 | Sensor | Provides | Update Rate |
 |--------|----------|-------------|
@@ -94,34 +68,32 @@ EKF3 provides these critical estimates:
 | **Barometer** | Altitude | 20-100 Hz |
 | **Compass** | Heading | 10-75 Hz |
 | **Airspeed** | Forward airspeed | 10-50 Hz |
-| **Rangefinder** | Height above ground | 10-50 Hz (if equipped) |
-| **Optical Flow** | Velocity over ground | 10-30 Hz (if equipped) |
+| **Rangefinder** | Height above ground | 10-50 Hz |
+| **Optical Flow** | Velocity over ground | 10-30 Hz |
 
 ---
 
 ## EKF3 Parameters
 
-### Core EKF3 Parameters
+### Core Parameters
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| **EK3_ENABLE** | 1 | Enable EKF3 (1=enabled) |
-| **EK3_IMU_MASK** | 3 | Which IMUs to use (bitmask) |
-| **EK3_ALT_SOURCE** | 0 | Primary altitude source (0=baro, 1=rangefinder, 2=GPS, 3=beacon) |
-| **EK3_GPS_TYPE** | 0 | GPS mode (0=3D fix, 1=2D fix, 2=no GPS, 3=fallback) |
+| **EK3_ENABLE** | 1 | Enable EKF3 |
+| **EK3_IMU_MASK** | 3 | IMUs to use (bitmask) |
+| **EK3_ALT_SOURCE** | 0 | Altitude source (0=baro, 1=rangefinder, 2=GPS, 3=beacon) |
+| **EK3_GPS_TYPE** | 0 | GPS mode |
 
 ### Sensor Weighting
 
-These parameters control how much the EKF trusts each sensor:
-
 | Parameter | Default | Description | Effect |
 |-----------|---------|-------------|--------|
-| **EK3_ACC_P_NSE** | 0.35 | Accelerometer noise (m/s²) | ↑ = trust accel less |
-| **EK3_GYRO_P_NSE** | 0.015 | Gyroscope noise (rad/s) | ↑ = trust gyro less |
+| **EK3_ACC_P_NSE** | 0.35 | Accelerometer noise (m/s²) | ↑ = trust less |
+| **EK3_GYRO_P_NSE** | 0.015 | Gyroscope noise (rad/s) | ↑ = trust less |
 | **EK3_GPS_VACC_MAX** | 10.0 | Max GPS vertical accuracy (m) | GPS rejected if worse |
 | **EK3_GPS_HACC_MAX** | 10.0 | Max GPS horizontal accuracy (m) | GPS rejected if worse |
-| **EK3_BARO_ALT_NOISE** | 0.5 | Barometer altitude noise (m) | ↑ = trust baro less |
-| **EK3_MAG_CAL** | 3 | Compass calibration mode | 0=no calibration, 3=auto, 5=use world magnetic model |
+| **EK3_BARO_ALT_NOISE** | 0.5 | Barometer altitude noise (m) | ↑ = trust less |
+| **EK3_MAG_CAL** | 3 | Compass calibration mode | 0=none, 3=auto, 5=world magnetic model |
 
 ### Innovation Limits
 
@@ -139,27 +111,12 @@ These parameters control how much the EKF trusts each sensor:
 
 ### Pre-Arm Checks
 
-Before arming, ArduPilot checks EKF health. Common pre-arm failures:
-
 | Message | Cause | Solution |
 |---------|-------|----------|
-| **PreArm: EKF attitude variance** | Orientation estimate uncertain | Wait for GPS lock, check compass calibration |
-| **PreArm: EKF velocity variance** | Velocity estimate uncertain | Wait longer, ensure GPS has good fix |
-| **PreArm: EKF position variance** | Position estimate uncertain | Wait for GPS lock, check GPS antenna |
-| **PreArm: EKF compass variance** | Compass inconsistent | Calibrate compass, check for interference |
-
-### EKF Variance
-
-**Variance = measure of uncertainty**
-
-- Low variance = confident estimate
-- High variance = uncertain estimate
-
-The EKF tracks variance for:
-- Position
-- Velocity
-- Attitude (orientation)
-- Compass
+| **PreArm: EKF attitude variance** | Orientation uncertain | Wait for GPS lock, check compass calibration |
+| **PreArm: EKF velocity variance** | Velocity uncertain | Wait longer, ensure GPS fix |
+| **PreArm: EKF position variance** | Position uncertain | Wait for GPS lock, check antenna |
+| **PreArm: EKF compass variance** | Compass inconsistent | Calibrate compass, check interference |
 
 Arming is blocked if variances exceed thresholds.
 
@@ -167,130 +124,76 @@ Arming is blocked if variances exceed thresholds.
 
 ## Common EKF Issues
 
-### Issue: EKF Won't Allow Arming
+### EKF Won't Allow Arming
 
-**Symptoms:** "PreArm: EKF variance" errors
+**Causes:** GPS not locked, compass not calibrated, excessive vibration, vehicle moved before GPS lock
 
-**Causes:**
-- GPS not locked or poor signal
-- Compass not calibrated
-- Excessive vibration
-- Vehicle moved before GPS lock
-
-**Solutions:**
 ```bash
-# Wait for good GPS
-# Console should show "GPS: 3D Fix"
-
 # Check GPS status
 param show GPS_*
 
-# Calibrate compass (in GCS)
-# Or force arm in SITL
+# Force arm in SITL
 arm throttle force
 ```
 
-### Issue: EKF Resets In Flight
+### EKF Resets In Flight
 
 **Symptoms:** Sudden position jumps, mode switches to LAND
 
-**Causes:**
-- GPS glitch or loss
-- Excessive vibration
-- Magnetic interference
-- Sensor failure
+**Causes:** GPS glitch/loss, excessive vibration, magnetic interference, sensor failure
 
-**Solutions:**
-- Review logs for sensor health
-- Check vibration levels
-- Improve GPS antenna placement
-- Calibrate sensors properly
+**Solutions:** Review logs, check vibration levels, improve GPS antenna placement, calibrate sensors.
 
-### Issue: Poor Position Hold
+### Poor Position Hold
 
-**Symptoms:** Aircraft drifts in LOITER or position-based modes
+**Causes:** Poor GPS accuracy, incorrect compass calibration, wind estimation errors
 
-**Causes:**
-- Poor GPS accuracy
-- Incorrect compass calibration
-- Wind estimation errors
-- EKF not trusting GPS enough
-
-**Solutions:**
-- Verify GPS HDOP < 2.0 (good accuracy)
-- Recalibrate compass away from metal/magnets
-- Adjust EK3_GPS_HACC_MAX if GPS is actually good
+```bash
+# Stricter GPS accuracy, increased position noise
+param set EK3_GPS_HACC_MAX 5.0
+param set EK3_POSNE_M_NSE 1.0
+```
 
 ---
 
 ## EKF Logging and Analysis
 
-### Enable EKF Logging
-
 ```bash
-# Log EKF data
-param set LOG_BITMASK 65535  # Log everything (for debugging)
+# Log everything (for debugging)
+param set LOG_BITMASK 65535
 ```
 
 ### Key Log Messages
 
-When analyzing EKF issues in logs:
-
 | Log Message | Contains |
 |-------------|----------|
 | **EKF1-5** | EKF status, variance, innovations |
-| **GPS** | GPS fix, satellites, accuracy |
+| **GPS** | Fix, satellites, accuracy |
 | **IMU** | Accelerometer, gyroscope data |
 | **MAG** | Compass readings |
 | **BARO** | Barometer altitude |
 
-### Viewing Logs
-
-**Mission Planner:**
-- Connect to vehicle or load log file
-- Review EKF messages in log browser
-- Check for variance spikes
-
-**MAVExplorer:**
 ```bash
-# In SITL or with log files
+# View logs with MAVExplorer
 mavexplorer.py logfile.bin
-# Plot EKF variance over time
 ```
 
 ---
 
 ## EKF Tuning (Advanced)
 
-### When to Tune EKF
+**Generally: Don't tune EKF unless you have a specific problem.** Defaults work for most vehicles.
 
-**Generally: Don't tune EKF unless you have a specific problem.**
-
-Defaults work well for most vehicles. Tune only if:
-- Persistent pre-arm failures
-- Position hold is poor despite good GPS
-- EKF variances too high in flight
-- Known sensor noise characteristics differ from defaults
-
-### How to Tune
+Tune only if: persistent pre-arm failures, poor position hold despite good GPS, EKF variances consistently high, or known sensor noise characteristics differ from defaults.
 
 **Process:**
-1. **Identify the problem sensor** from logs
-2. **Adjust noise parameter** for that sensor
-3. **Test and validate**
 
-**Example:** GPS is glitchy, EKF trusts it too much
-
-```bash
-# Increase GPS noise (trust it less)
-param set EK3_GPS_HACC_MAX 5.0  # Stricter GPS accuracy requirement
-param set EK3_POSNE_M_NSE 1.0   # Increase GPS position noise
-```
-
-**Example:** Vibration causing accelerometer issues
+1. Identify the problem sensor from logs
+2. Adjust the noise parameter for that sensor
+3. Test and validate
 
 ```bash
-# Increase accelerometer noise (trust less)
+# Vibration causing accelerometer issues — trust it less
 param set EK3_ACC_P_NSE 0.5  # Default 0.35
 ```
 
@@ -298,20 +201,15 @@ param set EK3_ACC_P_NSE 0.5  # Default 0.35
 
 ## EKF vs AHRS
 
-**AHRS (Attitude Heading Reference System):** Simpler algorithm, only estimates attitude (roll, pitch, yaw).
+**AHRS:** Simpler, estimates attitude only (roll, pitch, yaw).
 
-**EKF:** Full state estimator, estimates position, velocity, attitude, biases, wind.
+**EKF:** Full state estimator — position, velocity, attitude, biases, wind.
 
-**In ArduPilot:**
-- EKF provides all navigation data
-- AHRS uses EKF output for attitude
-- `AP_AHRS` library is the interface to EKF
+In ArduPilot, `AP_AHRS` is the interface to EKF output.
 
 ---
 
-## EKF Math (Optional Deep Dive)
-
-### Kalman Filter Equations
+## EKF Math (Optional)
 
 **State prediction:**
 ```
@@ -326,58 +224,17 @@ x̂(k|k) = x̂(k|k-1) + K(k) × [z(k) - H(k) × x̂(k|k-1)]
 P(k|k) = [I - K(k) × H(k)] × P(k|k-1)
 ```
 
-**Where:**
-- `x̂` = state estimate
-- `P` = covariance (uncertainty)
-- `F` = state transition matrix
-- `H` = observation matrix
-- `K` = Kalman gain
-- `Q` = process noise
-- `R` = measurement noise
-- `z` = measurement
-
-**Extended Kalman Filter:** Uses linearization for non-linear systems (like aircraft dynamics).
+Where: `x̂`=state estimate, `P`=covariance, `F`=state transition, `H`=observation, `K`=Kalman gain, `Q`=process noise, `R`=measurement noise, `z`=measurement.
 
 ---
 
 ## Resources
 
-### ArduPilot EKF Documentation
-
 - [EKF3 Overview](https://ardupilot.org/plane/docs/ekf3.html)
 - [EKF Failsafe](https://ardupilot.org/plane/docs/ekf-failsafe.html)
 - [Compass Calibration](https://ardupilot.org/plane/docs/common-compass-calibration-in-mission-planner.html)
-
-### Academic Resources
-
-- Kalman Filter explanation: https://www.kalmanfilter.net/
-- Extended Kalman Filter tutorial
-- Sensor fusion theory
-
-### Code Reference
-
 - `libraries/AP_NavEKF3/` - EKF3 implementation
 - `libraries/AP_AHRS/` - AHRS interface to EKF
-
----
-
-## Summary
-
-**Key Takeaways:**
-
-1. **EKF combines all sensors** to estimate position, velocity, and orientation
-2. **Each sensor has noise parameters** that control trust level
-3. **Pre-arm checks verify EKF confidence** before allowing flight
-4. **Default parameters work for most vehicles** - tune only if needed
-5. **Logs contain EKF data** for troubleshooting issues
-6. **Good GPS and compass calibration** are critical for EKF performance
-
-**For new engineers:**
-- Focus on understanding what EKF does (sensor fusion)
-- Learn to interpret pre-arm messages
-- Practice compass and accelerometer calibration
-- Review logs after flights
-- Don't modify EKF parameters without good reason
 
 ---
 

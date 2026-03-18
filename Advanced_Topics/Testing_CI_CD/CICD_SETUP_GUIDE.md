@@ -1,41 +1,10 @@
 # CI/CD Setup Guide for ArduPilot Development
 
-Comprehensive guide for setting up continuous integration and continuous delivery workflows for ArduPilot development.
-
 **Author:** Patrick Kelly (@Kuscko)
-**Version:** 1.0
-**Last Updated:** 2026-02-03
 
 ---
 
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Pre-Commit Hooks](#pre-commit-hooks)
-3. [GitHub Actions Workflows](#github-actions-workflows)
-4. [Local Testing Setup](#local-testing-setup)
-5. [ArduPilot CI Integration](#ardupilot-ci-integration)
-6. [Best Practices](#best-practices)
-
----
-
-## Overview
-
-### What is CI/CD?
-
-**Continuous Integration (CI):** Automatically build and test code changes before merging.
-
-**Continuous Delivery (CD):** Automatically prepare code for deployment/release.
-
-### Benefits for ArduPilot Development
-
-- Catch bugs before code review
-- Ensure code style compliance
-- Run automated tests on every commit
-- Validate builds for multiple platforms
-- Maintain code quality standards
-
-### ArduPilot CI Pipeline
+## ArduPilot CI Pipeline
 
 ```
 Code Change → Pre-commit Hooks → Push to GitHub → GitHub Actions
@@ -53,17 +22,7 @@ Code Change → Pre-commit Hooks → Push to GitHub → GitHub Actions
 
 ## Pre-Commit Hooks
 
-### What are Pre-Commit Hooks?
-
-Git hooks that run automatically before each commit to:
-- Check code style
-- Run static analysis
-- Prevent committing certain files
-- Validate commit messages
-
-### Setting Up Pre-Commit Hooks
-
-#### Method 1: Manual Hook Installation
+### Method 1: Manual Hook Installation
 
 ```bash
 cd ~/ardupilot
@@ -125,7 +84,7 @@ EOF
 chmod +x .git/hooks/pre-commit
 ```
 
-#### Method 2: Python Pre-Commit Framework
+### Method 2: Python Pre-Commit Framework
 
 ```bash
 # Install pre-commit framework
@@ -171,9 +130,7 @@ pre-commit install
 pre-commit run --all-files
 ```
 
-### Custom Pre-Commit Hook Examples
-
-#### Check Commit Message Format
+### Check Commit Message Format
 
 ```bash
 # .git/hooks/commit-msg
@@ -202,7 +159,7 @@ fi
 exit 0
 ```
 
-#### Prevent Committing Debug Code
+### Prevent Committing Debug Code
 
 ```bash
 # Add to pre-commit hook
@@ -222,14 +179,9 @@ done
 
 ## GitHub Actions Workflows
 
-### ArduPilot's Official CI
+ArduPilot's official CI workflows: `https://github.com/ArduPilot/ardupilot/tree/master/.github/workflows`
 
-ArduPilot uses GitHub Actions for CI. View workflows at:
-`https://github.com/ArduPilot/ardupilot/tree/master/.github/workflows`
-
-### Creating Custom Workflows for Your Fork
-
-#### Basic Build Test Workflow
+### Basic Build Test Workflow
 
 Create `.github/workflows/build-test.yml`:
 
@@ -291,7 +243,7 @@ jobs:
         ../Tools/autotest/autotest.py --no-configure build.ArduCopter
 ```
 
-#### Autotest Workflow
+### Autotest Workflow
 
 Create `.github/workflows/autotest.yml`:
 
@@ -356,7 +308,7 @@ jobs:
           *.tlog
 ```
 
-#### Code Style Check Workflow
+### Code Style Check Workflow
 
 Create `.github/workflows/style-check.yml`:
 
@@ -411,7 +363,7 @@ jobs:
         fi
 ```
 
-#### Unit Test Workflow
+### Unit Test Workflow
 
 Create `.github/workflows/unit-tests.yml`:
 
@@ -490,8 +442,6 @@ on:
 
 ## Local Testing Setup
 
-### Running Tests Locally Before Push
-
 ```bash
 # 1. Build all vehicles
 cd ~/ardupilot
@@ -514,8 +464,6 @@ cd Tools/autotest
 ```
 
 ### Docker Testing Environment
-
-Use Docker to match CI environment exactly:
 
 ```dockerfile
 # Dockerfile for ArduPilot CI
@@ -555,8 +503,6 @@ RUN ./waf configure --board=sitl && ./waf plane
 CMD ["./Tools/autotest/autotest.py", "--vehicle=Plane"]
 ```
 
-Build and run:
-
 ```bash
 # Build Docker image
 docker build -t ardupilot-ci .
@@ -568,8 +514,6 @@ docker run --rm -v $(pwd):/ardupilot ardupilot-ci
 ---
 
 ## ArduPilot CI Integration
-
-### Understanding ArduPilot's CI
 
 ArduPilot's CI runs on every pull request:
 
@@ -588,23 +532,23 @@ ArduPilot's CI runs on every pull request:
 
 ### Common CI Failures
 
-**Build Failure:**
-```
+```text
+Build Failure:
 Solution: Ensure code compiles locally first
 ./waf configure --board=sitl
 ./waf plane
 ```
 
-**Style Check Failure:**
-```
+```text
+Style Check Failure:
 Solution: Run astyle locally
 ./Tools/CodeStyle/run_astyle.sh
 git add -u
 git commit -m "Fix code style"
 ```
 
-**Autotest Failure:**
-```
+```text
+Autotest Failure:
 Solution: Run specific test locally
 cd Tools/autotest
 ./autotest.py --vehicle=Plane --test=FailingTest --debug
@@ -614,9 +558,9 @@ cd Tools/autotest
 
 ## Best Practices
 
-### Development Workflow with CI/CD
+### Development Workflow
 
-```
+```text
 1. Create feature branch
    git checkout -b feature/my-feature
 
@@ -646,7 +590,6 @@ cd Tools/autotest
 
 ### Performance Optimization
 
-**Use ccache:**
 ```bash
 # Install ccache
 sudo apt-get install ccache
@@ -655,7 +598,6 @@ sudo apt-get install ccache
 git config --global ccache.path /usr/lib/ccache
 ```
 
-**Cache dependencies in CI:**
 ```yaml
 - uses: actions/cache@v3
   with:
@@ -667,42 +609,35 @@ git config --global ccache.path /usr/lib/ccache
 
 ### Security Best Practices
 
-1. **Never commit secrets:**
-   - Use GitHub Secrets for API keys
-   - Add `.env` to `.gitignore`
+1. Never commit secrets — use GitHub Secrets for API keys, add `.env` to `.gitignore`
+2. Review third-party actions — only use trusted actions, pin to specific versions (not `@master`)
+3. Limit permissions:
 
-2. **Review third-party actions:**
-   - Only use trusted actions
-   - Pin to specific versions (not `@master`)
-
-3. **Limit permissions:**
-   ```yaml
-   permissions:
-     contents: read
-     pull-requests: write
-   ```
+```yaml
+permissions:
+  contents: read
+  pull-requests: write
+```
 
 ### Debugging CI Failures
 
-1. **Run tests locally first**
-2. **Enable debug mode:**
-   ```yaml
-   - name: Debug
-     if: failure()
-     run: |
-       cat /var/log/syslog
-       dmesg
-   ```
-3. **Upload artifacts:**
-   ```yaml
-   - uses: actions/upload-artifact@v3
-     if: always()
-     with:
-       name: debug-logs
-       path: |
-         *.log
-         *.BIN
-   ```
+```yaml
+- name: Debug
+  if: failure()
+  run: |
+    cat /var/log/syslog
+    dmesg
+```
+
+```yaml
+- uses: actions/upload-artifact@v3
+  if: always()
+  with:
+    name: debug-logs
+    path: |
+      *.log
+      *.BIN
+```
 
 ---
 
@@ -752,18 +687,7 @@ gh run download RUN_ID
 
 ---
 
-## Additional Resources
-
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Pre-Commit Framework](https://pre-commit.com/)
 - [ArduPilot Testing Guide](TESTING_GUIDE.md)
 - [ArduPilot Autotest Examples](example_autotest_custom.py)
-
----
-
-**Remember:**
-- CI/CD catches bugs early - use it!
-- Fix CI failures immediately
-- Never bypass checks without good reason
-- Keep CI runs fast (< 30 minutes ideal)
-- Monitor CI regularly during development

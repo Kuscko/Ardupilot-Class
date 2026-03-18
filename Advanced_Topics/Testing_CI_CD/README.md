@@ -1,94 +1,18 @@
 # Testing and CI/CD
 
-## Overview
+## CI/CD Pipeline Stages
 
-Master ArduPilot's testing framework and continuous integration workflows for reliable code contributions and automated quality assurance. Comprehensive testing ensures flight software stability, prevents regressions, and maintains the high reliability standards required for autonomous systems [1].
+| Stage       | Purpose                        | Duration    |
+| ----------- | ------------------------------ | ----------- |
+| Build       | Compile all vehicle types      | 10-15 min   |
+| Unit Tests  | Run library unit tests         | 2-5 min     |
+| Autotest    | SITL simulation tests          | 60-90 min   |
+| Style Check | Code formatting validation     | 1-2 min     |
+| Warnings    | Check for compiler warnings    | 5-10 min    |
 
-This module covers the autotest framework, unit testing, simulation tests, GitHub CI/CD workflows, pre-commit hooks, and test coverage analysis.
+---
 
-## Prerequisites
-
-Before starting this module, you should have:
-
-- Completed ArduPilot build system setup
-- Git and GitHub account for contributions
-- Python programming knowledge
-- Understanding of SITL simulation
-- Familiarity with ArduPilot codebase structure
-
-## What You'll Learn
-
-By completing this module, you will:
-
-- Run and create autotest simulation tests
-- Write unit tests for ArduPilot libraries
-- Set up pre-commit hooks for code quality
-- Understand GitHub CI/CD workflows
-- Analyze test coverage and identify gaps
-- Debug failing tests efficiently
-- Contribute tests with code changes
-
-## Key Concepts
-
-### ArduPilot Testing Layers
-
-Multi-level testing strategy [1]:
-
-**Unit Tests:**
-- Test individual functions and classes
-- Fast execution (milliseconds)
-- No hardware or simulation required
-- Located in libraries/*/tests/
-
-**Integration Tests:**
-- Test component interactions
-- Use SITL simulation
-- Validate MAVLink communication
-- Autotest framework
-
-**System Tests:**
-- Full vehicle simulation tests
-- Complete mission scenarios
-- Hardware-in-the-loop (HITL)
-- Real hardware validation
-
-### Autotest Framework
-
-Python-based test automation [2]:
-
-**Test Categories:**
-- Takeoff and land sequences
-- Flight mode transitions
-- Failsafe behaviors
-- Mission execution
-- Parameter changes
-- Sensor failures
-
-**Test Vehicles:**
-- Copter (multicopter)
-- Plane (fixed-wing)
-- Rover (ground vehicle)
-- Sub (submarine)
-- Helicopter
-- QuadPlane
-
-### CI/CD Pipeline
-
-Automated testing on GitHub [3]:
-
-| Stage | Purpose | Duration |
-| ----- | ------- | -------- |
-| Build | Compile all vehicle types | 10-15 min |
-| Unit Tests | Run library unit tests | 2-5 min |
-| Autotest | SITL simulation tests | 60-90 min |
-| Style Check | Code formatting validation | 1-2 min |
-| Warnings | Check for compiler warnings | 5-10 min |
-
-## Hands-On Practice
-
-### Exercise 1: Run Existing Autotests
-
-Execute complete autotest suite:
+## Exercise 1: Run Existing Autotests
 
 ```bash
 # Run all copter tests
@@ -114,9 +38,7 @@ cd ~/ardupilot
 ./Tools/autotest/autotest.py
 ```
 
-**Expected output:**
-
-```
+```text
 AP: Copter V4.5.0
 Autotest starting
 Test: Takeoff ... OK (15.2s)
@@ -127,9 +49,9 @@ Test: Mission ... OK (45.3s)
 ALL TESTS PASSED
 ```
 
-### Exercise 2: Write a Custom Autotest
+---
 
-Create new test for specific behavior:
+## Exercise 2: Write a Custom Autotest
 
 ```python
 # Tools/autotest/copter.py
@@ -167,17 +89,15 @@ def CustomFlightTest(self):
     self.progress("Custom flight test PASSED")
 ```
 
-**Run custom test:**
-
 ```bash
 # Add test to test list in copter.py
 # Then run:
 ./Tools/autotest/autotest.py --vehicle=Copter --test=CustomFlightTest
 ```
 
-### Exercise 3: Write Unit Tests
+---
 
-Create unit tests for library functions:
+## Exercise 3: Write Unit Tests
 
 ```cpp
 // libraries/AP_Example/tests/test_example.cpp
@@ -223,8 +143,6 @@ TEST_F(AP_Example_Test, ErrorHandling) {
 }
 ```
 
-**Run unit tests:**
-
 ```bash
 # Build and run all unit tests
 cd ~/ardupilot
@@ -238,9 +156,9 @@ cd ~/ardupilot
 ./build/linux/tests/test_example --gtest_verbose
 ```
 
-### Exercise 4: Set Up Pre-Commit Hooks
+---
 
-Install code quality checks:
+## Exercise 4: Set Up Pre-Commit Hooks
 
 ```bash
 # Install pre-commit framework
@@ -285,8 +203,6 @@ pre-commit run --all-files
 # Hooks now run automatically on git commit
 ```
 
-**Expected behavior:**
-
 ```bash
 # On git commit, hooks run:
 Check code style...............................................Passed
@@ -295,9 +211,9 @@ Check trailing whitespace......................................Passed
 Check YAML.....................................................Passed
 ```
 
-### Exercise 5: GitHub CI/CD Workflow
+---
 
-Understand and use GitHub Actions:
+## Exercise 5: GitHub CI/CD Workflow
 
 ```yaml
 # .github/workflows/test_custom.yml
@@ -353,8 +269,6 @@ jobs:
           path: /tmp/autotest_logs/
 ```
 
-**Trigger workflow:**
-
 ```bash
 # Push to trigger CI
 git add .
@@ -367,9 +281,9 @@ git push origin feature-branch
 # Red X = tests failed, review logs
 ```
 
-### Exercise 6: Test Coverage Analysis
+---
 
-Measure test coverage:
+## Exercise 6: Test Coverage Analysis
 
 ```bash
 # Build with coverage enabled
@@ -389,9 +303,7 @@ genhtml coverage.info --output-directory coverage_html
 firefox coverage_html/index.html
 ```
 
-**Analyze results:**
-
-```
+```text
 Coverage Summary:
 - Libraries: 75% line coverage
 - Vehicle code: 82% line coverage
@@ -403,9 +315,9 @@ Coverage Summary:
 Action: Write tests for untested code paths
 ```
 
-### Exercise 7: Debug Failing Tests
+---
 
-Troubleshoot test failures:
+## Exercise 7: Debug Failing Tests
 
 ```bash
 # Run test with debug output
@@ -433,8 +345,6 @@ less Copter-test.Mission/APM.log
 # (gdb) continue
 ```
 
-**Common failure patterns:**
-
 ```python
 # Timeout failures - increase timeout
 self.wait_altitude(9, 11, timeout=30)  # Increase from 10
@@ -454,16 +364,11 @@ self.wait_ready_to_arm()  # Wait before arming
 self.arm_vehicle()
 ```
 
+---
+
 ## Common Issues
 
-### Issue 1: Autotest Hangs
-
-**Symptoms:**
-- Test doesn't complete
-- Process stuck
-- No output for minutes
-
-**Solutions:**
+### Autotest Hangs
 
 ```bash
 # Kill hanging process
@@ -483,14 +388,7 @@ netstat -an | grep 14550
 ./Tools/autotest/autotest.py --vehicle=Copter --speedup=1
 ```
 
-### Issue 2: Unit Test Compilation Fails
-
-**Symptoms:**
-- Build errors in test code
-- Linking failures
-- Missing dependencies
-
-**Solutions:**
+### Unit Test Compilation Fails
 
 ```bash
 # Clean build
@@ -518,14 +416,7 @@ sudo cp *.a /usr/lib
 #     )
 ```
 
-### Issue 3: CI Fails Locally Passes
-
-**Symptoms:**
-- Tests pass on local machine
-- GitHub CI shows failures
-- Environment differences
-
-**Solutions:**
+### CI Fails, Locally Passes
 
 ```bash
 # Use Docker to match CI environment
@@ -547,14 +438,7 @@ apt-get install -y build-essential python3-dev
 # - Hard-coded paths
 ```
 
-### Issue 4: Test Flakiness
-
-**Symptoms:**
-- Test passes sometimes, fails others
-- Intermittent failures
-- No clear cause
-
-**Solutions:**
+### Test Flakiness
 
 ```bash
 # Run test multiple times
@@ -566,13 +450,6 @@ for i in {1..10}; do
   fi
 done
 
-# Identify flaky tests
-# Common causes:
-# - Timing dependencies
-# - Insufficient wait periods
-# - Race conditions
-# - Resource cleanup issues
-
 # Fix: Add proper synchronization
 self.wait_ready_to_arm()
 self.wait_heartbeat()
@@ -582,14 +459,7 @@ self.wait_mode('LOITER')
 self.wait_location(..., accuracy=5)  # Increase from 2
 ```
 
-### Issue 5: Coverage Report Empty
-
-**Symptoms:**
-- No coverage data generated
-- Empty report
-- Missing .gcno files
-
-**Solutions:**
+### Coverage Report Empty
 
 ```bash
 # Rebuild with coverage
@@ -616,9 +486,9 @@ lcov --directory build/sitl \
 ./waf configure --board=sitl --coverage --check-c-compiler=gcc
 ```
 
-## Best Practices
+---
 
-### Test Design Principles
+## Best Practices
 
 ```python
 # 1. Test one thing per test
@@ -705,33 +575,10 @@ git push origin feature-branch
 # Fix, commit, push again
 ```
 
-## Additional Resources
-
-- [Autotest Documentation](https://ardupilot.org/dev/docs/testing-with-autotest.html) [1] - Complete autotest guide
-- [Unit Testing](https://ardupilot.org/dev/docs/unit-tests.html) [2] - Unit test framework
-- [GitHub Actions](https://docs.github.com/en/actions) [3] - CI/CD documentation
-- [Contributing Guide](https://ardupilot.org/dev/docs/contributing.html) - How to contribute
-
-### Testing Tools
-
-- [Valgrind](https://valgrind.org/) - Memory leak detection
-- [GDB](https://www.gnu.org/software/gdb/) - Debugging tool
-- [Coverage.py](https://coverage.readthedocs.io/) - Python coverage
-- [gcov/lcov](http://ltp.sourceforge.net/coverage/lcov.php) - C++ coverage
-
-## Next Steps
-
-After mastering testing and CI/CD:
-
-1. **Advanced Test Scenarios** - Complex multi-vehicle tests
-2. **Performance Testing** - Benchmark and profiling
-3. **Fuzz Testing** - Automated bug finding
-4. **Hardware Testing** - Real hardware validation
-
 ---
 
-**Sources:**
-
-[1] https://ardupilot.org/dev/docs/testing-with-autotest.html
-[2] https://ardupilot.org/dev/docs/unit-tests.html
-[3] https://docs.github.com/en/actions
+- [Autotest Documentation](https://ardupilot.org/dev/docs/testing-with-autotest.html)
+- [Unit Testing](https://ardupilot.org/dev/docs/unit-tests.html)
+- [GitHub Actions](https://docs.github.com/en/actions)
+- [Contributing Guide](https://ardupilot.org/dev/docs/contributing.html)
+- [CI/CD Setup Guide](CICD_SETUP_GUIDE.md)

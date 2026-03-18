@@ -2,16 +2,17 @@
 
 ## RC Receiver Types
 
-| Type | Protocol | Channels | Notes |
-|------|----------|----------|-------|
-| PPM | PPM Sum | 8+ | Single wire, common |
-| SBUS | SBUS | 16+ | Inverted signal |
-| DSM | Spektrum | 8-12 | Satellite receivers |
-| SRXL | Multiplex | 16 | Less common |
+| Type | Protocol  | Channels | Notes               |
+| ---- | --------- | -------- | ------------------- |
+| PPM  | PPM Sum   | 8+       | Single wire, common |
+| SBUS | SBUS      | 16+      | Inverted signal     |
+| DSM  | Spektrum  | 8-12     | Satellite receivers |
+| SRXL | Multiplex | 16       | Less common         |
 
 ## Connection Setup
 
 **Serial port configuration:**
+
 ```bash
 param set SERIAL3_PROTOCOL 23  # RCIN on SERIAL3
 param set SERIAL3_BAUD 100     # SBUS = 100000 baud
@@ -22,6 +23,7 @@ param set SERIAL3_BAUD 100     # SBUS = 100000 baud
 ### Step 1: Radio Calibration
 
 **In Mission Planner:**
+
 1. Connect to autopilot
 2. Initial Setup → Mandatory Hardware → Radio Calibration
 3. Move all sticks to extremes
@@ -30,6 +32,7 @@ param set SERIAL3_BAUD 100     # SBUS = 100000 baud
 6. Click "Click when Done"
 
 **Verify:**
+
 - All channels show 1000-2000 PWM
 - Center = ~1500
 - No reversed channels (unless intentional)
@@ -37,6 +40,7 @@ param set SERIAL3_BAUD 100     # SBUS = 100000 baud
 ### Step 2: Mode Setup
 
 **Common mode switch setup (Channel 5):**
+
 ```bash
 param set MODE_CH 5          # Use channel 5 for modes
 param set MODE1 1            # Position 1 = MANUAL (1)
